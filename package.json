@@ -1,0 +1,15 @@
+{
+    "name": "peekvisor",
+    "type": "module",
+    "version": "0.0.1",
+    "scripts": {
+      "dev": "astro dev",
+      "start": "astro dev",
+      "build": "astro check && astro build && node process-html.mjs",
+      "preview": "astro preview",
+      "astro": "astro"
+    },
+    "dependencies": {
+      "astro": "^5.10.1"
+    }
+  }
