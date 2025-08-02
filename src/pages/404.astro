@@ -1,0 +1,12 @@
+---
+// src/pages/404.astro
+import { getRedirect } from "../i18n/utils";  // O "@i18n/utils" si usas alias
+import type { APIContext } from 'astro';  // Importa el tipo para tipar el handler
+
+// This page is necessary to redirect users to the correct language-specific 404 page.
+// Astro's default 404 handling requires a single `404.astro` file in `src/pages`.
+// We use a script to redirect to the localized version based on the user's preferred language.
+
+// The getRedirect function will determine the best language and return a redirect response.
+export const GET = ({ request }: APIContext) => getRedirect("/404", request);
+---

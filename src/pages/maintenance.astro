@@ -1,0 +1,6 @@
+---
+import { getRedirect } from "../i18n/utils";
+import type { APIContext } from 'astro';
+
+export const GET = ({ request }: APIContext) => getRedirect("/maintenance", request);
+---
