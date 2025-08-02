@@ -1,3 +1,71 @@
 ---
+import MainLayout from "@/layouts/MainLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { SITE } from "@data/constants";
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const pageTitle = `${t("pageNotFound.title")} | ${SITE.title}`;
 ---
+
+<MainLayout
+  title={pageTitle}
+  customDescription={t("pageNotFound.metaDescription")}
+  customOgTitle={t("pageNotFound.ogTitle")}
+  structuredData={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `https://peekvisor.com/${lang}/404`,
+    url: `https://peekvisor.com/${lang}/404`,
+    name: `${t("pageNotFound.ogTitle")} | PeekVisor`,
+    description: t("pageNotFound.metaDescription"),
+    isPartOf: {
+      "@type": "WebSite",
+      url: "https://peekvisor.com",
+      name: "PeekVisor",
+      description:
+        "Privacy-first analytics platform for comprehensive audience insights without compromising user data.",
+    },
+    inLanguage: lang,
+  }}
+>
+  <section class="min-h-[50vh] flex items-center justify-center px-4 py-8">
+    <div class="mx-auto max-w-xl text-center">
+      <h1
+        class="text-dark mb-4 text-7xl font-extrabold text-brand dark:text-brand lg:text-9xl"
+      >
+        404
+      </h1>
+      <p
+        id="subtitle"
+        class="mb-4 max-w-xl text-balance text-3xl font-bold tracking-tight text-neutral-700 dark:text-neutral-300 lg:text-4xl"
+      >
+        {t("pageNotFound.subTitle")}
+      </p>
+      
+      <button 
+        id="go-back"
+        class="btn-gradient hover:btn-gradient-hover px-6 py-3 rounded-lg font-medium text-white text-sm sm:text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        {t('ui.goBack')}
+      </button>
+    </div>
+  </section>
+</MainLayout>
+
+<script is:inline define:vars={{ lang }}>
+  document.addEventListener('DOMContentLoaded', function() {
+    const goBackButton = document.getElementById("go-back");
+    
+    if (goBackButton) {
+      goBackButton.addEventListener("click", function() {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = `/${lang}/`;
+        }
+      });
+    }
+  });
+</script>

@@ -1,0 +1,208 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const GITHUB_API_URL =
+    "https://api.github.com/repos/peekvisor/peekvisor/releases";
+
+let releases = [];
+let error = null;
+
+try {
+    const response = await fetch(GITHUB_API_URL);
+    if (response.ok) {
+        releases = await response.json();
+    } else {
+        error = "Failed to fetch releases";
+    }
+} catch (e) {
+    error = e instanceof Error ? e.message : "Unknown error occurred";
+}
+
+function formatDate(dateString: string, lang: string) {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    };
+
+    const locale = lang === "es" ? "es-ES" : lang === "fr" ? "fr-FR" : "en-US";
+    return date.toLocaleDateString(locale, options);
+}
+
+function processMarkdown(text: string) {
+    if (!text) return "";
+
+    return (
+        text
+            // Headers
+            .replace(
+                /^### (.*$)/gim,
+                '<h3 class="text-lg font-semibold text-neutral-800 dark:text-neutral-200 mt-4 mb-2">$1</h3>',
+            )
+            .replace(
+                /^## (.*$)/gim,
+                '<h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mt-6 mb-3">$1</h2>',
+            )
+            .replace(
+                /^# (.*$)/gim,
+                '<h1 class="text-2xl font-bold text-neutral-800 dark:text-neutral-200 mt-8 mb-4">$1</h1>',
+            )
+            // Bold
+            .replace(
+                /\*\*(.*?)\*\*/g,
+                '<strong class="font-semibold text-neutral-800 dark:text-neutral-200">$1</strong>',
+            )
+            // Italic
+            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+            // Code
+            .replace(
+                /`(.*?)`/g,
+                '<code class="bg-neutral-100 dark:bg-neutral-700 px-1 py-0.5 rounded text-sm font-mono">$1</code>',
+            )
+            // Links
+            .replace(
+                /\[([^\]]+)\]\(([^)]+)\)/g,
+                '<a href="$2" class="text-brand-coral hover:underline" target="_blank" rel="noopener noreferrer">$1</a>',
+            )
+            // Line breaks
+            .replace(
+                /\n\n/g,
+                '</p><p class="text-sm text-neutral-600 dark:text-neutral-400 mb-3">',
+            )
+            // List items
+            .replace(
+                /^- (.*$)/gim,
+                '<li class="text-sm text-neutral-600 dark:text-neutral-400 ml-4">• $1</li>',
+            )
+            // Wrap in paragraph if not already wrapped
+            .replace(
+                /^(?!<[h|l|p])/gm,
+                '<p class="text-sm text-neutral-600 dark:text-neutral-400 mb-3">',
+            )
+    );
+}
+---
+
+<MainLayout
+    title={t("changelog.pageTitle")}
+    customDescription={t("changelog.metaDescription")}
+    customOgTitle={t("changelog.ogTitle")}
+>
+    <div class="mt-8 mb-8 flex justify-center">
+        <div
+            class="w-full max-w-4xl rounded-lg border border-yellow-100/40 bg-indigo-50/40 px-6 py-10 shadow-lg backdrop-blur-md md:px-8 md:py-12 dark:border-neutral-700/40 dark:bg-neutral-800/80 dark:backdrop-blur-md"
+        >
+            <h1
+                class="mb-8 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100"
+            >
+                {t("changelog.title")}
+            </h1>
+
+            {
+                error ? (
+                    <div class="py-8 text-center">
+                        <p class="mb-4 text-red-600 dark:text-red-400">
+                            {t("changelog.error")}: {error}
+                        </p>
+                    </div>
+                ) : releases.length === 0 ? (
+                    <div class="py-8 text-center">
+                        <p class="text-neutral-600 dark:text-neutral-400">
+                            {t("changelog.loading")}
+                        </p>
+                    </div>
+                ) : (
+                    <div class="max-h-[70vh] space-y-8 overflow-y-auto pr-2">
+                        {releases.map((release: any, index: number) => (
+                            <div
+                                class="mb-6 rounded-[24px] border border-[#7C86FF] p-6"
+                                style="border-color: #7C86FF;"
+                            >
+                                <div class="mb-4 flex items-start justify-between">
+                                    <div>
+                                        <h2 class="mb-2 text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+                                            {t("changelog.version")}{" "}
+                                            {release.tag_name}
+                                            {release.name &&
+                                                release.name !==
+                                                    release.tag_name && (
+                                                    <span class="ml-2 text-lg font-normal text-neutral-600 dark:text-neutral-400">
+                                                        - {release.name}
+                                                    </span>
+                                                )}
+                                        </h2>
+                                        <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                            {t("changelog.releaseDate")}{" "}
+                                            {formatDate(
+                                                release.published_at,
+                                                lang,
+                                            )}
+                                        </p>
+                                    </div>
+                                    <a
+                                        href={release.html_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="inline-flex items-center rounded-lg border border-neutral-200 bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600"
+                                    >
+                                        <svg
+                                            class="mr-1 h-3 w-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                        {t("changelog.viewOnGitHub")}
+                                    </a>
+                                </div>
+
+                                {release.body && (
+                                    <div class="prose prose-sm max-w-none text-neutral-600 dark:text-neutral-400">
+                                        <div
+                                            set:html={processMarkdown(
+                                                release.body,
+                                            )}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )
+            }
+
+            <div class="mt-8 flex justify-center">
+                <button
+                    id="back-button"
+                    class="btn-gradient hover:btn-gradient-hover rounded-lg px-6 py-3 text-sm font-medium text-white transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none sm:text-base"
+                >
+                    {t("ui.goBack")}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script define:vars={{ lang }} is:inline>
+        document.addEventListener("DOMContentLoaded", function () {
+            const backButton = document.getElementById("back-button");
+
+            if (backButton) {
+                backButton.addEventListener("click", function () {
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        window.location.href = `/${lang}/`;
+                    }
+                });
+            }
+        });
+    </script>
+</MainLayout>

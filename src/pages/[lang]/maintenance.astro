@@ -1,3 +1,77 @@
 ---
+import MainLayout from "@/layouts/MainLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { SITE } from "@data/constants";
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const pageTitle = `${t("maintenance.title")} | ${SITE.title}`;
 ---
+
+<MainLayout
+  title={pageTitle}
+  customDescription={t("maintenance.metaDescription")}
+  customOgTitle={t("maintenance.ogTitle")}
+  structuredData={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `https://peekvisor.com/${lang}/maintenance`,
+    url: `https://peekvisor.com/${lang}/maintenance`,
+    name: `${t("maintenance.ogTitle")} | PeekVisor`,
+    description: t("maintenance.metaDescription"),
+    isPartOf: {
+      "@type": "WebSite",
+      url: "https://peekvisor.com",
+      name: "PeekVisor",
+      description:
+        "Privacy-first analytics platform for comprehensive audience insights without compromising user data.",
+    },
+    inLanguage: lang,
+  }}
+>
+  <section class="flex min-h-[50vh] items-center justify-center px-4 py-8">
+    <div class="mx-auto max-w-xl text-center">
+      <div class="mb-8">
+        <h1
+          class="text-dark text-brand dark:text-brand mb-4 text-5xl font-extrabold lg:text-7xl"
+        >
+          🚧
+        </h1>
+        <h2
+          class="mb-4 text-3xl font-bold tracking-tight text-neutral-700 lg:text-4xl dark:text-neutral-300"
+        >
+          {t("maintenance.title")}
+        </h2>
+        <p
+          class="mx-auto mb-4 max-w-xl text-lg text-balance text-neutral-600 dark:text-neutral-400"
+        >
+          {t("maintenance.description")}
+        </p>
+      </div>
+
+      <button
+        id="go-back"
+        class="btn-gradient hover:btn-gradient-hover rounded-lg px-6 py-3 text-sm font-medium text-white transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none sm:text-base"
+      >
+        {t("ui.goBack")}
+      </button>
+    </div>
+  </section>
+</MainLayout>
+
+<script is:inline define:vars={{ lang }}>
+  document.addEventListener("DOMContentLoaded", function () {
+    const goBackButton = document.getElementById("go-back");
+
+    if (goBackButton) {
+      goBackButton.addEventListener("click", function () {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = `/${lang}/`;
+        }
+      });
+    }
+  });
+</script>

@@ -1,3 +1,349 @@
 ---
+export const prerender = false;
+import MainLayout from "@/layouts/MainLayout.astro";
 
+import LearnMoreBtn from "@components/ui/buttons/LearnMoreBtn.astro";
+import Icon from "@components/ui/icons/Icon.astro";
+
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { eq } from "drizzle-orm";
+import { db } from "../../db/index";
+import { sessions } from "../../db/schema";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const sessionToken = Astro.cookies.get("app_auth_token")?.value;
+let isAuthenticated = false;
+
+if (sessionToken) {
+  try {
+    const sessionData = await db.query.sessions.findFirst({
+      where: eq(sessions.id, sessionToken),
+      with: {
+        user: true,
+      },
+    });
+
+    if (sessionData?.user) {
+      isAuthenticated = true;
+    }
+  } catch (error) {
+    console.error("Error verificando sesión:", error);
+    isAuthenticated = false;
+  }
+}
 ---
+
+<MainLayout title="PeekVisor | Privacy-first Analytics">
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden">
+    <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h1
+          class="text-4xl font-bold tracking-tight text-neutral-900 sm:text-6xl dark:text-neutral-100"
+        >
+          <span class="text-blue-600 dark:text-blue-400"
+            >{t("homepage.hero.title")}</span
+          >
+        </h1>
+        <p
+          class="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300"
+        >
+          {t("privacyFirst")} — {t("tagline")}
+        </p>
+        <div
+          class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-6"
+        >
+          {
+            isAuthenticated ? (
+              <div class="w-full sm:w-auto">
+                <a
+                  href={`/${lang}/websites`}
+                  class="btn-gradient btn-gradient-hover btn-gradient-hover inline-flex w-full items-center justify-center gap-x-2 rounded-lg border border-transparent px-4 py-3 text-sm font-bold text-neutral-700 ring-zinc-500 outline-hidden transition duration-300 focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 2xl:text-base dark:ring-zinc-200 dark:focus:outline-hidden"
+                >
+                  {t("nav.seeYourDomains")}
+                </a>
+              </div>
+            ) : (
+              <>
+                <div class="w-full sm:w-auto">
+                  <button
+                    type="button"
+                    class="btn-gradient btn-gradient-hover btn-gradient-hover inline-flex w-full items-center justify-center gap-x-2 rounded-lg border border-transparent px-4 py-3 text-sm font-bold text-neutral-700 ring-zinc-500 outline-hidden transition duration-300 focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 2xl:text-base dark:ring-zinc-200 dark:focus:outline-hidden"
+                    data-hs-overlay="#hs-toggle-between-modals-login-modal"
+                  >
+                    {t("homepage.hero.getStarted")}
+                  </button>
+                </div>
+                <LearnMoreBtn
+                  title={t("homepage.hero.learnMore")}
+                  href={`/${lang}/pricing`}
+                />
+              </>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-12 sm:py-16">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2
+          class="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-neutral-100"
+        >
+          {t("homepage.features.title")}
+        </h2>
+        <p
+          class="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300"
+        >
+          {t("homepage.features.subtitle")}
+        </p>
+      </div>
+      <div class="mx-auto mt-12 max-w-2xl sm:mt-16 lg:mt-20 lg:max-w-none">
+        <dl
+          class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3 place-items-center lg:place-items-start"
+        >
+          <div class="flex flex-col items-center text-center lg:items-start lg:text-left max-w-sm">
+            <dt
+              class="flex items-center gap-x-3 text-base leading-7 font-semibold text-neutral-900 dark:text-neutral-100"
+            >
+              <div
+                class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600"
+              >
+                <Icon name="verified" />
+              </div>
+              {t("homepage.features.privacy.title")}
+            </dt>
+            <dd
+              class="mt-4 flex flex-auto flex-col text-base leading-7 text-neutral-600 dark:text-neutral-300"
+            >
+              <p class="flex-auto">
+                {t("homepage.features.privacy.description")}
+              </p>
+            </dd>
+          </div>
+          <div class="flex flex-col items-center text-center lg:items-start lg:text-left max-w-sm">
+            <dt
+              class="flex items-center gap-x-3 text-base leading-7 font-semibold text-neutral-900 dark:text-neutral-100"
+            >
+              <div
+                class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600"
+              >
+                <Icon name="dashboard" />
+              </div>
+              {t("homepage.features.realtime.title")}
+            </dt>
+            <dd
+              class="mt-4 flex flex-auto flex-col text-base leading-7 text-neutral-600 dark:text-neutral-300"
+            >
+              <p class="flex-auto">
+                {t("homepage.features.realtime.description")}
+              </p>
+            </dd>
+          </div>
+          <div class="flex flex-col items-center text-center lg:items-start lg:text-left max-w-sm">
+            <dt
+              class="flex items-center gap-x-3 text-base leading-7 font-semibold text-neutral-900 dark:text-neutral-100"
+            >
+              <div
+                class="flex h-10 w-10 items-center justify-center rounded-lg"
+              >
+                <Icon name="rocket" />
+              </div>
+              {t("homepage.features.setup.title")}
+            </dt>
+            <dd
+              class="mt-4 flex flex-auto flex-col text-base leading-7 text-neutral-600 dark:text-neutral-300"
+            >
+              <p class="flex-auto">
+                {t("homepage.features.setup.description")}
+              </p>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="bg-neutral-50 py-16 sm:py-20 dark:bg-neutral-900">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl lg:max-w-none">
+        <div class="text-center">
+          <h2
+            class="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-neutral-100"
+          >
+            {t("homepage.stats.title")}
+          </h2>
+          <p
+            class="mt-4 text-lg leading-8 text-neutral-900 dark:text-neutral-100"
+          >
+            {t("homepage.stats.subtitle")}
+          </p>
+        </div>
+        <dl
+          class="mt-12 grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-2 lg:grid-cols-4"
+        >
+          <div
+            class="flex flex-col bg-neutral-100/50 p-8 dark:bg-neutral-800/50"
+          >
+            <dt
+              class="text-sm leading-6 font-semibold text-neutral-600 dark:text-neutral-400"
+            >
+              {t("homepage.stats.websites")}
+            </dt>
+            <dd
+              class="order-first text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
+            >
+              250+
+            </dd>
+          </div>
+          <div
+            class="flex flex-col bg-neutral-100/50 p-8 dark:bg-neutral-800/50"
+          >
+            <dt
+              class="text-sm leading-6 font-semibold text-neutral-600 dark:text-neutral-400"
+            >
+              {t("homepage.stats.pageviews")}
+            </dt>
+            <dd
+              class="order-first text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
+            >
+              1.2M+
+            </dd>
+          </div>
+          <div
+            class="flex flex-col bg-neutral-100/50 p-8 dark:bg-neutral-800/50"
+          >
+            <dt
+              class="text-sm leading-6 font-semibold text-neutral-600 dark:text-neutral-400"
+            >
+              {t("homepage.stats.countries")}
+            </dt>
+            <dd
+              class="order-first text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
+            >
+              45+
+            </dd>
+          </div>
+          <div
+            class="flex flex-col bg-neutral-100/50 p-8 dark:bg-neutral-800/50"
+          >
+            <dt
+              class="text-sm leading-6 font-semibold text-neutral-600 dark:text-neutral-400"
+            >
+              {t("homepage.stats.co2")}
+            </dt>
+            <dd
+              class="order-first text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
+            >
+              125kg
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works Section -->
+  <section class="py-16 sm:py-20">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2
+          class="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-neutral-100"
+        >
+          {t("homepage.howItWorks.title")}
+        </h2>
+        <p
+          class="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300"
+        >
+          {t("homepage.howItWorks.subtitle")}
+        </p>
+      </div>
+      <div class="mx-auto mt-12 max-w-2xl sm:mt-16 lg:mt-20 lg:max-w-none">
+        <div
+          class="grid grid-cols-1 place-items-center gap-x-8 gap-y-12 lg:grid-cols-3 lg:place-items-start lg:gap-y-16"
+        >
+          <div
+            class="mx-auto flex max-w-sm flex-col items-center text-center lg:mx-0"
+          >
+            <div
+              class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-xl font-bold text-indigo-500 dark:bg-blue-900/30 dark:text-indigo-400"
+            >
+              1
+            </div>
+            <h3
+              class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
+            >
+              {t("homepage.howItWorks.step1.title")}
+            </h3>
+            <p class="text-neutral-600 dark:text-neutral-300">
+              {t("homepage.howItWorks.step1.description")}
+            </p>
+          </div>
+          <div
+            class="mx-auto flex max-w-sm flex-col items-center text-center lg:mx-0"
+          >
+            <div
+              class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-xl font-bold text-indigo-500 dark:bg-blue-900/30 dark:text-indigo-400"
+            >
+              2
+            </div>
+            <h3
+              class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
+            >
+              {t("homepage.howItWorks.step2.title")}
+            </h3>
+            <p class="text-neutral-600 dark:text-neutral-300">
+              {t("homepage.howItWorks.step2.description")}
+            </p>
+          </div>
+          <div
+            class="mx-auto flex max-w-sm flex-col items-center text-center lg:mx-0"
+          >
+            <div
+              class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-xl font-bold text-indigo-500 dark:bg-blue-900/30 dark:text-indigo-400"
+            >
+              3
+            </div>
+            <h3
+              class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
+            >
+              {t("homepage.howItWorks.step3.title")}
+            </h3>
+            <p class="text-neutral-600 dark:text-neutral-300">
+              {t("homepage.howItWorks.step3.description")}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+</MainLayout>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", function () {
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+
+    anchorLinks.forEach((link) => {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute("href").substring(1);
+        const targetElement = document.getElementById(targetId);
+
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      });
+    });
+  });
+</script>
