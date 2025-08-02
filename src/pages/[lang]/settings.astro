@@ -1,0 +1,322 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import { eq, desc } from "drizzle-orm";
+import { db } from "../../db/index";
+import { sessions, users, loginLogs } from "../../db/schema";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { languages } from "../../i18n/ui";
+import Icon from "@components/ui/icons/Icon.astro";
+import Avatar from "@components/ui/avatars/Avatar.astro";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const sessionToken = Astro.cookies.get("app_auth_token")?.value;
+if (!sessionToken) return Astro.redirect("/");
+
+const userInfo = await db.query.sessions.findFirst({
+  where: eq(sessions.id, sessionToken),
+  with: {
+    user: {
+      with: {
+        oauthTokens: {
+          columns: {
+            strategy: true,
+            accessToken: true,
+          },
+        },
+        loginLogs: {
+          orderBy: desc(loginLogs.loggedInAt),
+        },
+      },
+    },
+  },
+});
+
+const userId = userInfo?.user?.id;
+const userEmail = userInfo?.user?.email;
+const fullName = userInfo?.user?.fullName;
+const profilePhoto = userInfo?.user?.profilePhoto;
+const accountCreated = userInfo?.user?.createdAt;
+
+const userData = userId ? await db.query.users.findFirst({
+  where: eq(users.id, userId),
+  columns: {
+    plan: true
+  }
+}) : null;
+
+const userPlan = userData?.plan || 'basic';
+const googleAccessToken = userInfo?.user?.oauthTokens?.find(token => token.strategy === 'google')?.accessToken;
+
+if (!googleAccessToken) {
+  return Astro.redirect("/login?error=missing+google+authorization");
+}
+
+const allLogs = userInfo?.user?.loginLogs?.sort((a, b) =>
+  a.sessionId === sessionToken ? -1 : 1
+) || [];
+
+const hasMoreSessions = (userInfo?.user?.loginLogs?.length || 0) > 5;
+
+function capitalizeFirstWord(text: string) {
+  if (!text) return '';
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+---
+
+<MainLayout title={t('settings.pageTitle')}>
+  <section class="py-16 sm:py-20">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-8">
+        <div class="text-center">
+          <h1 class="text-4xl font-bold text-neutral-800 dark:text-neutral-200 tracking-tight">
+            {t('settings.title')}
+          </h1>
+        </div>
+
+        <div class="space-y-8">
+          <div class="bg-indigo-50/40 dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
+            <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-6">
+              {t('settings.profile.title')}
+            </h2>
+            
+            <div class="space-y-6">
+              <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                  <Avatar 
+                    src={profilePhoto}
+                    alt={fullName || userEmail || 'User'}
+                    fullName={fullName}
+                    size="lg"
+                  />
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg font-medium text-neutral-800 dark:text-neutral-200 mb-1">
+                    {t('settings.profile.personalInfo')}
+                  </h3>
+                  <div class="space-y-2">
+                    <div>
+                      <span class="text-sm font-medium text-neutral-600 dark:text-neutral-400">{t('settings.profile.fullName')}:</span>
+                      <span class="ml-2 text-sm text-neutral-800 dark:text-neutral-200">{fullName || 'Not provided'}</span>
+                    </div>
+                    <div>
+                      <span class="text-sm font-medium text-neutral-600 dark:text-neutral-400">{t('settings.profile.email')}:</span>
+                      <span class="ml-2 text-sm text-neutral-800 dark:text-neutral-200">{userEmail}</span>
+                    </div>
+                    <div>
+                      <span class="text-sm font-medium text-neutral-600 dark:text-neutral-400">{t('settings.profile.memberSince')}:</span>
+                      <span class="ml-2 text-sm text-neutral-800 dark:text-neutral-200">
+                        {new Date(accountCreated!).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-indigo-50/40 dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
+            <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-6">
+              {t('settings.account.title')}
+            </h2>
+
+            <div class="space-y-8">
+              <div>
+                <h3 class="text-lg font-medium text-neutral-800 dark:text-neutral-200 mb-2">
+                  {t('settings.connectedAccounts.title')}
+                </h3>
+                <p class="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+                  {t('settings.connectedAccounts.description')}
+                </p>
+                
+                {userInfo?.user?.oauthTokens && userInfo?.user?.oauthTokens.length > 0 && (
+                  <div class="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
+                    {userInfo?.user?.oauthTokens
+                      .filter(provider => provider.strategy === "google")
+                      .map((provider) => (
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0">
+                              <svg class="h-6 w-6" viewBox="0 0 46 47" fill="none">
+                                <path d="M46 24.0287C46 22.09 45.8533 20.68 45.5013 19.2112H23.4694V27.9356H36.4069C36.1429 30.1094 34.7347 33.37 31.5957 35.5731L31.5663 35.8669L38.5191 41.2719L38.9885 41.3306C43.4477 37.2181 46 31.1669 46 24.0287Z" fill="#4285F4"></path>
+                                <path d="M23.4694 47C29.8061 47 35.1161 44.9144 39.0179 41.3012L31.625 35.5437C29.6301 36.9244 26.9898 37.8937 23.4987 37.8937C17.2793 37.8937 12.0281 33.7812 10.1505 28.1412L9.88649 28.1706L2.61097 33.7812L2.52296 34.0456C6.36608 41.7125 14.287 47 23.4694 47Z" fill="#34A853"></path>
+                                <path d="M10.1212 28.1413C9.62245 26.6725 9.32908 25.1156 9.32908 23.5C9.32908 21.8844 9.62245 20.3275 10.0918 18.8588V18.5356L2.75765 12.8369L2.52296 12.9544C0.909439 16.1269 0 19.7106 0 23.5C0 27.2894 0.909439 30.8731 2.49362 34.0456L10.1212 28.1413Z" fill="#FBBC05"></path>
+                                <path d="M23.4694 9.07688C27.8699 9.07688 30.8622 10.9863 32.5344 12.5725L39.1645 6.11C35.0867 2.32063 29.8061 0 23.4694 0C14.287 0 6.36607 5.2875 2.49362 12.9544L10.0918 18.8588C11.9987 13.1894 17.25 9.07688 23.4694 9.07688Z" fill="#EB4335"></path>
+                              </svg>
+                            </div>
+                            <div>
+                              <div class="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                                {t('settings.connectedAccounts.google')}
+                              </div>
+                              <div class="text-sm text-neutral-600 dark:text-neutral-400">
+                                {userEmail}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="flex items-center space-x-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm text-semibold font-medium bg-green-100 dark:bg-green-900 text-neutral-800 dark:text-neutral-200">
+                              {t('settings.connectedAccounts.connected')}
+                            </span>
+                            <button id="revoke-google-access" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-neutral-800 dark:bg-neutral-700 border border-[#576469] rounded-lg hover:bg-[#576469] dark:hover:bg-[#576469] transition-colors duration-200">
+                              <Icon name="power_off" />
+                              {t('settings.connectedAccounts.revoke')}
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h3 class="text-lg font-medium text-neutral-800 dark:text-neutral-200 mb-2">
+                  {t('settings.sessions.title')}
+                </h3>
+                <p class="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+                  {t('settings.sessions.description')}
+                </p>
+                
+                <div class="border border-neutral-200 dark:border-neutral-700 rounded-lg divide-y divide-neutral-200 dark:divide-neutral-700">
+                  {allLogs.map((log, index) => (
+                    <div class={`p-4 session-item ${index >= 5 ? 'hidden extra-session' : ''}`.trim()}>
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                          <div class="flex-shrink-0">
+                            <svg class="w-6 h-6 text-neutral-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <div class="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                              {`${capitalizeFirstWord(log.os)} - ${capitalizeFirstWord(log.device)} - ${capitalizeFirstWord(log.browser)}`}
+                            </div>
+                            <div class="text-sm text-neutral-600 dark:text-neutral-400">
+                              {t('settings.sessions.loggedIn')}: {new Date(log.loggedInAt!).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          {sessionToken === log.sessionId ? (
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-neutral-100 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                              {t('settings.sessions.currentDevice')}
+                            </span>
+                          ) : (
+                            <button
+                              class="revoke-session-btn inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-neutral-800 dark:bg-neutral-700 border border-[#576469] rounded-lg hover:bg-[#576469] dark:hover:bg-[#576469] transition-colors duration-200"
+                              data-session-id={log.sessionId}
+                            >
+                              <Icon name="logout" />
+                              {t('settings.sessions.revokeAccess')}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {hasMoreSessions && (
+                    <div class="p-4 text-center border-t border-neutral-200 dark:border-neutral-700">
+                      <button id="see-more-sessions" class="text-sm font-medium text-[#576469] hover:text-[#e55559] transition-colors duration-200">
+                        {t('settings.sessions.seeMore')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-indigo-50/40 dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
+            <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-6">
+              {t('settings.preferences.title')}
+            </h2>
+            
+            <div class="space-y-6">
+              <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
+                <div>
+                  <div class="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                    {t('settings.preferences.language')}
+                  </div>
+                  <div class="text-sm text-neutral-600 dark:text-neutral-400">
+                    {t('settings.preferences.languageDescription')}
+                  </div>
+                </div>
+                <select 
+                  id="language-selector"
+                  class="px-3 py-2 pr-8 ml-2 text-sm border border-neutral-200 dark:border-neutral-600 rounded-lg bg-indigo-50/40 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 focus:ring-2 focus:ring-[#576469] focus:border-[#576469]"
+                >
+                  {Object.entries(languages).map(([id, name]) => (
+                    <option value={`/${id}/settings`} selected={lang === id}>{name}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
+                <div>
+                  <div class="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                    {t('settings.preferences.theme')}
+                  </div>
+                  <div class="text-sm text-neutral-600 dark:text-neutral-400">
+                    {t('settings.preferences.themeDescription')}
+                  </div>
+                </div>
+                <select 
+                  id="theme-selector"
+                  class="px-3 py-2 pr-8 ml-2 text-sm border border-neutral-200 dark:border-neutral-600 rounded-lg bg-indigo-50/40 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 focus:ring-2 focus:ring-[#576469] focus:border-[#576469]"
+                >
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </div>
+              
+              <div class="flex items-center justify-between py-3">
+                <div>
+                  <div class="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                    {t('settings.preferences.notifications')}
+                  </div>
+                  <div class="text-sm text-neutral-600 dark:text-neutral-400">
+                    {t('settings.preferences.notificationsDescription')}
+                  </div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" class="sr-only peer" checked>
+                  <div class="w-11 h-6 bg-neutral-200 dark:bg-neutral-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#576469]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#576469] dark:peer-checked:bg-[#576469]"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
+            <h2 class="text-xl font-semibold text-red-800 dark:text-red-200 mb-6">
+              {t('settings.danger.title')}
+            </h2>
+            
+            <div class="space-y-4">
+              <div class="flex items-center justify-between py-3 border-b border-red-200 dark:border-red-800">
+                <div>
+                  <div class="text-sm font-medium text-red-800 dark:text-red-200">
+                    {t('settings.danger.logout')}
+                  </div>
+                  <div class="text-sm text-red-600 dark:text-red-400">
+                    {t('settings.danger.logoutDescription')}
+                  </div>
+                </div>
+                <a href="/logout" class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 dark:text-red-200 bg-indigo-50/40 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors duration-200">
+                  {t('settings.danger.logout')}
+                </a>
+              </div>
+              
+              <div class="flex items-center justify-between py-3">
+                <div>
+                  <div class="text-sm font-medium text-red-800 dark:text-red-200">
+                    {t('settings.danger.deleteAccount')}
+                  </div>
+                  <div class="text-sm text-red-600 dark:text-red-400">
+                    {t('settings.danger.deleteAccountDescription')}
+                  </div>
+                </div>
+                <button id="delete-account" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-red-600 rounded-lg hover:bg-red-700 transition-colors duration-200">
+                  <Icon name="delete" />
+                  {t('settings.danger.deleteAccount')}
+                </button>

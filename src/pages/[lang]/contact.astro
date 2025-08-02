@@ -1,0 +1,36 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import ContactSection from "@components/sections/misc/ContactSection.astro";
+import { SITE } from "@data/constants";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const pageTitle = `${t("contact.pageTitle")} | ${SITE.title}`;
+---
+
+<MainLayout
+  title={pageTitle}
+  customDescription={t("contact.metaDescription")}
+  customOgTitle={t("contact.ogTitle")}
+  structuredData={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `https://peekvisor.com/${lang}/contact`,
+    url: `https://peekvisor.com/${lang}/contact`,
+    name: `${t("contact.ogTitle")} | PeekVisor`,
+    description: t("contact.metaDescription"),
+    isPartOf: {
+      "@type": "WebSite",
+      url: "https://peekvisor.com",
+      name: "PeekVisor",
+      description:
+        "Privacy-first analytics platform for comprehensive audience insights without compromising user data.",
+    },
+    inLanguage: lang,
+  }}
+>
+
+  <ContactSection />
+</MainLayout>

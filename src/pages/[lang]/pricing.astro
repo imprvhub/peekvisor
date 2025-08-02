@@ -9,6 +9,7 @@ import Icon from "@components/ui/icons/Icon.astro";
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
+// Get user's current plan
 let userPlan = 'basic';
 const sessionToken = Astro.cookies.get("app_auth_token")?.value;
 
@@ -29,6 +30,7 @@ if (sessionToken) {
   }
 }
 
+// Plan configurations
 const plans = [
   {
     id: 'basic',

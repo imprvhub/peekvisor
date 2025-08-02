@@ -1,0 +1,312 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { eq } from "drizzle-orm";
+import { db } from "../../db/index";
+import { sessions } from "../../db/schema";
+import Icon from "@components/ui/icons/Icon.astro";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// Authentication check
+const sessionToken = Astro.cookies.get("app_auth_token")?.value;
+if (!sessionToken) return Astro.redirect(`/${lang}/`);
+
+const userInfo = await db.query.sessions.findFirst({
+  where: eq(sessions.id, sessionToken),
+  with: {
+    user: {
+      with: {
+        websites: true,
+      },
+    },
+  },
+});
+
+if (!userInfo?.user) return Astro.redirect(`/${lang}/`);
+
+const user = userInfo.user;
+const userWebsites = user.websites || [];
+const websiteCount = userWebsites.length;
+---
+
+<MainLayout
+  title={t("dashboard.pageTitle")}
+  customDescription="Your PeekVisor analytics dashboard"
+>
+  <div class="min-h-screen">
+    <div class="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <h1
+          class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100"
+        >
+          {t("dashboard.title")}
+        </h1>
+        <p class="mt-2 text-lg text-neutral-600 dark:text-neutral-400">
+          {t("dashboard.welcome")}, {user.fullName}
+        </p>
+      </div>
+
+      <!-- Stats Overview -->
+      <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Websites Count -->
+        <div
+          class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800"
+        >
+          <div class="flex items-center">
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30"
+            >
+              <div class="text-blue-600 dark:text-blue-400">
+                <Icon name="website" />
+              </div>
+            </div>
+            <div class="ml-4">
+              <p
+                class="text-sm font-medium text-neutral-600 dark:text-neutral-400"
+              >
+                {t("dashboard.usage.websitesUsed")}
+              </p>
+              <p
+                class="text-2xl font-bold text-neutral-900 dark:text-neutral-100"
+              >
+                {websiteCount}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Current Plan -->
+        <div
+          class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800"
+        >
+          <div class="flex items-center">
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30"
+            >
+              <div class="text-blue-600 dark:text-blue-400">
+                <Icon name="verified" />
+              </div>
+            </div>
+            <div class="ml-4">
+              <p
+                class="text-sm font-medium text-neutral-600 dark:text-neutral-400"
+              >
+                {t("dashboard.planCard.title")}
+              </p>
+              <p
+                class="text-2xl font-bold text-neutral-900 dark:text-neutral-100"
+              >
+                {t("dashboard.planCard.basicPlan")}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div
+          class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800"
+        >
+          <div class="flex items-center">
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30"
+            >
+              <div class="text-blue-600 dark:text-blue-400">
+                <Icon name="pulse" />
+              </div>
+            </div>
+            <div class="ml-4">
+              <p
+                class="text-sm font-medium text-neutral-600 dark:text-neutral-400"
+              >
+                {t("dashboard.recentActivity.title")}
+              </p>
+              <p
+                class="text-2xl font-bold text-neutral-900 dark:text-neutral-100"
+              >
+                {websiteCount > 0 ? "Active" : "None"}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="mb-8">
+        <h2
+          class="mb-6 text-xl font-semibold text-neutral-900 dark:text-neutral-100"
+        >
+          {t("dashboard.quickActions.title")}
+        </h2>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <!-- Websites -->
+          <a
+            href={`/${lang}/websites`}
+            class="group flex items-center rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:border-blue-300 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-blue-600"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 group-hover:bg-blue-200 dark:bg-blue-900/30 dark:group-hover:bg-blue-900/50"
+            >
+              <div class="text-blue-600 dark:text-blue-400">
+                <Icon name="website" />
+              </div>
+            </div>
+            <div class="ml-3">
+              <p
+                class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
+              >
+                {t("nav.websites")}
+              </p>
+              <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                {websiteCount}
+                {
+                  websiteCount === 1
+                    ? t("pricing.features.website")
+                    : t("pricing.features.websites")
+                }
+              </p>
+            </div>
+          </a>
+
+          <!-- Settings -->
+          <a
+            href={`/${lang}/settings`}
+            class="group flex items-center rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:border-blue-300 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-blue-600"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 group-hover:bg-blue-200 dark:bg-blue-900/30 dark:group-hover:bg-blue-900/50"
+            >
+              <div class="text-blue-600 dark:text-blue-400">
+                <Icon name="settings" />
+              </div>
+            </div>
+            <div class="ml-3">
+              <p
+                class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
+              >
+                {t("settings.title")}
+              </p>
+              <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                {t("dashboard.userCard.viewSettings")}
+              </p>
+            </div>
+          </a>
+
+          <!-- Pricing -->
+          <a
+            href={`/${lang}/pricing`}
+            class="group flex items-center rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:border-blue-300 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-blue-600"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 group-hover:bg-blue-200 dark:bg-blue-900/30 dark:group-hover:bg-blue-900/50"
+            >
+              <div class="text-blue-600 dark:text-blue-400">
+                <Icon name="rocket" />
+              </div>
+            </div>
+            <div class="ml-3">
+              <p
+                class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
+              >
+                {t("dashboard.planCard.upgrade")}
+              </p>
+              <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                {t("nav.pricing")}
+              </p>
+            </div>
+          </a>
+
+          <!-- Add Website -->
+          <a
+            href={`/${lang}/websites`}
+            class="group flex items-center rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:border-blue-300 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-blue-600"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 group-hover:bg-blue-200 dark:bg-blue-900/30 dark:group-hover:bg-blue-900/50"
+            >
+              <div class="text-blue-600 dark:text-blue-400">
+                <Icon name="plus" />
+              </div>
+            </div>
+            <div class="ml-3">
+              <p
+                class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
+              >
+                {t("dashboard.quickActions.addWebsite")}
+              </p>
+              <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                {
+                  websiteCount === 0
+                    ? t("dashboard.quickActions.noWebsitesYet")
+                    : "Add another"
+                }
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Websites List (if any) -->
+      {
+        websiteCount > 0 && (
+          <div>
+            <div class="mb-4 flex items-center justify-between">
+              <h2 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+                {t("nav.websites")}
+              </h2>
+              <a
+                href={`/${lang}/websites`}
+                class="text-sm font-medium text-neutral-800 transition-colors hover:text-neutral-700 dark:text-neutral-200 dark:hover:text-neutral-300"
+              >
+                View all →
+              </a>
+            </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {userWebsites.slice(0, 6).map((website: any) => (
+                <a
+                  href={`/${lang}/analytics/${website.id}`}
+                  class="group rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:border-blue-300 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-blue-600"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="font-medium text-neutral-900 dark:text-neutral-100">
+                        {website.name}
+                      </h3>
+                      <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                        {website.domain}
+                      </p>
+                    </div>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 group-hover:bg-blue-200 dark:bg-blue-900/30 dark:group-hover:bg-blue-900/50">
+                      <div class="text-blue-600 dark:text-blue-400">
+                        <Icon name="arrowRight" />
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      <!-- Back Button -->
+      <div class="mt-8 flex justify-center">
+        <button
+          id="back-button"
+          class="btn-gradient hover:btn-gradient-hover rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+        >
+          {t("ui.goBack")}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Back button functionality
+    document.getElementById("back-button")?.addEventListener("click", () => {
+      window.history.back();
+    });
+  </script>
+</MainLayout>
