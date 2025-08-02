@@ -1,13 +1,10 @@
 ---
-// Importing necessary components
 import Meta from "@components/Meta.astro";
 import Navbar from "@components/sections/navbar&footer/Navbar.astro";
 import FooterSection from "@components/sections/navbar&footer/FooterSection.astro";
-// import SearchModal from "@components/SearchModal.astro"; // Commented out - component doesn't exist
 import { SITE } from "@data/constants";
 import "@styles/global.css";
 
-// Setting expected props
 const {
   title = SITE.title,
   meta,
@@ -17,7 +14,6 @@ const {
   customOgTitle = null,
 } = Astro.props;
 
-// Interface to type-check the properties
 interface Props {
   title?: string;
   meta?: string;
@@ -30,14 +26,12 @@ interface Props {
 
 <html lang={lang} class="scrollbar-hide scroll-pt-16">
   <head>
-    {/* Adding metadata to the HTML document */}
     <Meta
       meta={meta}
       structuredData={structuredData}
       customDescription={customDescription}
       customOgTitle={customOgTitle}
     />
-    {/* Define the title of the page */}
     <title>{title}</title>
 
     <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
@@ -58,7 +52,7 @@ interface Props {
     <link rel="manifest" href="/manifest.json" />
    
     <script is:inline>
-      // Script to handle dark mode. It will check if the theme is stored in localStorage or if dark theme is preferred by system settings
+      
       if (
         localStorage.getItem("hs_theme") === "dark" ||
         (!("hs_theme" in localStorage) &&
@@ -75,12 +69,9 @@ interface Props {
     </script>
   </head>
   <body
-    class="bg-neutral-200 selection:bg-brand-coral selection:text-neutral-700 dark:bg-neutral-800 flex flex-col min-h-screen"
+    class="bg-neutral-200 connected-pattern selection:bg-brand-coral selection:text-neutral-700 dark:bg-neutral-800 flex flex-col min-h-screen"
   >
-    {/*
-    Setting up the main structure of the page.
-    The Navbar is placed at the top, with a slot for the main content and FooterSection at the bottom.
-    */}
+
     <div class="mx-auto max-w-(--breakpoint-2xl) px-4 sm:px-6 lg:px-8 flex-grow">
       <Navbar />
       <main>
@@ -88,13 +79,12 @@ interface Props {
       </main>
     </div>
     <FooterSection />
-    <!-- <SearchModal /> --> <!-- Commented out - component doesn't exist -->
+  
     <script>
       // https://preline.co
       import "preline/preline.js";
     </script>
     <style>
-      /* CSS rules for the page scrollbar */
       .scrollbar-hide::-webkit-scrollbar {
         display: none;
       }
