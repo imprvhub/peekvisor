@@ -1,0 +1,148 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<MainLayout>
+  <div class="mt-8 mb-8 flex justify-center">
+    <div
+      class="prose prose-lg w-full max-w-4xl rounded-lg border border-yellow-100/40  px-6 py-10 !text-left text-neutral-700  md:px-8 md:py-12 dark:border-neutral-700/40  dark:text-neutral-300"
+    >
+      <h1
+        class="mb-4 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100"
+      >
+        {t("privacy.title")}
+      </h1>
+      <p
+        class="text-center text-sm !text-[10px] text-neutral-500 !uppercase dark:text-neutral-400"
+      >
+        {t("privacy.effectiveDate")}
+      </p>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("privacy.section1.title")}
+      </h3>
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("privacy.section1.content")}
+      />
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("privacy.section2.title")}
+      </h3>
+      <p class="!text-[10px] !uppercase">{t("privacy.section2.intro")}</p>
+      <ul>
+        <li
+          class="!text-[10px] !uppercase"
+          set:html={t("privacy.section2.personal")}
+        />
+        <li
+          class="!text-[10px] !uppercase"
+          set:html={t("privacy.section2.payment")}
+        />
+        <li
+          class="!text-[10px] !uppercase"
+          set:html={t("privacy.section2.usage")}
+        />
+        <li
+          class="!text-[10px] !uppercase"
+          set:html={t("privacy.section2.analytics")}
+        />
+      </ul>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("privacy.section3.title")}
+      </h3>
+      <p class="!text-[10px] !uppercase">{t("privacy.section3.intro")}</p>
+      <ul>
+        <li class="!text-[10px] !uppercase">{t("privacy.section3.provide")}</li>
+        <li class="!text-[10px] !uppercase">{t("privacy.section3.process")}</li>
+        <li class="!text-[10px] !uppercase">
+          {t("privacy.section3.personalize")}
+        </li>
+        <li class="!text-[10px] !uppercase">
+          {t("privacy.section3.communicate")}
+        </li>
+        <li class="!text-[10px] !uppercase">{t("privacy.section3.monitor")}</li>
+        <li class="!text-[10px] !uppercase">{t("privacy.section3.prevent")}</li>
+        <li class="!text-[10px] !uppercase">
+          {t("privacy.section3.environmental")}
+        </li>
+      </ul>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("privacy.section4.title")}
+      </h3>
+      <p class="!text-[10px] !uppercase">{t("privacy.section4.intro")}</p>
+      <ul>
+        <li
+          class="!text-[10px] !uppercase"
+          set:html={t("privacy.section4.providers")}
+        />
+        <li
+          class="!text-[10px] !uppercase"
+          set:html={t("privacy.section4.legal")}
+        />
+        <li
+          class="!text-[10px] !uppercase"
+          set:html={t("privacy.section4.business")}
+        />
+      </ul>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("privacy.section5.title")}
+      </h3>
+      <p class="!text-[10px] !uppercase">{t("privacy.section5.content")}</p>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("privacy.section6.title")}
+      </h3>
+      <p class="!text-[10px] !uppercase">{t("privacy.section6.content")}</p>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("privacy.section7.title")}
+      </h3>
+      <p class="!text-[10px] !uppercase">{t("privacy.section7.content")}</p>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("privacy.section8.title")}
+      </h3>
+      <p class="!text-[10px] !uppercase">{t("privacy.section8.content")}</p>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("privacy.section9.title")}
+      </h3>
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("privacy.section9.content")}
+      />
+
+      <div class="mt-8 flex justify-center">
+        <button
+          id="back-button"
+          class="btn-gradient hover:btn-gradient-hover rounded-lg px-6 py-3 text-sm font-medium text-white transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none sm:text-base"
+        >
+          {t("ui.goBack")}
+        </button>
+      </div>
+    </div>
+  </div>
+  <script define:vars={{ lang }}>
+    document.addEventListener("DOMContentLoaded", function () {
+      const backButton = document.getElementById("back-button");
+
+      if (backButton) {
+        backButton.addEventListener("click", function () {
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = `/${lang}/`;
+          }
+        });
+      }
+    });
+  </script>
+</MainLayout>

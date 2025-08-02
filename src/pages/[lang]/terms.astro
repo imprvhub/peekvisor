@@ -1,0 +1,139 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<MainLayout>
+  <div class="mt-8 mb-8 flex justify-center">
+    <div
+      class="prose prose-lg w-full max-w-4xl rounded-lg border border-yellow-100/40  px-6 py-10 !text-left text-neutral-700  md:px-8 md:py-12 dark:border-neutral-700/40  dark:text-neutral-300"
+    >
+      <h1
+        class="mb-4 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100"
+      >
+        {t("terms.title")}
+      </h1>
+      <p
+        class="text-center text-sm !text-[10px] text-neutral-500 !uppercase dark:text-neutral-400"
+      >
+        {t("terms.effectiveDate")}
+      </p>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("terms.section1.title")}
+      </h3>
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section1.content")}
+      />
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("terms.section2.title")}
+      </h3>
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section2.content")}
+      />
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("terms.section3.title")}
+      </h3>
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section3.dataProcessing")}
+      />
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section3.dataOwnership")}
+      />
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section3.technicalOperation")}
+      />
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("terms.section4.title")}
+      </h3>
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section4.accountCreation")}
+      />
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section4.peekvisorPro")}
+      />
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section4.proFeatures")}
+      />
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("terms.section5.title")}
+      </h3>
+      <div class="!text-[10px] !uppercase">
+        <p set:html={t("terms.section5.intro")} />
+        <p class="pl-4" set:html={t("terms.section5.item1")} />
+        <p class="pl-4" set:html={t("terms.section5.item2")} />
+        <p class="pl-4" set:html={t("terms.section5.item3")} />
+        <p class="pl-4" set:html={t("terms.section5.item4")} />
+        <p class="pl-4" set:html={t("terms.section5.item5")} />
+        <p class="pl-4" set:html={t("terms.section5.item6")} />
+      </div>
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("terms.section6.title")}
+      </h3>
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section6.warranty")}
+      />
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section6.liability")}
+      />
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("terms.section7.title")}
+      </h3>
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section7.content")}
+      />
+
+      <h3 class="mt-6 text-[12px] font-bold uppercase">
+        {t("terms.section8.title")}
+      </h3>
+      <p
+        class="!text-[10px] !uppercase"
+        set:html={t("terms.section8.content")}
+      />
+
+      <div class="mt-8 flex justify-center">
+        <button
+          id="back-button"
+          class="btn-gradient hover:btn-gradient-hover rounded-lg px-6 py-3 text-sm font-medium text-white transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none sm:text-base"
+        >
+          {t("ui.goBack")}
+        </button>
+      </div>
+    </div>
+  </div>
+  <script define:vars={{ lang }}>
+    document.addEventListener("DOMContentLoaded", function () {
+      const backButton = document.getElementById("back-button");
+
+      if (backButton) {
+        backButton.addEventListener("click", function () {
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = `/${lang}/`;
+          }
+        });
+      }
+    });
+  </script>
+</MainLayout>

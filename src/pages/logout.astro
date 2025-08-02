@@ -1,0 +1,8 @@
+---
+import type { APIContext } from "astro";
+
+export async function GET({ cookies, redirect }: APIContext) {
+  cookies.delete("app_auth_token", { path: "/" });
+  return redirect("/login");
+}
+---
