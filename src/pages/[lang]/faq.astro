@@ -1,0 +1,71 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import FAQ from "@components/sections/misc/FAQ.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import faqsDataEn from "@data/faqs.json";
+import faqsDataEs from "@data/es/faqs.json";
+import faqsDataFr from "@data/fr/faqs.json";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+let faqsData;
+switch (lang) {
+  case 'es':
+    faqsData = faqsDataEs;
+    break;
+  case 'fr':
+    faqsData = faqsDataFr;
+    break;
+  default:
+    faqsData = faqsDataEn;
+}
+
+const pageTitle = t("faq.pageTitle");
+---
+
+<MainLayout
+  title={pageTitle}
+  customDescription={t("faq.metaDescription")}
+  customOgTitle={t("faq.ogTitle")}
+  structuredData={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqsData.faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  }}
+>
+  <div class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+    <FAQ title={t("faq.title")} faqs={faqsData} />
+    
+    <div class="flex justify-center mt-8">
+      <button 
+        id="back-button"
+        class="btn-gradient hover:btn-gradient-hover px-6 py-3 rounded-lg font-medium text-white text-sm sm:text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        {t('ui.goBack')}
+      </button>
+    </div>
+  </div>
+  <script define:vars={{ lang }}>
+    document.addEventListener('DOMContentLoaded', function() {
+      const backButton = document.getElementById('back-button');
+      
+      if (backButton) {
+        backButton.addEventListener('click', function() {
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = `/${lang}/`;
+          }
+        });
+      }
+    });
+  </script>
+</MainLayout>
