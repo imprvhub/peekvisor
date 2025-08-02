@@ -1,0 +1,53 @@
+{
+  "subTitle": "Encuentre respuestas rápidas a preguntas comunes sobre PeekVisor y sus características de análisis que priorizan la privacidad.",
+  "faqs": [
+    {
+      "question": "¿Qué es PeekVisor y cómo protege la privacidad del usuario?",
+      "answer": "PeekVisor es una plataforma de análisis que prioriza la privacidad y ofrece información completa sobre la audiencia sin comprometer los datos del usuario. Cumplimos completamente con el RGPD y no utilizamos cookies ni recopilamos información personal, garantizando protección total de la privacidad para los visitantes del sitio web."
+    },
+    {
+      "question": "¿Cuántos sitios web puedo rastrear con PeekVisor?",
+      "answer": "La cantidad de sitios web depende del plan. El plan Basic permite el seguimiento de 1 sitio web, mientras que los planes de nivel superior admiten múltiples sitios web, con nuestro plan superior ofreciendo seguimiento ilimitado de sitios web."
+    },
+    {
+      "question": "¿Qué datos de análisis proporciona PeekVisor?",
+      "answer": "PeekVisor proporciona análisis básicos que incluyen vistas de página, conteo de visitantes, datos geográficos (países), información de dispositivos y estadísticas de navegadores. Los planes avanzados también incluyen seguimiento de eventos personalizados, monitoreo de campañas UTM e informes de impacto ambiental."
+    },
+    {
+      "question": "¿Por cuánto tiempo se conservan mis datos de análisis?",
+      "answer": "La retención de datos varía según el plan. El plan Basic conserva los datos durante 30 días, mientras que los planes premium ofrecen períodos de retención extendidos, con nuestro nivel más alto proporcionando retención ilimitada de datos."
+    },
+    {
+      "question": "¿PeekVisor ofrece seguimiento del impacto ambiental?",
+      "answer": "Sí, nuestros planes avanzados incluyen funciones de seguimiento de CO₂ e impacto ambiental, permitiendo monitorear y medir el impacto ambiental del tráfico de su sitio web y actividades digitales."
+    },
+    {
+      "question": "¿Puedo exportar mis datos de análisis?",
+      "answer": "Todos los planes incluyen capacidades básicas de exportación de datos. Los planes premium ofrecen opciones de exportación mejoradas que incluyen formatos Excel y CSV para análisis y reportes completos de datos."
+    },
+    {
+      "question": "¿Qué son los eventos personalizados y cómo funcionan?",
+      "answer": "Los eventos personalizados permiten rastrear interacciones específicas del usuario en su sitio web más allá de las vistas de página estándar, como clics de botón, envíos de formularios o descargas. Esta función está disponible en nuestros planes premium."
+    },
+    {
+      "question": "¿PeekVisor proporciona acceso a API?",
+      "answer": "El acceso a API está disponible en nuestro plan de nivel superior, permitiendo a los desarrolladores integrar datos de PeekVisor directamente en sus aplicaciones y crear soluciones de análisis personalizadas."
+    },
+    {
+      "question": "¿Qué métodos de pago se aceptan y cómo gestiono la facturación?",
+      "answer": "Los pagos se procesan de forma segura a través de LemonSqueezy, nuestro socio de pagos de confianza. Puede acceder al portal de facturación directamente desde su panel de PeekVisor para gestionar suscripciones, actualizar métodos de pago y ver facturas. LemonSqueezy acepta las principales tarjetas de crédito y varios métodos de pago internacionales."
+    },
+    {
+      "question": "¿Puedo obtener un reembolso si no hay satisfacción con la suscripción?",
+      "answer": "Sí, los reembolsos están disponibles y se procesan a través de LemonSqueezy. Puede solicitar un reembolso accediendo al portal de facturación desde su panel o contactando a nuestro equipo de soporte. Las políticas de reembolso y los tiempos de procesamiento son gestionados por LemonSqueezy según sus términos."
+    },
+    {
+      "question": "¿Qué sucede cuando mi suscripción expira o si quiero cambiar de plan?",
+      "answer": "Cuando se suscribe a un plan, permanece activo hasta su fecha de vencimiento. Puede cancelar su suscripción en cualquier momento a través del portal de facturación, y si lo hace, puede suscribirse a un plan diferente. Si actualiza o cambia de plan antes del vencimiento, el nuevo plan entra en vigor inmediatamente y permanece activo hasta su propia fecha de vencimiento."
+    },
+    {
+      "question": "¿Hay límites en las vistas de página?",
+      "answer": "No, PeekVisor ofrece seguimiento ilimitado de vistas de página en todos los planes, asegurando que pueda monitorear el tráfico de su sitio web sin preocuparse por límites de uso o cargos adicionales."
+    }
+  ]
+}

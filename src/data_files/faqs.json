@@ -1,0 +1,53 @@
+{
+  "subTitle": "Find quick answers to common questions about PeekVisor and its privacy-first analytics features.",
+  "faqs": [
+    {
+      "question": "What is PeekVisor and how does it protect user privacy?",
+      "answer": "PeekVisor is a privacy-first analytics platform that delivers comprehensive audience insights without compromising user data. We are fully GDPR compliant and do not use cookies or collect personal information, ensuring complete privacy protection for website visitors."
+    },
+    {
+      "question": "How many websites can I track with PeekVisor?",
+      "answer": "The number of websites depends on your plan. The Basic plan allows tracking for 1 website, while higher-tier plans support multiple websites, with our top plan offering unlimited website tracking."
+    },
+    {
+      "question": "What analytics data does PeekVisor provide?",
+      "answer": "PeekVisor provides core analytics including page views, visitor counts, geographic data (countries), device information, and browser statistics. Advanced plans also include custom events tracking, UTM campaign monitoring, and environmental impact reporting."
+    },
+    {
+      "question": "How long is my analytics data retained?",
+      "answer": "Data retention varies by plan. The Basic plan retains data for 30 days, while premium plans offer extended retention periods, with our highest tier providing unlimited data retention."
+    },
+    {
+      "question": "Does PeekVisor offer environmental impact tracking?",
+      "answer": "Yes, our advanced plans include CO₂ and environmental tracking features, allowing you to monitor and measure the environmental impact of your website traffic and digital activities."
+    },
+    {
+      "question": "Can I export my analytics data?",
+      "answer": "All plans include basic data export capabilities. Premium plans offer enhanced export options including Excel and CSV formats for comprehensive data analysis and reporting."
+    },
+    {
+      "question": "What are custom events and how do they work?",
+      "answer": "Custom events allow you to track specific user interactions on your website beyond standard page views, such as button clicks, form submissions, or downloads. This feature is available in our premium plans."
+    },
+    {
+      "question": "Does PeekVisor provide API access?",
+      "answer": "API access is available in our top-tier plan, allowing developers to integrate PeekVisor data directly into their applications and create custom analytics solutions."
+    },
+    {
+      "question": "What payment methods are accepted and how do I manage billing?",
+      "answer": "Payments are processed securely through LemonSqueezy, our trusted payment partner. You can access your billing portal directly from your PeekVisor dashboard to manage subscriptions, update payment methods, and view invoices. LemonSqueezy accepts major credit cards and various international payment methods."
+    },
+    {
+      "question": "Can I get a refund if I'm not satisfied with my subscription?",
+      "answer": "Yes, refunds are available and processed through LemonSqueezy. You can request a refund by accessing the billing portal from your dashboard or contacting our support team. Refund policies and processing times are managed by LemonSqueezy according to their terms."
+    },
+    {
+      "question": "What happens when my subscription expires or if I want to change plans?",
+      "answer": "When you subscribe to a plan, it remains active until its expiration date. You can cancel your subscription at any time through the billing portal, and if you do, you can subscribe to a different plan. If you upgrade or change plans before expiration, the new plan takes effect immediately and remains active until its own expiration date."
+    },
+    {
+      "question": "Are there any limits on page views?",
+      "answer": "No, PeekVisor offers unlimited page view tracking across all plans, ensuring you can monitor your website traffic without worrying about usage limits or additional charges."
+    }
+  ]
+}

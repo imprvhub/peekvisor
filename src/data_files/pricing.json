@@ -1,0 +1,79 @@
+{
+  "title": "Simple, transparent pricing",
+  "subTitle": "Choose the plan that fits your needs. Start free, upgrade when you grow.",
+  "badge": "Most Popular",
+  "thirdOption": "Need a custom solution?",
+  "btnText": "Contact Sales",
+  "basic": {
+    "name": "Basic",
+    "description": "Perfect for personal projects and small websites",
+    "price": "Free",
+    "cents": "",
+    "billingFrequency": "",
+    "emoji": "🆓",
+    "features": [
+      "1 website",
+      "30 days data retention",
+      "Unlimited page views*",
+      "Core analytics (visits, countries, devices, browsers)",
+      "Basic data export"
+    ],
+    "notIncluded": [
+      "CO₂ reporting",
+      "Custom events",
+      "Weekly email reports",
+      "Custom subdomains",
+      "API access"
+    ],
+    "purchaseBtnTitle": "Get Started",
+    "purchaseLink": "#"
+  },
+  "flex": {
+    "name": "Flex",
+    "description": "Great for small businesses and growing websites",
+    "price": "$12",
+    "cents": "",
+    "billingFrequency": "USD / monthly",
+    "emoji": "💡",
+    "isDecoy": true,
+    "features": [
+      "5 websites",
+      "6 months data retention",
+      "Unlimited page views*",
+      "Core analytics",
+      "Custom events tracking",
+      "UTM campaign tracking",
+      "Data export (Excel/CSV)",
+      "Weekly email reports"
+    ],
+    "notIncluded": [
+      "CO₂ reporting",
+      "Custom subdomains",
+      "API access"
+    ],
+    "purchaseBtnTitle": "Subscribe",
+    "purchaseLink": "#"
+  },
+  "pro": {
+    "name": "Pro",
+    "description": "For agencies and businesses with multiple websites",
+    "price": "$15",
+    "cents": "",
+    "billingFrequency": "USD / monthly",
+    "emoji": "🚀",
+    "features": [
+      "Unlimited websites",
+      "Unlimited data retention",
+      "Unlimited page views*",
+      "Everything in Flex +",
+      "CO₂ & environmental tracking",
+      "API access",
+      "Custom subdomains (bypass ad-blockers)",
+      "Public dashboards",
+      "Priority support"
+    ],
+    "notIncluded": [],
+    "purchaseBtnTitle": "Subscribe",
+    "purchaseLink": "#"
+  }
+}

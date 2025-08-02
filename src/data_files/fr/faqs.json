@@ -1,0 +1,53 @@
+{
+  "subTitle": "Trouvez des réponses rapides aux questions courantes sur PeekVisor et ses fonctionnalités d'analyse axées sur la confidentialité.",
+  "faqs": [
+    {
+      "question": "Qu'est-ce que PeekVisor et comment protège-t-il la confidentialité des utilisateurs ?",
+      "answer": "PeekVisor est une plateforme d'analyse axée sur la confidentialité qui fournit des informations complètes sur l'audience sans compromettre les données utilisateur. Nous sommes entièrement conformes au RGPD et n'utilisons pas de cookies ni ne collectons d'informations personnelles, garantissant une protection complète de la confidentialité pour les visiteurs du site web."
+    },
+    {
+      "question": "Combien de sites web puis-je suivre avec PeekVisor ?",
+      "answer": "Le nombre de sites web dépend de votre plan. Le plan Basic permet le suivi d'1 site web, tandis que les plans de niveau supérieur prennent en charge plusieurs sites web, notre plan le plus élevé offrant un suivi illimité de sites web."
+    },
+    {
+      "question": "Quelles données d'analyse PeekVisor fournit-il ?",
+      "answer": "PeekVisor fournit des analyses de base incluant les vues de page, le nombre de visiteurs, les données géographiques (pays), les informations sur les appareils et les statistiques de navigateur. Les plans avancés incluent également le suivi d'événements personnalisés, la surveillance des campagnes UTM et les rapports d'impact environnemental."
+    },
+    {
+      "question": "Combien de temps mes données d'analyse sont-elles conservées ?",
+      "answer": "La rétention des données varie selon le plan. Le plan Basic conserve les données pendant 30 jours, tandis que les plans premium offrent des périodes de rétention étendues, notre niveau le plus élevé fournissant une rétention illimitée des données."
+    },
+    {
+      "question": "PeekVisor offre-t-il un suivi de l'impact environnemental ?",
+      "answer": "Oui, nos plans avancés incluent des fonctionnalités de suivi du CO₂ et de l'impact environnemental, vous permettant de surveiller et mesurer l'impact environnemental du trafic de votre site web et des activités numériques."
+    },
+    {
+      "question": "Puis-je exporter mes données d'analyse ?",
+      "answer": "Tous les plans incluent des capacités d'exportation de données de base. Les plans premium offrent des options d'exportation améliorées incluant les formats Excel et CSV pour une analyse et des rapports de données complets."
+    },
+    {
+      "question": "Que sont les événements personnalisés et comment fonctionnent-ils ?",
+      "answer": "Les événements personnalisés vous permettent de suivre des interactions utilisateur spécifiques sur votre site web au-delà des vues de page standard, comme les clics de bouton, les soumissions de formulaire ou les téléchargements. Cette fonctionnalité est disponible dans nos plans premium."
+    },
+    {
+      "question": "PeekVisor fournit-il un accès API ?",
+      "answer": "L'accès API est disponible dans notre plan de niveau supérieur, permettant aux développeurs d'intégrer les données PeekVisor directement dans leurs applications et de créer des solutions d'analyse personnalisées."
+    },
+    {
+      "question": "Quels modes de paiement sont acceptés et comment gérer la facturation ?",
+      "answer": "Les paiements sont traités en toute sécurité via LemonSqueezy, notre partenaire de paiement de confiance. Vous pouvez accéder au portail de facturation directement depuis votre tableau de bord PeekVisor pour gérer les abonnements, mettre à jour les méthodes de paiement et consulter les factures. LemonSqueezy accepte les principales cartes de crédit et diverses méthodes de paiement internationales."
+    },
+    {
+      "question": "Puis-je obtenir un remboursement si je ne suis pas satisfait de mon abonnement ?",
+      "answer": "Oui, les remboursements sont disponibles et traités via LemonSqueezy. Vous pouvez demander un remboursement en accédant au portail de facturation depuis votre tableau de bord ou en contactant notre équipe de support. Les politiques de remboursement et les délais de traitement sont gérés par LemonSqueezy selon leurs conditions."
+    },
+    {
+      "question": "Que se passe-t-il lorsque mon abonnement expire ou si je veux changer de plan ?",
+      "answer": "Lorsque vous vous abonnez à un plan, il reste actif jusqu'à sa date d'expiration. Vous pouvez annuler votre abonnement à tout moment via le portail de facturation, et si vous le faites, vous pouvez vous abonner à un plan différent. Si vous mettez à niveau ou changez de plan avant expiration, le nouveau plan prend effet immédiatement et reste actif jusqu'à sa propre date d'expiration."
+    },
+    {
+      "question": "Y a-t-il des limites sur les vues de page ?",
+      "answer": "Non, PeekVisor offre un suivi illimité des vues de page sur tous les plans, vous assurant de pouvoir surveiller le trafic de votre site web sans vous soucier des limites d'utilisation ou de frais supplémentaires."
+    }
+  ]
+}
