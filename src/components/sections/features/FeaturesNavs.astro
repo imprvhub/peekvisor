@@ -1,0 +1,76 @@
+---
+import TabNav from "@components/ui/blocks/TabNav.astro";
+import TabContent from "@components/ui/blocks/TabContent.astro";
+import Icon from "@components/ui/icons/Icon.astro";
+
+const { title, tabs } = Astro.props;
+
+interface Tab {
+  heading: string;
+  content: string;
+  svg: string;
+  src?: any;
+  alt: string;
+  first?: boolean;
+  second?: boolean;
+}
+
+interface Props {
+  title?: string;
+  tabs: Tab[];
+}
+---
+
+<section
+  class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14"
+>
+  <div class="mx-auto max-w-4xl">
+    <div class="text-center">
+      <h2
+        class="text-2xl font-bold text-neutral-800 dark:text-neutral-200 sm:text-3xl"
+      >
+        <Fragment set:html={title} />
+      </h2>
+    </div>
+
+    <div class="mt-12 flex flex-col items-center gap-10">
+      <div class="w-full max-w-lg">
+        <div class="relative">
+          <div>
+            {
+              tabs.map((tab, index) => (
+                <TabContent
+                  id={`tabs-with-card-${index + 1}`}
+                  aria={`tabs-with-card-item-${index + 1}`}
+                  src={tab.src}
+                  alt={tab.alt}
+                  first={tab.first}
+                  second={tab.second}
+                />
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full max-w-lg">
+        <nav class="grid gap-4" aria-label="Tabs" role="tablist">
+          {
+            tabs.map((tab, index) => (
+              <TabNav
+                id={`tabs-with-card-item-${index + 1}`}
+                dataTab={`#tabs-with-card-${index + 1}`}
+                aria={`tabs-with-card-${index + 1}`}
+                heading={tab.heading}
+                content={tab.content}
+                first={tab.first}
+              >
+                <Icon name={tab.svg} />
+              </TabNav>
+            ))
+          }
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>

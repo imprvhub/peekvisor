@@ -1,0 +1,34 @@
+---
+import { Image } from "astro:assets";
+
+const { id, aria, src, alt, first, second } = Astro.props;
+
+interface Props {
+  id: string;
+  aria: string;
+  src?: any;
+  alt: string;
+  first?: boolean;
+  second?: boolean;
+}
+
+const firstClass = first ? "" : "hidden";
+const secondClass = second
+  ? "shadow-xl aspect-5/4 bg-neutral-300 dark:bg-neutral-600 object-cover p-3 lg:aspect-auto shadow-neutral-200 rounded-xl dark:shadow-neutral-900/[.2]"
+  : "shadow-xl aspect-3/2 object-cover lg:aspect-auto shadow-neutral-200 rounded-xl dark:shadow-neutral-900/[.2]";
+
+---
+<div id={id} role="tabpanel" class={firstClass} aria-labelledby={aria}>
+  {
+    src && (
+      <Image
+        src={src}
+        alt={alt}
+        class={secondClass}
+        draggable={"false"}
+        format={"avif"}
+        loading={"eager"}
+      />
+    )
+  }
+</div>

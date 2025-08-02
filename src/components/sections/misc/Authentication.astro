@@ -1,0 +1,28 @@
+---
+import LoginModal from "@components/ui/forms/LoginModal.astro";
+import RegisterModal from "@components/ui/forms/RegisterModal.astro";
+import RecoverModal from "@components/ui/forms/RecoverModal.astro";
+import LoginBtn from "@components/ui/buttons/LoginBtn.astro";
+import LogoutBtn from "@components/ui/buttons/LogoutBtn.astro";
+import { getLangFromUrl, useTranslations } from "../../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const { userId } = Astro.locals as { userId?: string };
+---
+
+{userId ? (
+  <LogoutBtn title={t("nav.logout")} />
+) : (
+  <>
+    <!-- Login Button -->
+    <LoginBtn />
+    <!-- Login Modal -->
+    <LoginModal />
+    <!-- Register Modal -->
+    <RegisterModal />
+    <!-- Password Recovery Modal -->
+    <RecoverModal />
+  </>
+)}

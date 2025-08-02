@@ -1,0 +1,212 @@
+---
+import SecondaryCTA from "@components/ui/buttons/SecondaryCTA.astro";
+import Icon from "@components/ui/icons/Icon.astro";
+import { getLangFromUrl, useTranslations } from "../../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const {
+  title,
+  subTitle,
+  badge,
+  thirdOption,
+  btnText,
+} = Astro.props;
+
+const plans = {
+  basic: {
+    name: t("pricing.basic.name"),
+    description: t("pricing.basic.description"),
+    price: t("pricing.basic.price"),
+    cents: "",
+    billingFrequency: t("pricing.basic.billingFrequency"),
+    features: [
+      t("pricing.basic.feature.0"),
+      t("pricing.basic.feature.1"),
+      t("pricing.basic.feature.2"),
+    ],
+    purchaseBtnTitle: t("pricing.basic.purchaseBtnTitle"),
+    purchaseLink: t("pricing.basic.purchaseLink"),
+    isPopular: false,
+    bgClass: "bg-gray-100 dark:bg-neutral-800",
+    textClass: "text-neutral-800 dark:text-neutral-200"
+  },
+  plus: {
+    name: t("pricing.plus.name"),
+    description: t("pricing.plus.description"),
+    price: t("pricing.plus.price"),
+    cents: "",
+    billingFrequency: t("pricing.plus.billingFrequency"),
+    features: [
+      t("pricing.plus.feature.0"),
+      t("pricing.plus.feature.1"),
+      t("pricing.plus.feature.2"),
+      t("pricing.plus.feature.3"),
+      t("pricing.plus.feature.4"),
+    ],
+    purchaseBtnTitle: t("pricing.plus.purchaseBtnTitle"),
+    purchaseLink: t("pricing.plus.purchaseLink"),
+    isPopular: false,
+    bgClass: "bg-slate-50 dark:bg-slate-800/50",
+    textClass: "text-slate-900 dark:text-slate-100"
+  },
+  premium: {
+    name: t("pricing.premium.name"),
+    description: t("pricing.premium.description"),
+    price: t("pricing.premium.price"),
+    cents: "",
+    billingFrequency: t("pricing.premium.billingFrequency"),
+    features: [
+      t("pricing.premium.feature.0"),
+      t("pricing.premium.feature.1"),
+      t("pricing.premium.feature.2"),
+      t("pricing.premium.feature.3"),
+      t("pricing.premium.feature.4"),
+      t("pricing.premium.feature.5"),
+      t("pricing.premium.feature.7"),
+      t("pricing.premium.feature.8"),
+    ],
+    purchaseBtnTitle: t("pricing.premium.purchaseBtnTitle"),
+    purchaseLink: t("pricing.premium.purchaseLink"),
+    isPopular: true,
+    bgClass: "bg-gradient-to-br from-[#FF512F] to-[#F09819]",
+    textClass: "text-white"
+  }
+};
+---
+
+<section class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 2xl:max-w-full">
+  <div class="mx-auto mb-10 max-w-2xl text-center lg:mb-14">
+    <h2 class="text-balance text-2xl font-bold tracking-tight text-neutral-800 dark:text-neutral-200 md:text-4xl md:leading-tight">
+      {title || t("pricing.title")}
+    </h2>
+    <p class="mt-1 text-pretty text-neutral-600 dark:text-neutral-400">
+      {subTitle || t("pricing.subTitle")}
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+    
+    <div class={`relative w-full rounded-xl p-6 sm:p-8 shadow-lg border border-neutral-200 dark:border-neutral-700 ${plans.basic.bgClass}`}>
+      <div class="mb-4">
+        <h3 class={`text-2xl font-bold sm:text-3xl ${plans.basic.textClass}`}>
+          {plans.basic.name}
+        </h3>
+        <p class="text-neutral-600 dark:text-neutral-400">{plans.basic.description}</p>
+      </div>
+
+      <div class="mb-4">
+        <span class={`text-4xl font-bold ${plans.basic.textClass}`}>
+          {plans.basic.price}
+        </span>
+        {plans.basic.billingFrequency && (
+          <span class="ms-3 text-sm text-neutral-500 dark:text-neutral-400">
+            {plans.basic.billingFrequency}
+          </span>
+        )}
+      </div>
+
+      <ul class="mb-6 space-y-2 text-neutral-600 dark:text-neutral-400">
+        {plans.basic.features.map((feature: string) => (
+          <li class="flex items-center gap-1.5">
+            <Icon name="checkCircle" />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a
+        href={plans.basic.purchaseLink}
+        class="block rounded-lg bg-neutral-600 dark:bg-neutral-700 px-8 py-3 text-center text-sm font-bold text-white outline-hidden transition duration-200 hover:bg-neutral-700 dark:hover:bg-neutral-600 md:text-base"
+      >
+        {plans.basic.purchaseBtnTitle}
+      </a>
+    </div>
+
+    <div class={`relative w-full rounded-xl p-6 sm:p-8 shadow-lg border-2 border-[#FF7558] dark:border-[#576469] bg-white dark:bg-neutral-800 transform hover:scale-[1.02] transition-transform duration-200`}>
+      <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 inline-block rounded-full bg-[#FF7558] dark:bg-[#576469] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white border-[#576469] dark:border-[#FF7558]">
+        {t("pricing.badge2")}
+      </div>
+
+      <div class="mb-4">
+        <h3 class="text-2xl font-bold sm:text-3xl text-[#576469] dark:text-[#FF7558]">
+          {plans.plus.name}
+        </h3>
+        <p class="text-[#576469] dark:text-[#FF7558]">{plans.plus.description}</p>
+      </div>
+
+      <div class="mb-4">
+        <span class="text-4xl font-bold text-[#576469] dark:text-[#FF7558]">
+          {plans.plus.price}
+        </span>
+        <span class="ms-3 text-sm text-[#576469] dark:text-[#FF7558]">
+          {plans.plus.billingFrequency}
+        </span>
+      </div>
+
+      <ul class="mb-6 space-y-2 text-[#576469] dark:text-[#FF7558]">
+        {plans.plus.features.map((feature: string) => (
+          <li class="flex items-center gap-1.5">
+            <Icon name="checkCircle" />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a
+        href={plans.plus.purchaseLink}
+        class="block rounded-lg bg-[#FF7558] dark:bg-[#576469] px-8 py-3 text-center text-sm font-bold text-white outline-hidden transition duration-200 hover:bg-[#FF7558] dark:hover:bg-[#576469] shadow-md md:text-base"
+      >
+        {plans.plus.purchaseBtnTitle}
+      </a>
+    </div>
+
+    <div class={`relative w-full rounded-xl p-6 sm:p-8 shadow-xl ${plans.premium.bgClass}`}>
+      {plans.premium.isPopular && (
+        <span class="absolute -top-3 left-1/2 transform -translate-x-1/2 inline-block rounded-full bg-orange-200/80 px-3 py-1 text-xs font-bold uppercase tracking-wider text-orange-800 backdrop-blur">
+          {badge || t("pricing.badge")}
+        </span>
+      )}
+
+      <div class="mb-4">
+        <h3 class={`text-2xl font-bold sm:text-3xl ${plans.premium.textClass}`}>
+          {plans.premium.name}
+        </h3>
+        <p class="text-orange-100">{plans.premium.description}</p>
+      </div>
+
+      <div class="mb-4">
+        <span class={`text-4xl font-bold ${plans.premium.textClass}`}>
+          {plans.premium.price}
+        </span>
+        <span class="ms-3 text-sm text-orange-200">
+          {plans.premium.billingFrequency}
+        </span>
+      </div>
+
+      <ul class="mb-6 space-y-2 text-orange-100">
+        {plans.premium.features.map((feature: string) => (
+          <li class="flex items-center gap-1.5">
+            <Icon name="checkCircle" />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a
+        href={plans.premium.purchaseLink}
+        class="block rounded-lg bg-orange-200/40 px-8 py-3 text-center text-sm font-bold text-white outline-hidden transition duration-300 hover:bg-orange-800/50 backdrop-blur md:text-base"
+      >
+        {plans.premium.purchaseBtnTitle}
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-8 flex items-center justify-center gap-x-3 md:mt-12">
+    <p class="text-sm text-neutral-600 dark:text-neutral-400">
+      {thirdOption || t("pricing.thirdOption")}
+    </p>
+    <SecondaryCTA title={btnText || t("pricing.btnText")} url="#" />
+  </div>
+</section>

@@ -1,0 +1,25 @@
+---
+import Icon from "@components/ui/icons/Icon.astro";
+const { title, id } = Astro.props;
+
+interface Props {
+  title?: string;
+  id?: string;
+  noArrow?: boolean;
+}
+
+const baseClasses =
+  "group inline-flex items-center justify-center gap-x-2 rounded-lg px-4 py-3 text-sm font-bold text-neutral-50 ring-zinc-500 transition duration-300 focus-visible:ring-3 outline-hidden";
+const borderClasses = "border border-transparent";
+const bgColorClasses =
+  "btn-gradient btn-gradient-hover active:bg-orange-500 dark:focus:outline-hidden";
+const disableClasses = "disabled:pointer-events-none disabled:opacity-50";
+const fontSizeClasses = "2xl:text-base";
+const ringClasses = "dark:ring-zinc-200";
+---
+<button
+  class={`${baseClasses} ${borderClasses} ${bgColorClasses} ${disableClasses} ${fontSizeClasses} ${ringClasses}`}
+  id={id}
+>
+  {title}
+</button>

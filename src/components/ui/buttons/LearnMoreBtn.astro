@@ -1,0 +1,26 @@
+---
+import Icon from "@components/ui/icons/Icon.astro";
+
+const { title, href = "#features", variant = "default" } = Astro.props;
+
+interface Props {
+  title: string;
+  href?: string;
+  variant?: "default" | "white";
+}
+
+const baseClasses = "inline-flex items-center gap-2 px-4 py-3 text-sm font-semibold leading-6 transition-all duration-200 rounded-lg border-1";
+const variantClasses = {
+  default: "text-neutral-700 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-neutral-400 border-neutral-700 hover:border-blue-600 dark:border-neutral-200 dark:hover:border-blue-400 bg-transparent hover:bg-blue-50 dark:hover:bg-blue-900/20",
+  white: "text-neutral-900 dark:text-neutral-100 hover:text-blue-100 border-white/30 hover:border-white bg-transparent hover:bg-white/10"
+};
+---
+
+<a
+  href={href}
+  class={`${baseClasses} ${variantClasses[variant]}`}
+>
+  {title}
+  <Icon name="arrowRight" />
+</a>
+

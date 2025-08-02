@@ -1,0 +1,37 @@
+---
+const { aria, dataTab, id, heading, content, first } = Astro.props;
+
+interface Props {
+  dataTab: string;
+  id: string;
+  aria: string;
+  heading?: string;
+  content?: string;
+  first?: boolean;
+}
+
+const BUTTON_CLASS =
+  "dark:hover:bg-neutral-700 rounded-xl p-4 text-start outline-hidden ring-zinc-500 transition duration-300 hover:bg-neutral-200 focus-visible:ring-3 hs-tab-active:bg-neutral-50 hs-tab-active:shadow-md hs-tab-active:hover:border-transparent dark:ring-zinc-200 dark:focus:outline-hidden  dark:hs-tab-active:bg-neutral-700/60 md:p-5";
+---
+<button
+  type="button"
+  class={`${first ? "active " : ""}${BUTTON_CLASS}`}
+  id={id}
+  data-hs-tab={dataTab}
+  aria-controls={aria}
+  role="tab"
+>
+  <span class="flex">
+    <slot />
+    <span class="ms-6 grow">
+      <span
+        class="block text-lg font-bold text-neutral-800 hs-tab-active:text-brand dark:text-neutral-200 dark:hs-tab-active:text-orange-300"
+        >{heading}</span
+      >
+      <span
+        class="mt-1 block text-neutral-500 hs-tab-active:text-neutral-600 dark:text-neutral-400 dark:hs-tab-active:text-neutral-200"
+        >{content}</span
+      >
+    </span>
+  </span>
+</button>
