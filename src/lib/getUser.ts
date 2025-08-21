@@ -9,7 +9,7 @@ async function getUser(authToken: string | undefined) {
     const userInfo = await db.query.sessions.findFirst({
       where: and(
         eq(sessions.id, authToken),
-        gte(sessions.expiresAt, new Date().getTime())
+        gte(sessions.expiresAt, new Date().getTime()),
       ),
       with: {
         user: {
@@ -41,7 +41,7 @@ async function getUser(authToken: string | undefined) {
 
     return userInfo;
   } catch (error) {
-    console.error('Error in getUser:', error);
+    console.error("Error in getUser:", error);
     return null;
   }
 }

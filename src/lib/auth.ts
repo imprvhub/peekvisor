@@ -57,7 +57,7 @@ export const createUser = async ({
         fullName,
         emailVerified,
         userName,
-        plan: 'basic',
+        plan: "basic",
       })
       .returning({ id: users.id });
 
@@ -132,7 +132,7 @@ export const updateOauthToken = async ({
         refreshToken,
       })
       .where(
-        and(eq(oauthTokens.userId, userId), eq(oauthTokens.strategy, strategy))
+        and(eq(oauthTokens.userId, userId), eq(oauthTokens.strategy, strategy)),
       );
   } catch (error) {
     console.error("Error while updating OAuth token:", error);
@@ -166,32 +166,29 @@ export const createLoginLog = async ({
 };
 
 export async function revokeGoogleAccessToken(token: string): Promise<void> {
-  const response = await fetch('https://oauth2.googleapis.com/revoke', {
-    method: 'POST',
+  const response = await fetch("https://oauth2.googleapis.com/revoke", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      "Content-Type": "application/x-www-form-urlencoded",
     },
     body: `token=${token}`,
   });
 
   if (!response.ok) {
     const error = await response.json();
-    console.error('Failed to revoke Google token:', error);
-    throw new Error('Failed to revoke Google token');
+    console.error("Failed to revoke Google token:", error);
+    throw new Error("Failed to revoke Google token");
   }
 }
 
 export async function deleteOauthToken(
   userId: string,
-  strategy: "google" | "github"
+  strategy: "google" | "github",
 ): Promise<void> {
   await db
     .delete(oauthTokens)
     .where(
-      and(
-        eq(oauthTokens.userId, userId),
-        eq(oauthTokens.strategy, strategy)
-      )
+      and(eq(oauthTokens.userId, userId), eq(oauthTokens.strategy, strategy)),
     );
 }
 

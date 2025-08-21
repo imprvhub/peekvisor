@@ -18,12 +18,12 @@ interface ImportMeta {
 declare namespace App {
   interface Locals {
     userId: string | undefined;
-    userPlan: 'basic' | 'flex' | 'pro';
+    userPlan: "basic" | "flex" | "pro";
     userEmail: string | undefined;
     user?: {
       id: string;
       email: string;
-      plan: 'basic' | 'flex' | 'pro';
+      plan: "basic" | "flex" | "pro";
       planExpiresAt?: number;
       fullName?: string;
       profilePhoto?: string;
@@ -51,7 +51,7 @@ declare global {
   }
 
   interface WindowEventMap {
-    'on-hs-appearance-change': CustomEvent<string>;
+    "on-hs-appearance-change": CustomEvent<string>;
   }
 }
 
