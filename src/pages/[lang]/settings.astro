@@ -67,7 +67,6 @@ function capitalizeFirstWord(text: string) {
 
 <MainLayout title={t('settings.pageTitle')}>
   <section class="py-16 sm:py-20">
-    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col gap-8">
         <div class="text-center">
           <h1 class="text-4xl font-bold text-neutral-800 dark:text-neutral-200 tracking-tight">
@@ -76,7 +75,7 @@ function capitalizeFirstWord(text: string) {
         </div>
 
         <div class="space-y-8">
-          <div class="bg-indigo-50/40 dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
+          <div class="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
             <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-6">
               {t('settings.profile.title')}
             </h2>
@@ -116,7 +115,7 @@ function capitalizeFirstWord(text: string) {
             </div>
           </div>
 
-          <div class="bg-indigo-50/40 dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
+          <div class="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
             <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-6">
               {t('settings.account.title')}
             </h2>
@@ -184,7 +183,7 @@ function capitalizeFirstWord(text: string) {
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
                           <div class="flex-shrink-0">
-                            <svg class="w-6 h-6 text-neutral-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-[#7D87FF] dark:text-[#A4B3FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
                           </div>
@@ -227,66 +226,6 @@ function capitalizeFirstWord(text: string) {
             </div>
           </div>
 
-          <div class="bg-indigo-50/40 dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
-            <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-6">
-              {t('settings.preferences.title')}
-            </h2>
-            
-            <div class="space-y-6">
-              <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
-                <div>
-                  <div class="text-sm font-medium text-neutral-800 dark:text-neutral-200">
-                    {t('settings.preferences.language')}
-                  </div>
-                  <div class="text-sm text-neutral-600 dark:text-neutral-400">
-                    {t('settings.preferences.languageDescription')}
-                  </div>
-                </div>
-                <select 
-                  id="language-selector"
-                  class="px-3 py-2 pr-8 ml-2 text-sm border border-neutral-200 dark:border-neutral-600 rounded-lg bg-indigo-50/40 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 focus:ring-2 focus:ring-[#576469] focus:border-[#576469]"
-                >
-                  {Object.entries(languages).map(([id, name]) => (
-                    <option value={`/${id}/settings`} selected={lang === id}>{name}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
-                <div>
-                  <div class="text-sm font-medium text-neutral-800 dark:text-neutral-200">
-                    {t('settings.preferences.theme')}
-                  </div>
-                  <div class="text-sm text-neutral-600 dark:text-neutral-400">
-                    {t('settings.preferences.themeDescription')}
-                  </div>
-                </div>
-                <select 
-                  id="theme-selector"
-                  class="px-3 py-2 pr-8 ml-2 text-sm border border-neutral-200 dark:border-neutral-600 rounded-lg bg-indigo-50/40 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 focus:ring-2 focus:ring-[#576469] focus:border-[#576469]"
-                >
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                </select>
-              </div>
-              
-              <div class="flex items-center justify-between py-3">
-                <div>
-                  <div class="text-sm font-medium text-neutral-800 dark:text-neutral-200">
-                    {t('settings.preferences.notifications')}
-                  </div>
-                  <div class="text-sm text-neutral-600 dark:text-neutral-400">
-                    {t('settings.preferences.notificationsDescription')}
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked>
-                  <div class="w-11 h-6 bg-neutral-200 dark:bg-neutral-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#576469]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#576469] dark:peer-checked:bg-[#576469]"></div>
-                </label>
-              </div>
-            </div>
-          </div>
-
           <div class="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
             <h2 class="text-xl font-semibold text-red-800 dark:text-red-200 mb-6">
               {t('settings.danger.title')}
@@ -302,7 +241,7 @@ function capitalizeFirstWord(text: string) {
                     {t('settings.danger.logoutDescription')}
                   </div>
                 </div>
-                <a href="/logout" class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 dark:text-red-200 bg-indigo-50/40 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors duration-200">
+                <a href="/logout" class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 dark:text-red-200 bg-white dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors duration-200">
                   {t('settings.danger.logout')}
                 </a>
               </div>
@@ -320,3 +259,356 @@ function capitalizeFirstWord(text: string) {
                   <Icon name="delete" />
                   {t('settings.danger.deleteAccount')}
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modals remain the same as in the original -->
+  <div id="revoke-google-modal" class="fixed inset-0 bg-black/50 backdrop-blur-lg flex items-center justify-center hidden z-50 p-4">
+    <div class="relative w-full max-w-md">
+      <div class="absolute -inset-1.5 bg-gradient-to-r from-[#576469] to-[#393E41] rounded-xl blur-lg opacity-60"></div>
+      <div class="relative bg-neutral-200 dark:bg-neutral-900 rounded-lg shadow-xl p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl text-neutral-800 dark:text-neutral-200 font-bold">{t('settings.modals.revokeGoogle.title')}</h2>
+          <button id="close-revoke-google-modal" class="p-2 rounded-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 dark:focus:ring-offset-neutral-900 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="mb-6">
+          <p class="text-neutral-600 dark:text-neutral-400">{t('settings.modals.revokeGoogle.message')}</p>
+        </div>
+        <div class="flex space-x-3">
+          <button id="cancel-revoke-google" class="flex-1 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors duration-200">
+            {t('settings.modals.revokeGoogle.cancel')}
+          </button>
+          <button id="confirm-revoke-google" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-[#576469] border border-[#576469] rounded-lg hover:bg-[#e55559] transition-colors duration-200">
+            {t('settings.modals.revokeGoogle.confirm')}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="revoke-session-modal" class="fixed inset-0 bg-black/50 backdrop-blur-lg flex items-center justify-center hidden z-50 p-4">
+    <div class="relative w-full max-w-md">
+      <div class="absolute -inset-1.5 bg-gradient-to-r from-[#576469] to-[#393E41] rounded-xl blur-lg opacity-60"></div>
+      <div class="relative bg-yellow-50/60 dark:bg-neutral-900 rounded-lg shadow-xl p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl text-neutral-800 dark:text-neutral-200 font-bold">{t('settings.modals.revokeSession.title')}</h2>
+          <button id="close-revoke-session-modal" class="p-2 rounded-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 dark:focus:ring-offset-neutral-900 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="mb-6">
+          <p class="text-neutral-600 dark:text-neutral-400">{t('settings.modals.revokeSession.message')}</p>
+        </div>
+        <div class="flex space-x-3">
+          <button id="cancel-revoke-session" class="flex-1 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors duration-200">
+            {t('settings.modals.revokeSession.cancel')}
+          </button>
+          <button id="confirm-revoke-session" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-[#576469] rounded-lg hover:bg-[#e55559] transition-colors duration-200">
+            {t('settings.modals.revokeSession.confirm')}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="delete-account-modal" class="fixed inset-0 bg-black/50 backdrop-blur-lg flex items-center justify-center hidden z-50 p-4">
+    <div class="relative w-full max-w-md">
+      <div class="absolute -inset-1.5 bg-gradient-to-r from-red-500 to-red-700 rounded-xl blur-lg opacity-60"></div>
+      <div class="relative bg-red-50 dark:bg-red-900/20 rounded-lg shadow-xl p-6 border border-red-200 dark:border-red-800">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl text-red-800 dark:text-red-200 font-bold">{t('settings.modals.deleteAccount.title')}</h2>
+          <button id="close-delete-account-modal" class="p-2 rounded-full text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-red-900 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="mb-6">
+          <div class="flex items-center mb-3">
+            <svg class="w-6 h-6 text-red-600 dark:text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+            <span class="text-lg font-semibold text-red-800 dark:text-red-200">{t('settings.modals.deleteAccount.warning')}</span>
+          </div>
+          <p class="text-red-700 dark:text-red-300 mb-4">{t('settings.modals.deleteAccount.message')}</p>
+          <div class="bg-red-100 dark:bg-red-900/50 p-3 rounded-lg border border-red-300 dark:border-red-700">
+            <p class="text-sm text-red-800 dark:text-red-200 font-medium">{t('settings.modals.deleteAccount.permanentlyText')}:</p>
+            <ul class="text-sm text-red-700 dark:text-red-300 mt-1 list-disc list-inside">
+              <li>{t('settings.modals.deleteAccount.deleteProfile')}</li>
+              <li>{t('settings.modals.deleteAccount.removeData')}</li>
+              <li>{t('settings.modals.deleteAccount.revokeServices')}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="flex space-x-3">
+          <button id="cancel-delete-account" class="flex-1 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-300 bg-yellow-50/60 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors duration-200">
+            {t('settings.modals.deleteAccount.cancel')}
+          </button>
+          <button id="confirm-delete-account" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 border border-red-600 rounded-lg hover:bg-red-700 transition-colors duration-200">
+            {t('settings.modals.deleteAccount.confirm')}
+          </button>
+        </div>
+      </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const backButton = document.getElementById('back-button');
+    
+      if (backButton) {
+        backButton.addEventListener('click', function() {
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = `/${window.location.pathname.split('/')[1]}/`;
+          }
+        });
+      }
+      const currentPath = window.location.pathname;
+      const pathSegments = currentPath.split('/').filter(segment => segment !== '');
+      const currentLang = pathSegments[0] || 'en';
+      
+      const languageSelector = document.getElementById('language-selector') as HTMLSelectElement | null;
+      const themeSelector = document.getElementById('theme-selector') as HTMLSelectElement | null;
+      
+      let pendingSessionId: string | null = null;
+
+      function initializeSessionsFeature() {
+        const seeMoreBtn = document.getElementById('see-more-sessions');
+        if (seeMoreBtn) {
+          seeMoreBtn.addEventListener('click', function() {
+            document.querySelectorAll('.extra-session').forEach(el => {
+              el.classList.remove('hidden');
+            });
+            const parentElement = seeMoreBtn.parentElement;
+            if (parentElement) {
+              parentElement.remove();
+            }
+          });
+        }
+      }
+  
+      function showModal(modalId: string) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        }
+      }
+  
+      function hideModal(modalId: string) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.classList.add('hidden');
+          document.body.style.overflow = '';
+        }
+      }
+  
+      function initializeRevokeGoogleModal() {
+        const revokeBtn = document.getElementById('revoke-google-access');
+        const modal = document.getElementById('revoke-google-modal');
+        const closeBtn = document.getElementById('close-revoke-google-modal');
+        const cancelBtn = document.getElementById('cancel-revoke-google');
+        const confirmBtn = document.getElementById('confirm-revoke-google');
+  
+        if (revokeBtn) {
+          revokeBtn.addEventListener('click', function() {
+            showModal('revoke-google-modal');
+          });
+        }
+  
+        [closeBtn, cancelBtn].forEach(btn => {
+          if (btn) {
+            btn.addEventListener('click', function() {
+              hideModal('revoke-google-modal');
+            });
+          }
+        });
+  
+        if (confirmBtn) {
+          confirmBtn.addEventListener('click', async function() {
+            try {
+              const response = await fetch('/api/auth/revoke/google', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+              
+              if (response.ok) {
+                window.location.href = `/${currentLang}?revoked=true`;
+              } else {
+                const data = await response.json();
+                alert(`Failed to revoke access: ${data.error}`);
+              }
+            } catch (error) {
+              console.error('Error revoking access:', error);
+              alert('An error occurred while revoking access.');
+            }
+            hideModal('revoke-google-modal');
+          });
+        }
+  
+        if (modal) {
+          modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+              hideModal('revoke-google-modal');
+            }
+          });
+        }
+      }
+  
+      function attachSessionRevokeListeners() {
+        const revokeSessionBtns = document.querySelectorAll('.revoke-session-btn');
+        revokeSessionBtns.forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const button = e.currentTarget as HTMLButtonElement;
+            if (button) {
+              const sessionId = button.getAttribute('data-session-id');
+                          
+              if (!sessionId) {
+                console.error('No session ID found');
+                return;
+              }
+
+              pendingSessionId = sessionId;
+              showModal('revoke-session-modal');
+            }
+          });
+        });
+      }
+
+      function initializeRevokeSessionModal() {
+        const modal = document.getElementById('revoke-session-modal');
+        const closeBtn = document.getElementById('close-revoke-session-modal');
+        const cancelBtn = document.getElementById('cancel-revoke-session');
+        const confirmBtn = document.getElementById('confirm-revoke-session');
+
+        attachSessionRevokeListeners();
+
+        [closeBtn, cancelBtn].forEach(btn => {
+          if (btn) {
+            btn.addEventListener('click', function() {
+              hideModal('revoke-session-modal');
+              pendingSessionId = null;
+            });
+          }
+        });
+
+        if (confirmBtn) {
+          confirmBtn.addEventListener('click', async function() {
+            if (!pendingSessionId) return;
+
+            try {
+              const response = await fetch('/api/auth/revoke-access', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sessionId: pendingSessionId }),
+              });
+
+              if (response.ok) {
+                const sessionBtn = document.querySelector(`[data-session-id="${pendingSessionId}"]`);
+                if (sessionBtn) {
+                  const sessionItem = sessionBtn.closest('.session-item');
+                  if (sessionItem) {
+                    sessionItem.remove();
+                  }
+                }
+                alert('Session revoked successfully');
+              } else {
+                const data = await response.json();
+                alert(`Failed to revoke session: ${data.error}`);
+              }
+            } catch (error) {
+              console.error('Error revoking session:', error);
+              alert('An error occurred while revoking the session.');
+            }
+            hideModal('revoke-session-modal');
+            pendingSessionId = null;
+          });
+        }
+
+        if (modal) {
+          modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+              hideModal('revoke-session-modal');
+              pendingSessionId = null;
+            }
+          });
+        }
+      }
+
+      function initializeDeleteAccountModal() {
+        const deleteBtn = document.getElementById('delete-account');
+        const modal = document.getElementById('delete-account-modal');
+        const closeBtn = document.getElementById('close-delete-account-modal');
+        const cancelBtn = document.getElementById('cancel-delete-account');
+        const confirmBtn = document.getElementById('confirm-delete-account');
+
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', function() {
+            showModal('delete-account-modal');
+          });
+        }
+
+        [closeBtn, cancelBtn].forEach(btn => {
+          if (btn) {
+            btn.addEventListener('click', function() {
+              hideModal('delete-account-modal');
+            });
+          }
+        });
+
+        if (confirmBtn) {
+          confirmBtn.addEventListener('click', async function() {
+            try {
+              const response = await fetch('/api/auth/delete-account', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+              
+              if (response.ok) {
+                window.location.href = `/${currentLang}?account_deleted=true`;
+              } else {
+                const data = await response.json();
+                alert(`Failed to delete account: ${data.error}`);
+              }
+            } catch (error) {
+              console.error('Error deleting account:', error);
+              alert('An error occurred while deleting your account.');
+            }
+            hideModal('delete-account-modal');
+          });
+        }
+
+        if (modal) {
+          modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+              hideModal('delete-account-modal');
+            }
+          });
+        }
+      }
+      initializeSessionsFeature();
+      initializeRevokeGoogleModal();
+      initializeRevokeSessionModal();
+      initializeDeleteAccountModal();
+      });
+  </script>
+</MainLayout>

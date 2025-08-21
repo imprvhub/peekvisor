@@ -1,8 +1,6 @@
 ---
-// Destructure the properties from Astro.props
 const { url, name } = Astro.props;
 
-// Define TypeScript interface for the properties
 interface Props {
   url: string;
   name: string;
@@ -42,7 +40,6 @@ interface Props {
       nav.setAttribute("aria-current", "page");
     }
 
-    // Search modal trigger
     const searchLink = document.getElementById('search');
     if (searchLink) {
       searchLink.addEventListener('click', (e) => {

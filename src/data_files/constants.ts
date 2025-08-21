@@ -1,6 +1,3 @@
-// Remover la importación problemática
-// import ogImageSrc from "@images/social.png";
-
 export const SITE = {
   title: "PeekVisor",
   tagline: "Know your audience, protect their privacy",
@@ -39,7 +36,6 @@ export const OG = {
   title: `${SITE.title}: Privacy-First Analytics Platform`,
   description:
     "Get comprehensive audience insights without compromising user privacy. Track unlimited page views, monitor campaigns, and measure environmental impact with GDPR-compliant analytics.",
-  // Usar una URL directa en lugar de importar
   image: "https://peekvisor.com/social.webp",
 };
 

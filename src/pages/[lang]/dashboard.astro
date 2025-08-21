@@ -9,7 +9,6 @@ import Icon from "@components/ui/icons/Icon.astro";
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
-// Authentication check
 const sessionToken = Astro.cookies.get("app_auth_token")?.value;
 if (!sessionToken) return Astro.redirect(`/${lang}/`);
 
@@ -290,8 +289,6 @@ const websiteCount = userWebsites.length;
           </div>
         )
       }
-
-      <!-- Back Button -->
       <div class="mt-8 flex justify-center">
         <button
           id="back-button"
@@ -304,7 +301,6 @@ const websiteCount = userWebsites.length;
   </div>
 
   <script>
-    // Back button functionality
     document.getElementById("back-button")?.addEventListener("click", () => {
       window.history.back();
     });

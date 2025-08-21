@@ -54,17 +54,14 @@
 </button>
 
 <script>
-  // Define the Theme type
   type Theme = "light" | "dark";
 
-  // Function to set the theme
   function setTheme(theme: Theme): void {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("starlight-theme", theme);
     updateButtons(theme);
   }
 
-  // Function to update the button visibility
   function updateButtons(theme: Theme): void {
     const darkButton = document.getElementById("dark-theme-toggle");
     const lightButton = document.getElementById("light-theme-toggle");
@@ -78,7 +75,6 @@
     }
   }
 
-  // Event listeners for theme toggle buttons
   document
     .getElementById("dark-theme-toggle")
     ?.addEventListener("click", () => {
@@ -91,7 +87,6 @@
       setTheme("light");
     });
 
-  // Initial theme setup
   document.addEventListener("DOMContentLoaded", () => {
     const storedTheme = localStorage.getItem("starlight-theme") as Theme | null;
     const theme: Theme =

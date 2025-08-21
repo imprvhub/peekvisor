@@ -756,7 +756,6 @@ export const Icons = {
     fill: "currentColor",
   },
 
-  // Analytics specific icons
   pageViews: {
     paths: [
       {
@@ -984,7 +983,6 @@ export const Icons = {
     fill: "currentColor",
   },
 
-  // Website management icons
   users: {
     paths: [
       {
@@ -1051,7 +1049,6 @@ export const Icons = {
     fill: "currentColor",
   },
 
-  // Dashboard specific icons
   stats: {
     paths: [
       {

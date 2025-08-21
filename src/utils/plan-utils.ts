@@ -32,11 +32,11 @@ export const PLAN_CONFIG: Record<PlanType, PlanLimitsConfig> = {
     hasApiAccess: false,
     hasPublicDashboards: false,
     hasPrioritySupport: false,
-    monthlyPrice: 1200 // $12/month (DECOY)
+    monthlyPrice: 1200
   },
   pro: {
-    maxWebsites: -1, // Unlimited
-    dataRetentionDays: -1, // Unlimited
+    maxWebsites: -1,
+    dataRetentionDays: -1,
     hasUnlimitedPageViews: true,
     hasCustomEvents: true,
     hasUtmTracking: true,
@@ -47,7 +47,7 @@ export const PLAN_CONFIG: Record<PlanType, PlanLimitsConfig> = {
     hasApiAccess: true,
     hasPublicDashboards: true,
     hasPrioritySupport: true,
-    monthlyPrice: 1500 // $15/month
+    monthlyPrice: 1500
   }
 };
 
@@ -66,7 +66,7 @@ export async function canCreateWebsite(userId: string): Promise<boolean> {
   const planType = user[0].plan as PlanType;
   const planLimits = PLAN_CONFIG[planType];
   
-  if (planLimits.maxWebsites === -1) return true; // Unlimited
+  if (planLimits.maxWebsites === -1) return true;
   
   const websiteCount = await db
     .select({ count: count() })

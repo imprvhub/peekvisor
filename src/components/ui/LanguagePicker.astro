@@ -4,7 +4,6 @@ import Icon from "./icons/Icon.astro";
 
 const { pathname } = Astro.url;
 
-// Remove the language prefix from the path
 const pathWithoutLang = pathname.startsWith(`/${defaultLang}`)
   ? pathname.replace(`/${defaultLang}`, "")
   : pathname.replace(/^\/[a-z]{2}/, "");

@@ -1,7 +1,5 @@
 ---
-// Import the necessary AccordionItem component and JSON data
 import AccordionItem from "@components/ui/blocks/AccordionItem.astro";
-
 
 const { title, faqs } = Astro.props;
 
@@ -20,11 +18,9 @@ interface Props {
   title: string;
   faqs: FaqGroup;
 }
-// Define a helper function to generate ids dynamically.
 const makeId = (base: any, index: any) => `${base}${index + 1}`;
 ---
 
-<!-- Main container that holds all content. Customized for different viewport sizes. -->
 <section
   class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14"
 >
@@ -46,7 +42,6 @@ const makeId = (base: any, index: any) => `${base}${index + 1}`;
       >
         {
           faqs.faqs.map((question, i) => {
-            // Generate ids dynamically for each FAQ accordion item.
             let id = makeId(
               "hs-basic-with-title-and-arrow-stretched-heading-",
               i

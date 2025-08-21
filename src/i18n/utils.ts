@@ -1,4 +1,3 @@
-// src/i18n/utils.ts
 import { ui, defaultLang } from "./ui";
 
 export function getLangFromUrl(url: URL) {
@@ -26,7 +25,7 @@ export function useTranslations(lang: keyof typeof ui) {
 }
 
 export function getRedirect(path: string, request: Request) {
-  const supportedLangs = ["en", "es", "fr"] as const;
+  const supportedLangs = ["en", "es", "fr","pt"] as const;
   type SupportedLang = (typeof supportedLangs)[number];
 
   function getPreferredLanguage(): SupportedLang {

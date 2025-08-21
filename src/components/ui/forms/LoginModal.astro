@@ -1,22 +1,18 @@
 ---
-// Import necessary components from their individual files
 import EmailInput from "./input/EmailInput.astro";
 import PasswordInput from "./input/PasswordInput.astro";
 import Checkbox from "./input/Checkbox.astro";
 import AuthBtn from "@components/ui/buttons/AuthBtn.astro";
 import GoogleBtn from "@components/ui/buttons/GoogleBtn.astro";
 
-// Variables for customization of the LoginModal Component
-
 const config = {
-  id: "hs-toggle-between-modals-login-modal", // Modal IDENTIFIER
-  title: "Sign in", // Main HEADING
-  subTitle: "Don't have an account yet?", // Sub-Heading TEXT
-  registerBtn: "Sign up here", // Text for REGISTRATION BUTTON
-  registerBtnDataHS: "#hs-toggle-between-modals-register-modal", // TARGET LINK for registration button
+  id: "hs-toggle-between-modals-login-modal",
+  title: "Sign in",
+  subTitle: "Don't have an account yet?",
+  registerBtn: "Sign up here",
+  registerBtnDataHS: "#hs-toggle-between-modals-register-modal",
 };
 ---
-
 <div
   id={config.id}
   class="hs-overlay hs-overlay-backdrop-open:bg-black/20 hs-overlay-backdrop-open:backdrop-blur-sm absolute start-0 top-0 z-50 hidden h-full w-full transition-all duration-300"
@@ -29,7 +25,6 @@ const config = {
         class="rounded-xl border border-neutral-200 bg-neutral-100 shadow-lg dark:border-neutral-700 dark:bg-neutral-800"
       >
         <div class="relative p-4 sm:p-7">
-          <!-- Close button -->
           <button
             type="button"
             class="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-600 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
@@ -77,22 +72,16 @@ const config = {
             >
               Or
             </div>
-            <!-- The container for the form -->
             <form>
-              <!-- A grid layout for the form fields -->
               <div class="grid gap-y-4">
-                <!-- The email input field -->
                 <EmailInput id="login-email" errorId="login-email-error" />
-                <!-- The password input field -->
                 <PasswordInput
                   forgot={true}
                   id="password"
                   errorId="login-password-error"
                   content="8+ characters required"
                 />
-                <!-- The remember-me checkbox -->
                 <Checkbox id="remember-me" />
-                <!-- The sign-in button -->
                 <AuthBtn title="Sign in" />
               </div>
             </form>
