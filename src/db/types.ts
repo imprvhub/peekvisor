@@ -1,6 +1,6 @@
 import type { InferSelectModel } from "drizzle-orm";
-import type { 
-  users, 
+import type {
+  users,
   websites,
   pageViews,
   customEvents,
@@ -9,7 +9,7 @@ import type {
   emailReports,
   planLimits,
   usageAlerts,
-  subscriptions
+  subscriptions,
 } from "./schema";
 
 export type User = InferSelectModel<typeof users>;
@@ -28,8 +28,11 @@ export type PlanLimit = InferSelectModel<typeof planLimits>;
 export type UsageAlert = InferSelectModel<typeof usageAlerts>;
 export type Subscription = InferSelectModel<typeof subscriptions>;
 
-export type PlanType = 'basic' | 'flex' | 'pro';
-export type AlertType = 'website_limit_reached' | 'data_retention_warning' | 'upgrade_suggestion';
+export type PlanType = "basic" | "flex" | "pro";
+export type AlertType =
+  | "website_limit_reached"
+  | "data_retention_warning"
+  | "upgrade_suggestion";
 
 export interface AnalyticsData {
   pageViews: number;
@@ -44,7 +47,13 @@ export interface AnalyticsData {
   }>;
   topCountries: Array<{
     country: string;
+    region?: string;
+    city?: string;
     visitors: number;
+    latitude: number;
+    longitude: number;
+    locationName: string;
+    visitorIds: string[];
   }>;
   topDevices: Array<{
     device: string;

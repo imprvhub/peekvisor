@@ -15,5 +15,11 @@
     }
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", ".astro", "content-assets.mjs", "content-modules.mjs", "data-store.json"]
+  "exclude": [
+    "dist",
+    ".astro",
+    "content-assets.mjs",
+    "content-modules.mjs",
+    "data-store.json"
+  ]
 }

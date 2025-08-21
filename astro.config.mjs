@@ -55,7 +55,11 @@ export default defineConfig({
         },
       ],
       social: [
-        { icon: "github", label: "GitHub", href: "https://github.com/imprvhub" },
+        {
+          icon: "github",
+          label: "GitHub",
+          href: "https://github.com/peekvisor",
+        },
       ],
       disable404Route: true,
       customCss: ["./src/assets/styles/starlight.css"],
@@ -63,7 +67,8 @@ export default defineConfig({
       components: {
         SiteTitle: "./src/components/ui/starlight/SiteTitle.astro",
         Head: "./src/components/ui/starlight/Head.astro",
-        MobileMenuFooter: "./src/components/ui/starlight/MobileMenuFooter.astro",
+        MobileMenuFooter:
+          "./src/components/ui/starlight/MobileMenuFooter.astro",
         ThemeSelect: "./src/components/ui/starlight/ThemeSelect.astro",
       },
       head: [
@@ -86,10 +91,12 @@ export default defineConfig({
     compressor({
       gzip: false,
       brotli: true,
-    }), mdx()],
-    experimental: {
-      clientPrerender: true,
-    },
+    }),
+    mdx(),
+  ],
+  experimental: {
+    clientPrerender: true,
+  },
   vite: {
     plugins: [tailwindcss()],
   },

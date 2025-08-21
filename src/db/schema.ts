@@ -6,7 +6,7 @@ import {
   sqliteTable,
   text,
   unique,
-  real
+  real,
 } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
@@ -23,11 +23,12 @@ export const users = sqliteTable("users", {
   isBlocked: integer("is_blocked", { mode: "boolean" }).default(false),
   isDeleted: integer("is_deleted", { mode: "boolean" }).default(false),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-  plan: text("plan", { enum: ["basic", "flex", "pro"] }).default("basic").notNull(),
+  plan: text("plan", { enum: ["basic", "flex", "pro"] })
+    .default("basic")
+    .notNull(),
   planExpiresAt: integer("plan_expires_at"),
   lemonSqueezyCustomerId: text("lemon_squeezy_customer_id"),
 });
-
 
 export const oauthTokens = sqliteTable(
   "oauth_tokens",
@@ -44,7 +45,7 @@ export const oauthTokens = sqliteTable(
     return {
       pk: primaryKey({ columns: [table.userId, table.strategy] }),
     };
-  }
+  },
 );
 
 export const oauthTokenRelations = relations(oauthTokens, ({ one }) => ({
@@ -99,13 +100,15 @@ export const loginLogsRelations = relations(loginLogs, ({ one }) => ({
 }));
 
 export const subscriptions = sqliteTable("subscriptions", {
-  id: text("id").$default(() => createId()).primaryKey(),
+  id: text("id")
+    .$default(() => createId())
+    .primaryKey(),
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   lemonSqueezySubscriptionId: text("lemon_squeezy_subscription_id").notNull(),
-  status: text("status", { 
-    enum: ["active", "past_due", "unpaid", "cancelled", "expired", "on_trial"] 
+  status: text("status", {
+    enum: ["active", "past_due", "unpaid", "cancelled", "expired", "on_trial"],
   }).notNull(),
   planType: text("plan_type", { enum: ["basic", "flex", "pro"] }).notNull(),
   currentPeriodStart: integer("current_period_start").notNull(),
@@ -121,27 +124,37 @@ export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
   }),
 }));
 
-export const websites = sqliteTable("websites", {
-  id: text("id").$default(() => createId()).primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  domain: text("domain").notNull(),
-  name: text("name").notNull(),
-  isActive: integer("is_active", { mode: "boolean" }).default(true),
-  trackingCode: text("tracking_code").notNull().unique(),
-  publicDashboard: integer("public_dashboard", { mode: "boolean" }).default(false),
-  customSubdomain: text("custom_subdomain").unique(),
-  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
-}, (table) => {
-  return {
-    userDomainUnique: unique().on(table.userId, table.domain),
-  };
-});
+export const websites = sqliteTable(
+  "websites",
+  {
+    id: text("id")
+      .$default(() => createId())
+      .primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    domain: text("domain").notNull(),
+    name: text("name").notNull(),
+    isActive: integer("is_active", { mode: "boolean" }).default(true),
+    trackingCode: text("tracking_code").notNull().unique(),
+    publicDashboard: integer("public_dashboard", { mode: "boolean" }).default(
+      false,
+    ),
+    customSubdomain: text("custom_subdomain").unique(),
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => {
+    return {
+      userDomainUnique: unique().on(table.userId, table.domain),
+    };
+  },
+);
 
 export const pageViews = sqliteTable("page_views", {
-  id: text("id").$default(() => createId()).primaryKey(),
+  id: text("id")
+    .$default(() => createId())
+    .primaryKey(),
   websiteId: text("website_id")
     .notNull()
     .references(() => websites.id, { onDelete: "cascade" }),
@@ -160,7 +173,9 @@ export const pageViews = sqliteTable("page_views", {
 });
 
 export const customEvents = sqliteTable("custom_events", {
-  id: text("id").$default(() => createId()).primaryKey(),
+  id: text("id")
+    .$default(() => createId())
+    .primaryKey(),
   websiteId: text("website_id")
     .notNull()
     .references(() => websites.id, { onDelete: "cascade" }),
@@ -174,7 +189,9 @@ export const customEvents = sqliteTable("custom_events", {
 });
 
 export const utmCampaigns = sqliteTable("utm_campaigns", {
-  id: text("id").$default(() => createId()).primaryKey(),
+  id: text("id")
+    .$default(() => createId())
+    .primaryKey(),
   websiteId: text("website_id")
     .notNull()
     .references(() => websites.id, { onDelete: "cascade" }),
@@ -189,25 +206,33 @@ export const utmCampaigns = sqliteTable("utm_campaigns", {
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const carbonFootprint = sqliteTable("carbon_footprint", {
-  id: text("id").$default(() => createId()).primaryKey(),
-  websiteId: text("website_id")
-    .notNull()
-    .references(() => websites.id, { onDelete: "cascade" }),
-  date: text("date").notNull(), // YYYY-MM-DD
-  pageViews: integer("page_views").default(0),
-  dataTransferMB: real("data_transfer_mb").default(0),
-  co2GramsEstimated: real("co2_grams_estimated").default(0),
-  energyWattHours: real("energy_watt_hours").default(0),
-  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-}, (table) => {
-  return {
-    websiteDateUnique: unique().on(table.websiteId, table.date),
-  };
-});
+export const carbonFootprint = sqliteTable(
+  "carbon_footprint",
+  {
+    id: text("id")
+      .$default(() => createId())
+      .primaryKey(),
+    websiteId: text("website_id")
+      .notNull()
+      .references(() => websites.id, { onDelete: "cascade" }),
+    date: text("date").notNull(), // YYYY-MM-DD
+    pageViews: integer("page_views").default(0),
+    dataTransferMB: real("data_transfer_mb").default(0),
+    co2GramsEstimated: real("co2_grams_estimated").default(0),
+    energyWattHours: real("energy_watt_hours").default(0),
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => {
+    return {
+      websiteDateUnique: unique().on(table.websiteId, table.date),
+    };
+  },
+);
 
 export const emailReports = sqliteTable("email_reports", {
-  id: text("id").$default(() => createId()).primaryKey(),
+  id: text("id")
+    .$default(() => createId())
+    .primaryKey(),
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -225,16 +250,32 @@ export const planLimits = sqliteTable("plan_limits", {
   planType: text("plan_type", { enum: ["basic", "flex", "pro"] }).primaryKey(),
   maxWebsites: integer("max_websites").notNull(),
   dataRetentionDays: integer("data_retention_days").notNull(),
-  hasUnlimitedPageViews: integer("has_unlimited_page_views", { mode: "boolean" }).default(true),
-  hasCustomEvents: integer("has_custom_events", { mode: "boolean" }).default(false),
-  hasUtmTracking: integer("has_utm_tracking", { mode: "boolean" }).default(false),
+  hasUnlimitedPageViews: integer("has_unlimited_page_views", {
+    mode: "boolean",
+  }).default(true),
+  hasCustomEvents: integer("has_custom_events", { mode: "boolean" }).default(
+    false,
+  ),
+  hasUtmTracking: integer("has_utm_tracking", { mode: "boolean" }).default(
+    false,
+  ),
   hasDataExport: integer("has_data_export", { mode: "boolean" }).default(false),
-  hasEmailReports: integer("has_email_reports", { mode: "boolean" }).default(false),
-  hasCarbonReports: integer("has_carbon_reports", { mode: "boolean" }).default(false),
-  hasCustomSubdomains: integer("has_custom_subdomains", { mode: "boolean" }).default(false),
+  hasEmailReports: integer("has_email_reports", { mode: "boolean" }).default(
+    false,
+  ),
+  hasCarbonReports: integer("has_carbon_reports", { mode: "boolean" }).default(
+    false,
+  ),
+  hasCustomSubdomains: integer("has_custom_subdomains", {
+    mode: "boolean",
+  }).default(false),
   hasApiAccess: integer("has_api_access", { mode: "boolean" }).default(false),
-  hasPublicDashboards: integer("has_public_dashboards", { mode: "boolean" }).default(false),
-  hasPrioritySupport: integer("has_priority_support", { mode: "boolean" }).default(false),
+  hasPublicDashboards: integer("has_public_dashboards", {
+    mode: "boolean",
+  }).default(false),
+  hasPrioritySupport: integer("has_priority_support", {
+    mode: "boolean",
+  }).default(false),
   monthlyPrice: integer("monthly_price").notNull(), // in cents
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
@@ -246,10 +287,16 @@ export const usageAlerts = sqliteTable("usage_alerts", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  alertType: text("alert_type", { 
-    enum: ["website_limit_reached", "data_retention_warning", "upgrade_suggestion"] 
+  alertType: text("alert_type", {
+    enum: [
+      "website_limit_reached",
+      "data_retention_warning",
+      "upgrade_suggestion",
+    ],
   }).notNull(),
-  triggeredAt: integer("triggered_at").notNull().default(sql`(strftime('%s', 'now'))`),
+  triggeredAt: integer("triggered_at")
+    .notNull()
+    .default(sql`(strftime('%s', 'now'))`),
   acknowledged: integer("acknowledged", { mode: "boolean" }).default(false),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
@@ -297,12 +344,15 @@ export const utmCampaignsRelations = relations(utmCampaigns, ({ one }) => ({
   }),
 }));
 
-export const carbonFootprintRelations = relations(carbonFootprint, ({ one }) => ({
-  website: one(websites, {
-    fields: [carbonFootprint.websiteId],
-    references: [websites.id],
+export const carbonFootprintRelations = relations(
+  carbonFootprint,
+  ({ one }) => ({
+    website: one(websites, {
+      fields: [carbonFootprint.websiteId],
+      references: [websites.id],
+    }),
   }),
-}));
+);
 
 export const emailReportsRelations = relations(emailReports, ({ one }) => ({
   user: one(users, {
