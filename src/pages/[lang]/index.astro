@@ -1,10 +1,7 @@
 ---
 export const prerender = false;
 import MainLayout from "@/layouts/MainLayout.astro";
-
-import LearnMoreBtn from "@components/ui/buttons/LearnMoreBtn.astro";
 import Icon from "@components/ui/icons/Icon.astro";
-
 import { getLangFromUrl, useTranslations } from "../../i18n/utils";
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index";
@@ -20,330 +17,535 @@ if (sessionToken) {
   try {
     const sessionData = await db.query.sessions.findFirst({
       where: eq(sessions.id, sessionToken),
-      with: {
-        user: true,
-      },
+      with: { user: true },
     });
-
     if (sessionData?.user) {
       isAuthenticated = true;
     }
   } catch (error) {
-    console.error("Error verificando sesión:", error);
-    isAuthenticated = false;
+    console.error("Error verifying session:", error);
   }
 }
 ---
 
 <MainLayout title="PeekVisor | Privacy-first Analytics">
-  <!-- Hero Section -->
   <section class="relative overflow-hidden">
-    <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8">
-      <div class="mx-auto max-w-2xl text-center">
-        <h1
-          class="text-4xl font-bold tracking-tight text-neutral-900 sm:text-6xl dark:text-neutral-100"
-        >
-          <span class="text-blue-600 dark:text-blue-400"
-            >{t("homepage.hero.title")}</span
-          >
-        </h1>
-        <p
-          class="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300"
-        >
-          {t("privacyFirst")} — {t("tagline")}
-        </p>
-        <div
-          class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-6"
-        >
-          {
-            isAuthenticated ? (
-              <div class="w-full sm:w-auto">
-                <a
-                  href={`/${lang}/websites`}
-                  class="btn-gradient btn-gradient-hover btn-gradient-hover inline-flex w-full items-center justify-center gap-x-2 rounded-lg border border-transparent px-4 py-3 text-sm font-bold text-neutral-700 ring-zinc-500 outline-hidden transition duration-300 focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 2xl:text-base dark:ring-zinc-200 dark:focus:outline-hidden"
-                >
-                  {t("nav.seeYourDomains")}
-                </a>
-              </div>
-            ) : (
-              <>
-                <div class="w-full sm:w-auto">
-                  <button
-                    type="button"
-                    class="btn-gradient btn-gradient-hover btn-gradient-hover inline-flex w-full items-center justify-center gap-x-2 rounded-lg border border-transparent px-4 py-3 text-sm font-bold text-neutral-700 ring-zinc-500 outline-hidden transition duration-300 focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 2xl:text-base dark:ring-zinc-200 dark:focus:outline-hidden"
-                    data-hs-overlay="#hs-toggle-between-modals-login-modal"
-                  >
-                    {t("homepage.hero.getStarted")}
-                  </button>
-                </div>
-                <LearnMoreBtn
-                  title={t("homepage.hero.learnMore")}
-                  href={`/${lang}/pricing`}
-                />
-              </>
-            )
-          }
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features Section -->
-  <section id="features" class="py-12 sm:py-16">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl text-center">
-        <h2
-          class="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-neutral-100"
-        >
-          {t("homepage.features.title")}
-        </h2>
-        <p
-          class="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300"
-        >
-          {t("homepage.features.subtitle")}
-        </p>
-      </div>
-      <div class="mx-auto mt-12 max-w-2xl sm:mt-16 lg:mt-20 lg:max-w-none">
-        <dl
-          class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3 place-items-center lg:place-items-start"
-        >
-          <div class="flex flex-col items-center text-center lg:items-start lg:text-left max-w-sm">
-            <dt
-              class="flex items-center gap-x-3 text-base leading-7 font-semibold text-neutral-900 dark:text-neutral-100"
-            >
-              <div
-                class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600"
-              >
-                <Icon name="verified" />
-              </div>
-              {t("homepage.features.privacy.title")}
-            </dt>
-            <dd
-              class="mt-4 flex flex-auto flex-col text-base leading-7 text-neutral-600 dark:text-neutral-300"
-            >
-              <p class="flex-auto">
-                {t("homepage.features.privacy.description")}
-              </p>
-            </dd>
-          </div>
-          <div class="flex flex-col items-center text-center lg:items-start lg:text-left max-w-sm">
-            <dt
-              class="flex items-center gap-x-3 text-base leading-7 font-semibold text-neutral-900 dark:text-neutral-100"
-            >
-              <div
-                class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600"
-              >
-                <Icon name="dashboard" />
-              </div>
-              {t("homepage.features.realtime.title")}
-            </dt>
-            <dd
-              class="mt-4 flex flex-auto flex-col text-base leading-7 text-neutral-600 dark:text-neutral-300"
-            >
-              <p class="flex-auto">
-                {t("homepage.features.realtime.description")}
-              </p>
-            </dd>
-          </div>
-          <div class="flex flex-col items-center text-center lg:items-start lg:text-left max-w-sm">
-            <dt
-              class="flex items-center gap-x-3 text-base leading-7 font-semibold text-neutral-900 dark:text-neutral-100"
-            >
-              <div
-                class="flex h-10 w-10 items-center justify-center rounded-lg"
-              >
-                <Icon name="rocket" />
-              </div>
-              {t("homepage.features.setup.title")}
-            </dt>
-            <dd
-              class="mt-4 flex flex-auto flex-col text-base leading-7 text-neutral-600 dark:text-neutral-300"
-            >
-              <p class="flex-auto">
-                {t("homepage.features.setup.description")}
-              </p>
-            </dd>
-          </div>
-        </dl>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats Section -->
-  <section class="bg-neutral-50 py-16 sm:py-20 dark:bg-neutral-900">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl lg:max-w-none">
-        <div class="text-center">
-          <h2
-            class="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-neutral-100"
-          >
-            {t("homepage.stats.title")}
-          </h2>
-          <p
-            class="mt-4 text-lg leading-8 text-neutral-900 dark:text-neutral-100"
-          >
-            {t("homepage.stats.subtitle")}
+    <div class="absolute inset-0 bg-grid-neutral-100/50 dark:bg-grid-neutral-800/30 [mask-image:radial-gradient(ellipse_at_center,transparent,black)]"></div>
+    
+    <div class="relative mx-auto max-w-7xl px-8 py-10 sm:py-16 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <div class="animate-fade-in">
+          <h1 class="text-4xl font-bold tracking-tight text-neutral-900 sm:text-6xl dark:text-white">
+            <span class="text-blue-600 dark:text-neutral-400">{t("homepage.hero.title")}</span>
+          </h1>
+          <p class="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300">
+            {t("homepage.value.subtitle")}.
           </p>
         </div>
-        <dl
-          class="mt-12 grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-2 lg:grid-cols-4"
-        >
-          <div
-            class="flex flex-col bg-neutral-100/50 p-8 dark:bg-neutral-800/50"
-          >
-            <dt
-              class="text-sm leading-6 font-semibold text-neutral-600 dark:text-neutral-400"
-            >
-              {t("homepage.stats.websites")}
-            </dt>
-            <dd
-              class="order-first text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
-            >
-              250+
-            </dd>
-          </div>
-          <div
-            class="flex flex-col bg-neutral-100/50 p-8 dark:bg-neutral-800/50"
-          >
-            <dt
-              class="text-sm leading-6 font-semibold text-neutral-600 dark:text-neutral-400"
-            >
-              {t("homepage.stats.pageviews")}
-            </dt>
-            <dd
-              class="order-first text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
-            >
-              1.2M+
-            </dd>
-          </div>
-          <div
-            class="flex flex-col bg-neutral-100/50 p-8 dark:bg-neutral-800/50"
-          >
-            <dt
-              class="text-sm leading-6 font-semibold text-neutral-600 dark:text-neutral-400"
-            >
-              {t("homepage.stats.countries")}
-            </dt>
-            <dd
-              class="order-first text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
-            >
-              45+
-            </dd>
-          </div>
-          <div
-            class="flex flex-col bg-neutral-100/50 p-8 dark:bg-neutral-800/50"
-          >
-            <dt
-              class="text-sm leading-6 font-semibold text-neutral-600 dark:text-neutral-400"
-            >
-              {t("homepage.stats.co2")}
-            </dt>
-            <dd
-              class="order-first text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
-            >
-              125kg
-            </dd>
-          </div>
-        </dl>
-      </div>
-    </div>
-  </section>
-
-  <!-- How it works Section -->
-  <section class="py-16 sm:py-20">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl text-center">
-        <h2
-          class="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-neutral-100"
-        >
-          {t("homepage.howItWorks.title")}
-        </h2>
-        <p
-          class="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300"
-        >
-          {t("homepage.howItWorks.subtitle")}
-        </p>
-      </div>
-      <div class="mx-auto mt-12 max-w-2xl sm:mt-16 lg:mt-20 lg:max-w-none">
-        <div
-          class="grid grid-cols-1 place-items-center gap-x-8 gap-y-12 lg:grid-cols-3 lg:place-items-start lg:gap-y-16"
-        >
-          <div
-            class="mx-auto flex max-w-sm flex-col items-center text-center lg:mx-0"
-          >
-            <div
-              class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-xl font-bold text-indigo-500 dark:bg-blue-900/30 dark:text-indigo-400"
-            >
-              1
-            </div>
-            <h3
-              class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
-            >
-              {t("homepage.howItWorks.step1.title")}
-            </h3>
-            <p class="text-neutral-600 dark:text-neutral-300">
-              {t("homepage.howItWorks.step1.description")}
-            </p>
-          </div>
-          <div
-            class="mx-auto flex max-w-sm flex-col items-center text-center lg:mx-0"
-          >
-            <div
-              class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-xl font-bold text-indigo-500 dark:bg-blue-900/30 dark:text-indigo-400"
-            >
-              2
-            </div>
-            <h3
-              class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
-            >
-              {t("homepage.howItWorks.step2.title")}
-            </h3>
-            <p class="text-neutral-600 dark:text-neutral-300">
-              {t("homepage.howItWorks.step2.description")}
-            </p>
-          </div>
-          <div
-            class="mx-auto flex max-w-sm flex-col items-center text-center lg:mx-0"
-          >
-            <div
-              class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-xl font-bold text-indigo-500 dark:bg-blue-900/30 dark:text-indigo-400"
-            >
-              3
-            </div>
-            <h3
-              class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
-            >
-              {t("homepage.howItWorks.step3.title")}
-            </h3>
-            <p class="text-neutral-600 dark:text-neutral-300">
-              {t("homepage.howItWorks.step3.description")}
-            </p>
-          </div>
+        
+        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-6 animate-fade-in-up">
+          {isAuthenticated ? (
+            <a href={`/${lang}/websites`} class="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-neutral-800 hover:shadow-xl hover:-translate-y-0.5 hover:scale-105 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white">
+              <span>{t("homepage.hero.viewDashboard")}</span>
+              <Icon name="arrowRight" class="group-hover:rotate-45 transition-transform" />
+            </a>
+          ) : (
+            <>
+              <button type="button" class="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-neutral-800 hover:shadow-xl hover:-translate-y-0.5 hover:scale-105 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white" data-hs-overlay="#hs-toggle-between-modals-login-modal">
+                <span>{t("homepage.hero.startFree")}</span>
+                <Icon name="arrowRight" class="group-hover:rotate-45 transition-transform" />
+              </button>
+              <a href={`/${lang}/pricing`} class="group inline-flex items-center gap-2 text-sm font-semibold text-neutral-700 transition-colors hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-100">
+                <span>{t("homepage.hero.seePricing")}</span>
+                <span class="transition-transform group-hover:translate-x-1">→</span>
+              </a>
+            </>
+          )}
         </div>
       </div>
     </div>
   </section>
 
+  <section class="py-6 sm:py-10">
+    <div class="mx-auto px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100/70 animate-fade-in">
+        {t("homepage.privacy.title")}
+        </h2>
+        <p class="mt-4 text-lg text-neutral-600 dark:text-neutral-300 animate-fade-in-up">
+          {t("homepage.hero.subtitle")}
+        </p>
+      </div>
 
+      <div class="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="text-center group">
+          <div class="mx-auto mb-4 flex text-neutral-800 dark:text-neutral-200 h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
+            <div class="w-6 h-6 sm:w-7 sm:h-7">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-combined-icon lucide-chart-no-axes-combined"><path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/><path d="M4 18v3"/><path d="M8 14v7"/></svg>
+            </div>
+          </div>
+          <h3 class="mb-2 text-sm sm:text-base font-semibold text-neutral-900 dark:text-neutral-100">
+            {t("homepage.value.realtime.title")}
+          </h3>
+          <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
+            {t("homepage.features.visitors.description")}
+          </p>
+        </div>
+
+        <div class="text-center group">
+          <div class="mx-auto mb-4 flex text-neutral-800 dark:text-neutral-200 h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-check-icon lucide-map-pin-check"><path d="M19.43 12.935c.357-.967.57-1.955.57-2.935a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 1.202 0 32.197 32.197 0 0 0 .813-.728"/><circle cx="12" cy="10" r="3"/><path d="m16 18 2 2 4-4"/></svg>
+          </div>
+          <h3 class="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">
+            {t("homepage.features.geography.title")}
+          </h3>
+          <p class="text-sm text-neutral-600 dark:text-neutral-400">
+            {t("homepage.features.geography.description")}
+          </p>
+        </div>
+
+        <div class="text-center group">
+          <div class="mx-auto mb-4 text-neutral-800 dark:text-neutral-200 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-smartphone-icon lucide-monitor-smartphone"><path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8"/><path d="M10 19v-3.96 3.15"/><path d="M7 19h5"/><rect width="6" height="10" x="16" y="12" rx="2"/></svg>
+          </div>
+          <h3 class="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">
+            {t("homepage.features.devices.title")}
+          </h3>
+          <p class="text-sm text-neutral-600 dark:text-neutral-400">
+            {t("homepage.features.devices.description")}
+          </p>
+        </div>
+
+        <div class="text-center group">
+          <div class="mx-auto mb-4 flex text-neutral-800 dark:text-neutral-200 h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rocket-icon lucide-rocket"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+          </div>
+          <h3 class="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">
+            {t("homepage.features.campaigns.title")}
+          </h3>
+          <p class="text-sm text-neutral-600 dark:text-neutral-400">
+            {t("homepage.features.campaigns.description")}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pattern-section" class="py-10 sm:py-18 step-patterns shadow-2xl rounded-3xl">
+    <div class="mx-auto max-w-5xl">
+      <div class="mx-auto max-w-2xl text-center">
+            <h2 class="text-4xl !bottom-4 relative font-bold tracking-tight text-neutral-900 dark:text-neutral-100 animate-fade-in">
+            {t("homepage.howItWorks.title")}
+            </h2>
+      </div>
+      <br>
+      <br>
+      <div class="grid grid-cols-1 gap-12 lg:grid-cols-3">
+            
+        <div class="relative text-center how-it-works-step group">
+      
+          <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-2xl font-bold text-blue-600 dark:bg-blue-900/30 dark:text-neutral-800 transition-transform group-hover:scale-110 group-hover:shadow-lg drop-shadow-2xl">
+            <span class="drop-shadow-lg">1</span>
+          </div>
+          <h3 class="mb-2 text-lg font-semibold text-neutral-900 dark:text-neutral-100 drop-shadow-lg">
+            {t("homepage.how.step1.title")}
+          </h3>
+          <p class="text-sm text-neutral-600 dark:text-neutral-400 drop-shadow-lg">
+            {t("homepage.how.step1.description")}
+          </p>
+        </div>
+        
+        <div class="relative text-center how-it-works-step group">
+          <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-2xl font-bold text-blue-600 dark:bg-blue-900/30 dark:text-neutral-800 transition-transform group-hover:scale-110 group-hover:shadow-lg drop-shadow-2xl">
+            <span class="drop-shadow-lg">2</span>
+          </div>
+          <h3 class="mb-6 text-lg font-semibold text-neutral-900 dark:text-neutral-100 drop-shadow-lg">
+            {t("homepage.how.step2.title")}
+          </h3>
+          <p class="text-sm text-neutral-600 dark:text-neutral-400 drop-shadow-lg">
+            {t("homepage.how.step2.description")}
+          </p>
+        </div>
+        
+        <div class="text-center how-it-works-step group">
+          <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-2xl font-bold text-neutral-600 dark:bg-green-900/30 dark:text-neutral-800 transition-transform group-hover:scale-110 group-hover:shadow-lg drop-shadow-2xl">
+            <span class="drop-shadow-lg">3</span>
+          </div>
+          <h3 class="mb-2 text-lg font-semibold text-neutral-900 dark:text-neutral-100 drop-shadow-lg">
+            {t("homepage.how.step3.title")}
+          </h3>
+          <p class="text-sm text-neutral-600 dark:text-neutral-400 drop-shadow-lg">
+            {t("homepage.how.step3.description")}
+          </p>
+        </div>
+
+       <div class="lg:col-span-3 mt-8 flex flex-wrap w-full items-center justify-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm  text-[#7D87FF] dark:text-[#A4B3FF] animate-fade-in">
+        <div class="flex items-center gap-1.5 sm:gap-2 font-semibold">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 shrink-0  fill-[#7D87FF] dark:fill-[#A4B3FF] font-semibold shadow-xl" width="48" height="48" viewBox="0 -960 960 960">
+            <path d="m346-60-76-130-151-31 17-147-96-112 96-111-17-147 151-31 76-131 134 62 134-62 77 131 150 31-17 147 96 111-96 112 17 147-150 31-77 130-134-62-134 62Zm27-79 107-45 110 45 67-100 117-30-12-119 81-92-81-94 12-119-117-28-69-100-108 45-110-45-67 100-117 28 12 119-81 94 81 92-12 121 117 28 70 100Zm107-341Zm-43 133 227-225-45-41-182 180-95-99-46 45 141 140Z"/>
+          </svg>
+          <span>{t("homepage.hero.gdpr")}</span>
+        </div>
+        <div class="flex items-center gap-1.5 sm:gap-2 font-semibold">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[#7D87FF] dark:stroke-[#A4B3FF] shadow-xl" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
+            <path d="M8.5 8.5v.01"/>
+            <path d="M16 15.5v.01"/>
+            <path d="M12 12v.01"/>
+            <path d="M11 17v.01"/>
+            <path d="M7 14v.01"/>
+          </svg>
+          <span>{t("homepage.hero.noCookies")}</span>
+        </div>
+        <div class="flex items-center gap-1.5 sm:gap-2 font-semibold">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[#7D87FF] dark:stroke-[#A4B3FF] shadow-xl" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
+          </svg>
+          <span>{t("homepage.hero.fiveMinSetup")}</span>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-6 sm:py-12">
+  <div class="mx-auto max-w-7xl">
+    <div class="mx-auto max-w-7xl">
+      <div class="grid gap-8 lg:grid-cols-2">
+        <!-- Trust Indicators Card -->
+        <div class="relative overflow-hidden rounded-3xl bg-white p-8 shadow-xl dark:bg-neutral-800/50 backdrop-blur">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="relative">
+            <h3 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
+              {t("homepage.trust.title")}
+            </h3>
+            <div class="space-y-4">
+              
+              <!-- Item 1 -->
+              <div class="flex items-start gap-3 text-neutral-800 dark:text-neutral-200">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="w-6 h-6 shrink-0 text-blue-500">
+                  <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+                <div>
+                  <p class="font-semibold text-neutral-900 dark:text-neutral-100">
+                    {t("homepage.trust.security.title")}
+                  </p>
+                  <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                    {t("homepage.trust.security.description")}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="flex items-start gap-3 text-neutral-800 dark:text-neutral-200">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="w-6 h-6 shrink-0 text-blue-500">
+                  <path d="M14 18a2 2 0 0 0-4 0"/>
+                  <path d="m19 11-2.11-6.657a2 2 0 0 0-2.752-1.148l-1.276.61A2 2 0 0 1 12 4H8.5a2 2 0 0 0-1.925 1.456L5 11"/>
+                  <path d="M2 11h20"/>
+                  <circle cx="17" cy="18" r="3"/>
+                  <circle cx="7" cy="18" r="3"/>
+                </svg>
+                <div>
+                  <p class="font-semibold text-neutral-900 dark:text-neutral-100">
+                    {t("homepage.trust.ownership.title")}
+                  </p>
+                  <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                    {t("homepage.trust.ownership.description")}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="flex items-start gap-3 text-neutral-800 dark:text-neutral-200">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="w-6 h-6 shrink-0 text-blue-500">
+                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                  <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                </svg>
+                <div>
+                  <p class="font-semibold text-neutral-900 dark:text-neutral-100">
+                    {t("homepage.trust.transparent.title")}
+                  </p>
+                  <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                    {t("homepage.trust.transparent.description")}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Get Help Card -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-neutral-800 dark:to-neutral-900 p-8 shadow-xl">
+          <div class="absolute bottom-0 left-0 -mb-12 -ml-12 h-32 w-32 rounded-full bg-blue-500/20 blur-3xl"></div>
+          <div class="relative">
+            <h3 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
+              {t("homepage.help.title")}
+            </h3>
+            <p class="text-neutral-600 dark:text-neutral-300 mb-6">
+              {t("homepage.help.description")}
+            </p>
+            <div class="space-y-3">
+              <a href={`/${lang}/faq`} class="flex items-center justify-between p-3 rounded-lg bg-white/50 dark:bg-neutral-800/50 backdrop-blur hover:bg-white/80 dark:hover:bg-neutral-800/80 transition-all group text-neutral-800 dark:text-neutral-200">
+                <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{t("homepage.help.faq")}</span>
+                <Icon name="arrowRight" class="w-4 h-4 text-neutral-800 dark:text-neutral-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+              </a>
+              <a href={`/${lang}/contact`} class="flex items-center justify-between p-3 rounded-lg bg-white/50 dark:bg-neutral-800/50 backdrop-blur hover:bg-white/80 dark:hover:bg-neutral-800/80 transition-all group text-neutral-800 dark:text-neutral-200">
+                <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{t("homepage.help.contact")}</span>
+                <Icon name="arrowRight" class="w-4 h-4 text-neutral-800 dark:text-neutral-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+              </a>
+              <a href={`/${lang}/changelog`} class="flex items-center justify-between p-3 rounded-lg bg-white/50 dark:bg-neutral-800/50 backdrop-blur hover:bg-white/80 dark:hover:bg-neutral-800/80 transition-all group text-neutral-800 dark:text-neutral-200">
+                <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{t("homepage.help.updates")}</span>
+                <Icon name="arrowRight" class="w-4 h-4 text-neutral-800 dark:text-neutral-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 </MainLayout>
 
-<script is:inline>
-  document.addEventListener("DOMContentLoaded", function () {
-    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-    anchorLinks.forEach((link) => {
-      link.addEventListener("click", function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute("href").substring(1);
-        const targetElement = document.getElementById(targetId);
+  document.addEventListener("DOMContentLoaded", () => {
+    gsap.registerPlugin(ScrollTrigger);
 
-        if (targetElement) {
-          targetElement.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
+    gsap.utils.toArray<HTMLElement>(".how-it-works-step").forEach((step, index) => {
+      gsap.fromTo(
+        step,
+        { opacity: 0, y: 50, scale: 0.9 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: step,
+            start: "top 80%",
+            toggleActions: "play none none reset",
+          },
+          delay: index * 0.2,
+        }
+      );
+    });
+
+    gsap.utils.toArray<HTMLElement>(".dashed-line").forEach((line) => {
+      gsap.fromTo(
+        line,
+        { scaleX: 0, transformOrigin: "left" },
+        {
+          scaleX: 1,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: line,
+            start: "top 80%",
+            toggleActions: "play none none reset",
+          },
+        }
+      );
+    });
+
+    const patternSection = document.getElementById('pattern-section');
+    const ctaPatternSection = document.getElementById('cta-pattern-section');
+
+    function updatePatternClass() {
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      
+      if (patternSection) {
+        if (isDarkMode) {
+          patternSection.classList.remove('step-patterns');
+          patternSection.classList.add('step-patterns-dark');
+        } else {
+          patternSection.classList.remove('step-patterns-dark');
+          patternSection.classList.add('step-patterns');
+        }
+      }
+      
+      if (ctaPatternSection) {
+        if (isDarkMode) {
+          ctaPatternSection.classList.remove('cta-pattern-light');
+          ctaPatternSection.classList.add('cta-pattern-dark');
+        } else {
+          ctaPatternSection.classList.remove('cta-pattern-dark');
+          ctaPatternSection.classList.add('cta-pattern-light');
+        }
+      }
+    }
+
+    updatePatternClass();
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          updatePatternClass();
         }
       });
     });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'theme') {
+        updatePatternClass();
+      }
+    });
   });
 </script>
+
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(25px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .step-patterns {
+    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='70' height='8' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='%23ffffff60'/><path d='M-.02 22c8.373 0 11.938-4.695 16.32-9.662C20.785 7.258 25.728 2 35 2c9.272 0 14.215 5.258 18.7 10.338C58.082 17.305 61.647 22 70.02 22M-.02 14.002C8.353 14 11.918 9.306 16.3 4.339 20.785-.742 25.728-6 35-6 44.272-6 49.215-.742 53.7 4.339c4.382 4.967 7.947 9.661 16.32 9.664M70 6.004c-8.373-.001-11.918-4.698-16.3-9.665C49.215-8.742 44.272-14 35-14c-9.272 0-14.215 5.258-18.7 10.339C11.918 1.306 8.353 6-.02 6.002' stroke-width='0.8' stroke='%23635e5e38' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>");
+  }
+
+  .step-patterns-dark {
+    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='70' height='8' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='%231f1f1fff'/><path d='M-.02 22c8.373 0 11.938-4.695 16.32-9.662C20.785 7.258 25.728 2 35 2c9.272 0 14.215 5.258 18.7 10.338C58.082 17.305 61.647 22 70.02 22M-.02 14.002C8.353 14 11.918 9.306 16.3 4.339 20.785-.742 25.728-6 35-6 44.272-6 49.215-.742 53.7 4.339c4.382 4.967 7.947 9.661 16.32 9.664M70 6.004c-8.373-.001-11.918-4.698-16.3-9.665C49.215-8.742 44.272-14 35-14c-9.272 0-14.215 5.258-18.7 10.339C11.918 1.306 8.353 6-.02 6.002' stroke-width='0.6' stroke='%23ffffff15' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>");
+  }
+
+  .cta-pattern-light {
+    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='70' height='8' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='%23ffffff60'/><path d='M-.02 22c8.373 0 11.938-4.695 16.32-9.662C20.785 7.258 25.728 2 35 2c9.272 0 14.215 5.258 18.7 10.338C58.082 17.305 61.647 22 70.02 22M-.02 14.002C8.353 14 11.918 9.306 16.3 4.339 20.785-.742 25.728-6 35-6 44.272-6 49.215-.742 53.7 4.339c4.382 4.967 7.947 9.661 16.32 9.664M70 6.004c-8.373-.001-11.918-4.698-16.3-9.665C49.215-8.742 44.272-14 35-14c-9.272 0-14.215 5.258-18.7 10.339C11.918 1.306 8.353 6-.02 6.002' stroke-width='0.8' stroke='%23635e5e38' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>");
+  }
+
+  .cta-pattern-dark {
+    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='70' height='8' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='%231f1f1fff'/><path d='M-.02 22c8.373 0 11.938-4.695 16.32-9.662C20.785 7.258 25.728 2 35 2c9.272 0 14.215 5.258 18.7 10.338C58.082 17.305 61.647 22 70.02 22M-.02 14.002C8.353 14 11.918 9.306 16.3 4.339 20.785-.742 25.728-6 35-6 44.272-6 49.215-.742 53.7 4.339c4.382 4.967 7.947 9.661 16.32 9.664M70 6.004c-8.373-.001-11.918-4.698-16.3-9.665C49.215-8.742 44.272-14 35-14c-9.272 0-14.215 5.258-18.7 10.339C11.918 1.306 8.353 6-.02 6.002' stroke-width='0.6' stroke='%23ffffff15' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>");
+  }
+
+  .action-pattern {
+    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='60' height='60' patternTransform='scale(1) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='%231d1d1dff'/><path d='m54.002 6.014-17.995 17.99h17.995V6.014H36.007v17.99L29.991 30H0V0l5.998 6.014 17.995 17.99V6.014H5.998v17.99h17.995L29.991 30v30H0l5.998-5.996 17.995-18.008H5.998v18.008h17.995V35.996L29.991 30H60v30l-5.998-5.996-17.995-18.008v18.008h17.995V35.996H36.007L29.991 30V0H60z'  stroke-width='1' stroke='none' fill='%23000000ff'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>")
+  }
+  .animate-fade-in {
+    animation: fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+  }
+
+  .bg-grid-neutral-100\/50 {
+    background-image: url("data:image/svg+xml,%3csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%239ca3af' fill-opacity='0.1'%3e%3cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e");
+  }
+
+  .dark .bg-grid-neutral-800\/30 {
+    background-image: url("data:image/svg+xml,%3csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%236b7280' fill-opacity='0.1'%3e%3cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e");
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-fade-in-up,
+    .group-hover\:scale-105,
+    .group-hover\:scale-110,
+    .group-hover\:rotate-45 {
+      animation: none;
+      transition: none;
+      transform: none;
+    }
+  }
+
+   .how-it-works-step {
+    position: relative;
+  }
+
+  .how-it-works-step > div:first-child {
+    position: relative;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark .how-it-works-step > div:first-child {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.25) 100%);
+  }
+
+  .how-it-works-step:hover > div:first-child {
+    background: linear-gradient(135deg, #7D87FF 0%, #6366F1 100%);
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 20px 40px -10px rgba(125, 135, 255, 0.5);
+  }
+
+  .how-it-works-step:hover > div:first-child span {
+    color: white !important;
+    transform: scale(1.1);
+  }
+
+  .how-it-works-step:last-child > div:first-child {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  }
+
+  .dark .how-it-works-step:last-child > div:first-child {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.25) 100%);
+  }
+
+  .how-it-works-step:last-child:hover > div:first-child {
+    background: linear-gradient(135deg, #7D87FF 0%, #6366F1 100%);
+  }
+
+  .how-it-works-step > div:first-child::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(135deg, #7D87FF, #6366F1);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .how-it-works-step:hover > div:first-child::before {
+    opacity: 1;
+  }
+</style>

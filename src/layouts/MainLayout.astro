@@ -50,9 +50,8 @@ interface Props {
     <link rel="apple-touch-icon" sizes="152x152" href="/favicons/favicon-152-precomposed.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/favicons/favicon-180-precomposed.png" />
     <link rel="manifest" href="/manifest.json" />
-   
+    <script is:inline src="https://peekvisor.vercel.app/hello.js"></script>
     <script is:inline>
-      
       if (
         localStorage.getItem("hs_theme") === "dark" ||
         (!("hs_theme" in localStorage) &&
@@ -66,12 +65,13 @@ interface Props {
       window.mytuner_scripts = window.mytuner_scripts || {};
       window.mytuner_scripts["schedule-v1.js_queue"] = window.mytuner_scripts["schedule-v1.js_queue"] || [];
       window.mytuner_scripts["playlist-v1.js_queue"] = window.mytuner_scripts["playlist-v1.js_queue"] || [];
+      
     </script>
+    
   </head>
   <body
     class="bg-neutral-200 connected-pattern selection:bg-brand-coral selection:text-neutral-700 dark:bg-neutral-800 flex flex-col min-h-screen"
   >
-
     <div class="mx-auto max-w-(--breakpoint-2xl) px-4 sm:px-6 lg:px-8 flex-grow">
       <Navbar />
       <main>
@@ -79,7 +79,6 @@ interface Props {
       </main>
     </div>
     <FooterSection />
-  
     <script>
       // https://preline.co
       import "preline/preline.js";

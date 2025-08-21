@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'preline/variants.css';
+@import "tailwindcss";
+@import "preline/variants.css";
 @plugin '@tailwindcss/forms';
 
 @custom-variant dark (&:is(.dark *));
@@ -126,43 +126,42 @@
   .btn-gradient {
     background-image: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
     color: white;
-   }
-   
-   .dark .btn-gradient {
+  }
+
+  .dark .btn-gradient {
     background-image: linear-gradient(to bottom, #f5f5f5, #e5e5e5);
     color: #1f2937;
-   }
-   
-   .btn-gradient-hover:hover {
+  }
+
+  .btn-gradient-hover:hover {
     background-image: linear-gradient(to bottom, #3a3a3a, #2a2a2a);
     color: white;
-   }
+  }
 
-   .connected-pattern {
-    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='40' height='40' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='%23ffffffff'/><path d='M0 10v20m40-20v20M10 40h20M10 0h20m10 50c-5.523 0-10-4.477-10-10s4.477-10 10-10 10 4.477 10 10-4.477 10-10 10zM10 40c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10 10 4.477 10 10m30-30c-5.523 0-10-4.477-10-10s4.477-10 10-10S50-5.523 50 0s-4.477 10-10 10zM10 0c0 5.523-4.477 10-10 10S-10 5.523-10 0s4.477-10 10-10S10-5.523 10 0'  stroke-width='1' stroke='%23ecc94b20' fill='none'/><path d='M20-10v20m0 20v20m-30-30h20m20 0h20m-20 0c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10 10 4.477 10 10'  stroke-width='1' stroke='%237a85ff15' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>")
-   }
+  .connected-pattern {
+    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='40' height='40' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='%23ffffffff'/><path d='M0 10v20m40-20v20M10 40h20M10 0h20m10 50c-5.523 0-10-4.477-10-10s4.477-10 10-10 10 4.477 10 10-4.477 10-10 10zM10 40c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10 10 4.477 10 10m30-30c-5.523 0-10-4.477-10-10s4.477-10 10-10S50-5.523 50 0s-4.477 10-10 10zM10 0c0 5.523-4.477 10-10 10S-10 5.523-10 0s4.477-10 10-10S10-5.523 10 0'  stroke-width='1' stroke='%23ecc94b20' fill='none'/><path d='M20-10v20m0 20v20m-30-30h20m20 0h20m-20 0c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10 10 4.477 10 10'  stroke-width='1' stroke='%237a85ff15' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>");
+  }
 
-   .dark .connected-pattern {
-    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='40' height='40' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(240,6.7%,10.6%,1)'/><path d='M0 10v20m40-20v20M10 40h20M10 0h20m10 50c-5.523 0-10-4.477-10-10s4.477-10 10-10 10 4.477 10 10-4.477 10-10 10zM10 40c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10 10 4.477 10 10m30-30c-5.523 0-10-4.477-10-10s4.477-10 10-10S50-5.523 50 0s-4.477 10-10 10zM10 0c0 5.523-4.477 10-10 10S-10 5.523-10 0s4.477-10 10-10S10-5.523 10 0'  stroke-width='1' stroke='%23ecc94b20' fill='none'/><path d='M20-10v20m0 20v20m-30-30h20m20 0h20m-20 0c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10 10 4.477 10 10'  stroke-width='1' stroke='%237a85ff15' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>")
-    }
-    
-   
-   .dark .btn-gradient-hover:hover {
+  .dark .connected-pattern {
+    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='40' height='40' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(240,6.7%,10.6%,1)'/><path d='M0 10v20m40-20v20M10 40h20M10 0h20m10 50c-5.523 0-10-4.477-10-10s4.477-10 10-10 10 4.477 10 10-4.477 10-10 10zM10 40c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10 10 4.477 10 10m30-30c-5.523 0-10-4.477-10-10s4.477-10 10-10S50-5.523 50 0s-4.477 10-10 10zM10 0c0 5.523-4.477 10-10 10S-10 5.523-10 0s4.477-10 10-10S10-5.523 10 0'  stroke-width='1' stroke='%23ecc94b20' fill='none'/><path d='M20-10v20m0 20v20m-30-30h20m20 0h20m-20 0c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10 10 4.477 10 10'  stroke-width='1' stroke='%237a85ff15' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>");
+  }
+
+  .dark .btn-gradient-hover:hover {
     background-image: linear-gradient(to bottom, #ffffff, #f0f0f0);
     color: #1f2937;
-   }
+  }
   .text-brand {
     color: oklch(0.673 0.182 276.935);
   }
 
   .filter-btn {
-    @apply px-4 py-2 rounded-full text-sm font-semibold border-2 border-transparent bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-all duration-300;
+    @apply rounded-full border-2 border-transparent bg-neutral-200 px-4 py-2 text-sm font-semibold text-neutral-700 transition-all duration-300 dark:bg-neutral-800 dark:text-neutral-300;
   }
   .filter-btn:hover {
     @apply bg-neutral-300 dark:bg-neutral-700;
   }
   .filter-btn.active {
-    @apply bg-gradient-to-r from-[#576469] to-[#393E41] text-white shadow-md scale-105;
+    @apply scale-105 bg-gradient-to-r from-[#576469] to-[#393E41] text-white shadow-md;
   }
 
   .img-container-loader {
@@ -175,7 +174,7 @@
   }
 
   .img-container-loader::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
