@@ -10,6 +10,34 @@ export const Icons = {
     height: 48,
     viewBox: "0 -960 960 960",
   },
+
+  chatBubbleFilled: {
+    paths: [
+      {
+        d: "M80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z",
+      },
+    ],
+    class: "mt-1.5 h-6 w-6 shrink-0 fill-indigo-400 dark:fill-indigo-300",
+    width: 48,
+    height: 48,
+    viewBox: "0 -960 960 960",
+    fill: "currentColor",
+  },
+
+  mailFilled: {
+    paths: [
+      {
+        d: "M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v400h640v-400L480-440Zm0-80 320-200H160l320 200ZM160-640v-80 480-400Z",
+      },
+    ],
+    class: "mt-1.5 h-6 w-6 shrink-0 fill-indigo-400 dark:fill-indigo-300",
+    width: 48,
+    height: 48,
+    viewBox: "0 -960 960 960",
+    fill: "currentColor",
+  },
+
+
   books: {
     paths: [
       {
@@ -116,6 +144,22 @@ export const Icons = {
     fillRule: "evenodd",
     clipRule: "evenodd",
   },
+  check: {
+    paths: [
+      {
+        d: "M5 13l4 4L19 7",
+      },
+    ],
+    class: "w-4 h-4 shrink-0 text-neutral-700 dark:text-neutral-300",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    stroke: "currentColor",
+  },
   bookmark: {
     paths: [
       {
@@ -130,6 +174,22 @@ export const Icons = {
     viewBox: "0 0 24 24",
     fill: "none",
     strokeWidth: "1.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    stroke: "currentColor",
+  },
+  arrowLeft: {
+    paths: [
+      {
+        d: "m15 18-6-6 6-6",
+      },
+    ],
+    class: "h-4 w-4 shrink-0 transition duration-300 group-hover:-translate-x-1",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    strokeWidth: "2",
     strokeLinecap: "round",
     strokeLinejoin: "round",
     stroke: "currentColor",
@@ -180,6 +240,17 @@ export const Icons = {
     class: "size-4 shrink-0 fill-current",
     viewBox: "0 0 24 24",
     stroke: "currentColor",
+  },
+  linkedinFooter: {
+    paths: [
+      {
+        d: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
+      },
+    ],
+    class: "h-4 w-4 shrink-0 fill-current fill-indigo-400 dark:fill-indigo-300",
+    viewBox: "0 0 24 24",
+    fill: "currentColor",
+    title: "LinkedIn",
   },
   share: {
     paths: [
@@ -842,6 +913,64 @@ export const Icons = {
     fill: "currentColor",
   },
 
+  trash: {
+    paths: [
+      {
+        d: "M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z",
+      },
+    ],
+    class: "w-4 h-4 shrink-0 text-red-600 dark:text-red-400",
+    width: 48,
+    height: 48,
+    viewBox: "0 -960 960 960",
+    fill: "currentColor",
+  },
+
+  settingsCard: {
+    paths: [
+      {
+        d: "m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-1 13.5l103 78-110 190-119-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z",
+      },
+    ],
+    class: "w-4 h-4 shrink-0 text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300",
+    width: 48,
+    height: 48,
+    viewBox: "0 -960 960 960",
+    fill: "currentColor",
+  },
+
+  cookie: {
+    paths: [
+      {
+        d: "M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5",
+      },
+      {
+        d: "M8.5 8.5v.01",
+      },
+      {
+        d: "M16 15.5v.01",
+      },
+      {
+        d: "M12 12v.01",
+      },
+      {
+        d: "M11 17v.01",
+      },
+      {
+        d: "M7 14v.01",
+      },
+    ],
+    class: "w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-neutral-700 dark:text-neutral-300",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    stroke: "currentColor",
+  },
+
   plus: {
     paths: [
       {
@@ -869,13 +998,40 @@ export const Icons = {
     fill: "currentColor",
   },
 
+
+  clock: {
+    paths: [
+      {
+        d: "m612-292 56-56-148-148v-184h-80v216l172 172ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160Z",
+      },
+    ],
+    class: "w-4 h-4 shrink-0",
+    width: 48,
+    height: 48,
+    viewBox: "0 -960 960 960",
+    fill: "currentColor",
+  },
+
+  hourglass: {
+    paths: [
+      {
+        d: "M320-160h320v-120q0-66-47-113t-113-47q-66 0-113 47t-47 113v120Zm160-360q66 0 113-47t47-113v-120H320v120q0 66 47 113t113 47ZM200-80v-80h40v-40q0-83 58.5-141.5T440-400q-83 0-141.5-58.5T240-600v-40h-40v-80h560v80h-40v40q0 83-58.5 141.5T520-400q83 0 141.5 58.5T720-200v40h40v80H200Zm280-400Zm0 240Z",
+      },
+    ],
+    class: "w-4 h-4 shrink-0",
+    width: 48,
+    height: 48,
+    viewBox: "0 -960 960 960",
+    fill: "currentColor",
+  },
+
   analytics: {
     paths: [
       {
         d: "M280-280h80v-200h-80v200Zm160 0h80v-400h-80v400Zm160 0h80v-120h-80v120ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z",
       },
     ],
-    class: "w-4 h-4 shrink-0 text-green-700 dark:text-green-300",
+    class: "w-4 h-4 shrink-0",
     width: 48,
     height: 48,
     viewBox: "0 -960 960 960",
@@ -888,7 +1044,7 @@ export const Icons = {
         d: "M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z",
       },
     ],
-    class: "w-4 h-4 shrink-0 text-blue-700 dark:text-blue-300",
+    class: "w-4 h-4 shrink-0 text-neutral-700 dark:text-neutral-300",
     width: 48,
     height: 48,
     viewBox: "0 -960 960 960",
@@ -902,7 +1058,7 @@ export const Icons = {
         d: "M120-120v-80l80-80v160h-80Zm160 0v-200l80-80v280h-80Zm160 0v-280l80 80v200h-80Zm160 0v-200l80-80v280h-80Zm160 0v-400l80-80v480h-80ZM120-320l280-280 160 160 280-280v80L560-360 400-520 200-320h-80Z",
       },
     ],
-    class: "w-6 h-6 shrink-0 text-blue-600 dark:text-blue-400",
+    class: "w-6 h-6 shrink-0 text-neutral-700 dark:text-neutral-300",
     width: 48,
     height: 48,
     viewBox: "0 -960 960 960",
@@ -915,7 +1071,7 @@ export const Icons = {
         d: "M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z",
       },
     ],
-    class: "w-5 h-5 shrink-0 text-blue-600 dark:text-blue-400",
+    class: "w-5 h-5 shrink-0 text-neutral-700 dark:text-neutral-300",
     width: 48,
     height: 48,
     viewBox: "0 -960 960 960",
@@ -928,7 +1084,7 @@ export const Icons = {
         d: "m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z",
       },
     ],
-    class: "w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400",
+    class: "w-4 h-4 shrink-0 text-neutral-700 dark:text-neutral-300",
     width: 48,
     height: 48,
     viewBox: "0 -960 960 960",

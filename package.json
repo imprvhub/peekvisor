@@ -1,7 +1,7 @@
 {
   "name": "peekvisor",
   "type": "module",
-  "version": "0.4.8",
+  "version": "0.4.10",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -14,7 +14,7 @@
     "@astrojs/mdx": "^4.3.0",
     "@astrojs/sitemap": "^3.4.1",
     "@astrojs/starlight": "^0.34.4",
-    "@astrojs/vercel": "^8.2.1",
+    "@astrojs/vercel": "^8.2.6",
     "@libsql/client": "^0.15.9",
     "@paralleldrive/cuid2": "^2.2.2",
     "@tailwindcss/vite": "^4.1.11",
@@ -26,18 +26,23 @@
     "clipboard": "^2.0.11",
     "drizzle-orm": "^0.44.2",
     "globby": "^14.1.0",
-    "gsap": "^3.12.7",
+    "gsap": "^3.13.0",
     "html-minifier-terser": "^7.2.0",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
+    "leaflet": "^1.9.4",
     "nanoid": "^5.1.5",
     "preline": "^3.1.0",
     "query-string": "^9.2.1",
     "rimraf": "^6.0.1",
     "sharp": "^0.34.2",
     "sharp-ico": "^0.1.5",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.10",
+    "@types/leaflet": "^1.9.20",
     "astro-vtbot": "^2.1.5",
     "drizzle-kit": "^0.31.4",
     "prettier": "^3.6.2",
