@@ -60,7 +60,7 @@ const navLinks = [
 ---
 
 <header
-  class="sticky inset-x-0 top-4 z-50 flex w-full flex-wrap text-sm md:flex-nowrap md:justify-start"
+  class="sticky inset-x-0 top-4 z-[1000] flex w-full flex-wrap text-sm md:flex-nowrap md:justify-start"
 >
   <nav
     class="relative mx-2 w-full rounded-[36px] border border-yellow-100/40 bg-indigo-50/40 px-4 py-5 backdrop-blur-md md:flex md:items-center md:justify-between md:px-6 md:py-4 lg:px-8 xl:mx-auto dark:border-neutral-700/40 dark:bg-neutral-800/80 dark:backdrop-blur-md"
@@ -130,83 +130,9 @@ const navLinks = [
         class="mt-5 flex flex-col items-start gap-x-0 gap-y-4 md:mt-0 md:flex-row md:items-center md:justify-end md:gap-x-4 md:gap-y-0 md:ps-7 lg:gap-x-7"
       >
         {/* Show Home and Pricing links on desktop */}
-        <div class="hidden md:flex md:gap-x-4 lg:gap-x-7">
+        <div class="hidden md:flex md:items-center md:gap-x-4 lg:gap-x-7">
           <NavLink url={navLinks[0].url} name={navLinks[0].name} />
           <NavLink url={navLinks[1].url} name={navLinks[1].name} />
-
-          {
-            isAuthenticated && (
-              <NavLink url={`/${lang}/dashboard`} name={t("nav.dashboard")} />
-            )
-          }
-
-          {
-            isAuthenticated && userWebsites.length > 0 && (
-              <div class="hs-dropdown relative inline-flex">
-                <button
-                  type="button"
-                  class="hs-dropdown-toggle hover:text-brand flex items-center gap-x-1 text-base font-medium text-neutral-600 transition duration-300 md:text-sm dark:text-neutral-400 dark:hover:text-orange-300"
-                >
-                  {t("nav.websites")}
-                  <svg
-                    class="hs-dropdown-open:rotate-180 h-4 w-4 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-
-                <div class="hs-dropdown-menu hs-dropdown-open:opacity-100 z-10 hidden min-w-60 rounded-lg bg-white p-2 opacity-0 shadow-md transition-opacity duration-300 dark:border dark:border-neutral-700 dark:bg-neutral-800">
-                  <div class="py-2 first:pt-0 last:pb-0">
-                    <span class="block px-3 py-2 text-xs font-medium text-neutral-400 uppercase dark:text-neutral-500">
-                      Your Websites
-                    </span>
-                    {userWebsites.slice(0, 5).map((website: any) => (
-                      <a
-                        class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-neutral-800 hover:bg-neutral-100 focus:ring-2 focus:ring-blue-500 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
-                        href={`/${lang}/analytics/${website.id}`}
-                      >
-                        <div class="flex h-6 w-6 items-center justify-center rounded bg-blue-100 dark:bg-blue-900/30">
-                          <svg
-                            class="h-3 w-3 text-blue-600 dark:text-blue-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                          </svg>
-                        </div>
-                        <div class="grow">
-                          <span class="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
-                            {website.name}
-                          </span>
-                          <span class="block text-xs text-neutral-500 dark:text-neutral-400">
-                            {website.domain}
-                          </span>
-                        </div>
-                      </a>
-                    ))}
-                    {userWebsites.length > 5 && (
-                      <div class="py-2 first:pt-0 last:pb-0">
-                        <a
-                          class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-neutral-800 hover:bg-neutral-100 focus:ring-2 focus:ring-blue-500 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
-                          href={`/${lang}/websites`}
-                        >
-                          View all websites →
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          }
         </div>
 
         {/* Show all navigation links on mobile */}
@@ -238,7 +164,7 @@ const navLinks = [
         {
           isAuthenticated && userInfo && (
             <div class="hidden md:block">
-              <AvatarDropdown userInfo={userInfo} />
+              <AvatarDropdown userInfo={userInfo} userWebsites={userWebsites} />
             </div>
           )
         }

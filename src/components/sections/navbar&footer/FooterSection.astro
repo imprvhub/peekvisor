@@ -28,15 +28,12 @@ const footerLinks = [
 ];
 
 const socialLinks = {
-  facebook: "#",
-  x: "#",
-  github: "https://github.com/imprvhub",
-  google: "#",
-  slack: "#",
+  github: "https://github.com/peekvisor",
+  linkedin: "https://linkedin.com/company/peekvisor-analytics",
 };
 ---
 
-<footer class="w-full bg-neutral-300 dark:bg-neutral-900">
+<footer class="w-full bg-neutral-100 dark:bg-neutral-900">
   <div
     class="mx-auto w-full max-w-[85rem] px-4 py-10 sm:px-6 lg:px-16 lg:pt-20 2xl:max-w-(--breakpoint-2xl)"
   >
@@ -77,24 +74,12 @@ const socialLinks = {
 
       <!-- Social Brands -->
       <div>
-        <FooterSocialLink url={socialLinks.facebook}
-          ><Icon name="facebookFooter" />
-        </FooterSocialLink>
-
-        <FooterSocialLink url={socialLinks.x}
-          ><Icon name="xFooter" /></FooterSocialLink
-        >
-
         <FooterSocialLink url={socialLinks.github}
           ><Icon name="githubFooter" />
         </FooterSocialLink>
 
-        <FooterSocialLink url={socialLinks.google}
-          ><Icon name="googleFooter" />
-        </FooterSocialLink>
-
-        <FooterSocialLink url={socialLinks.slack}
-          ><Icon name="slackFooter" />
+        <FooterSocialLink url={socialLinks.linkedin}
+          ><Icon name="linkedinFooter" />
         </FooterSocialLink>
       </div>
     </div>

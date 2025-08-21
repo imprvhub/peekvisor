@@ -31,7 +31,16 @@ const t = useTranslations(lang);
         >
           {t("contact.form.title")}
         </h2>
-        <form>
+        
+        <div id="success-message" class="hidden mb-4 p-4 rounded-lg bg-indigo-400 text-white">
+          <p>{t("contact.form.result")}</p>
+        </div>
+        
+        <div id="error-message" class="hidden mb-4 p-4 rounded-lg bg-red-100 border border-red-400 text-red-700">
+          <p id="error-text">Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.</p>
+        </div>
+
+        <form id="contact-form">
           <div class="grid gap-4">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <TextInput
@@ -42,7 +51,7 @@ const t = useTranslations(lang);
               <TextInput
                 id="hs-lastname-contacts"
                 label={t("contact.form.lastName")}
-                name="hs-firstname-contacts"
+                name="hs-lastname-contacts"
               />
             </div>
             <EmailContactInput id="hs-email-contacts" />
@@ -57,10 +66,10 @@ const t = useTranslations(lang);
                 name="contact-reason"
                 class="block w-full rounded-lg border-neutral-200 px-4 py-3 text-sm focus:border-neutral-500 focus:ring-neutral-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:focus:ring-neutral-600"
               >
-                <option selected>{t("contact.form.reason.select")}</option>
-                <option>{t("contact.form.reason.billing")}</option>
-                <option>{t("contact.form.reason.feedback")}</option>
-                <option>{t("contact.form.reason.other")}</option>
+                <option value="">{t("contact.form.reason.select")}</option>
+                <option value="feature">{t("contact.form.reason.billing")}</option>
+                <option value="support">{t("contact.form.reason.feedback")}</option>
+                <option value="other">{t("contact.form.reason.other")}</option>
               </select>
             </div>
             <TextAreaInput
@@ -71,7 +80,19 @@ const t = useTranslations(lang);
           </div>
 
           <div class="mt-4 grid">
-            <AuthBtn title={t("contact.form.send")} />
+            <button
+              type="submit"
+              id="submit-button"
+              class="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-neutral-800 hover:shadow-xl hover:-translate-y-0.5 hover:scale-105 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
+            >
+              <span id="button-text">{t("contact.form.send")}</span>
+              <span id="loading-spinner" class="hidden ml-2">
+                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </span>
+            </button>
           </div>
 
           <div class="mt-3 text-center">
@@ -90,7 +111,7 @@ const t = useTranslations(lang);
           linkTitle={t("contact.blocks.faq.linkTitle")}
           linkURL={`/${lang}/faq`}
           isArrowVisible={true}
-          ><Icon name="chatBubble" />
+          ><Icon name="chatBubbleFilled" />
         </ContactIconBlock>
         <ContactIconBlock
           heading={t("contact.blocks.email.heading")}
@@ -98,7 +119,7 @@ const t = useTranslations(lang);
           isLinkVisible={true}
           linkTitle="info@peekvisor.com"
           linkURL="mailto:info@peekvisor.com"
-          ><Icon name="envelopeOpen" />
+          ><Icon name="mailFilled" />
         </ContactIconBlock>
       </div>
     </div>
@@ -113,9 +134,17 @@ const t = useTranslations(lang);
     </div>
   </div>
 </section>
+
 <script define:vars={{ lang }}>
   document.addEventListener("DOMContentLoaded", function () {
     const backButton = document.getElementById("back-button");
+    const contactForm = document.getElementById("contact-form");
+    const submitButton = document.getElementById("submit-button");
+    const buttonText = document.getElementById("button-text");
+    const loadingSpinner = document.getElementById("loading-spinner");
+    const successMessage = document.getElementById("success-message");
+    const errorMessage = document.getElementById("error-message");
+    const errorText = document.getElementById("error-text");
 
     if (backButton) {
       backButton.addEventListener("click", function () {
@@ -123,6 +152,77 @@ const t = useTranslations(lang);
           window.history.back();
         } else {
           window.location.href = `/${lang}/`;
+        }
+      });
+    }
+
+    if (contactForm) {
+      contactForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        
+        successMessage.classList.add("hidden");
+        errorMessage.classList.add("hidden");
+        
+        submitButton.disabled = true;
+        buttonText.classList.add("hidden");
+        loadingSpinner.classList.remove("hidden");
+
+        const firstNameInput = document.getElementById("hs-firstname-contacts");
+        const lastNameInput = document.getElementById("hs-lastname-contacts");
+        const emailInput = document.getElementById("hs-email-contacts");
+        const reasonSelect = document.getElementById("contact-reason");
+        const detailsTextarea = document.getElementById("hs-about-contacts");
+
+        const firstName = firstNameInput?.value?.trim() || "";
+        const lastName = lastNameInput?.value?.trim() || "";
+        const email = emailInput?.value?.trim() || "";
+        const reason = reasonSelect?.value || "";
+        const details = detailsTextarea?.value?.trim() || "";
+
+        if (!firstName || !lastName || !email || !reason || !details) {
+          errorText.textContent = "Por favor, completa todos los campos requeridos.";
+          errorMessage.classList.remove("hidden");
+          submitButton.disabled = false;
+          buttonText.classList.remove("hidden");
+          loadingSpinner.classList.add("hidden");
+          return;
+        }
+
+        // AQUÍ ESTÁ LA CORRECCIÓN - Enviamos los datos con los nombres que espera el backend
+        const data = {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          reason: reason,
+          details: details
+        };
+
+        try {
+          const response = await fetch("https://peekvisor-form.vercel.app/api/contact", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+
+          if (response.ok && result.success) {
+            successMessage.classList.remove("hidden");
+            contactForm.reset();
+          } else {
+            errorText.textContent = result.error || "Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.";
+            errorMessage.classList.remove("hidden");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          errorText.textContent = "Error de conexión. Por favor, verifica tu conexión a internet e inténtalo de nuevo.";
+          errorMessage.classList.remove("hidden");
+        } finally {
+          submitButton.disabled = false;
+          buttonText.classList.remove("hidden");
+          loadingSpinner.classList.add("hidden");
         }
       });
     }
