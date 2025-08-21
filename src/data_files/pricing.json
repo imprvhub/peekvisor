@@ -46,11 +46,7 @@
       "Data export (Excel/CSV)",
       "Weekly email reports"
     ],
-    "notIncluded": [
-      "CO₂ reporting",
-      "Custom subdomains",
-      "API access"
-    ],
+    "notIncluded": ["CO₂ reporting", "Custom subdomains", "API access"],
     "purchaseBtnTitle": "Subscribe",
     "purchaseLink": "#"
   },
