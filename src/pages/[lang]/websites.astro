@@ -398,34 +398,62 @@ try {
     });
 
     function loadFavicons() {
-        const faviconImages = document.querySelectorAll('.website-favicon');
+      const faviconImages = document.querySelectorAll('.website-favicon');
+      
+      faviconImages.forEach((img: Element, index: number) => {
+        const domain = img.getAttribute('data-domain');
+        const fallback = img.parentElement?.querySelector('.website-fallback-icon');
         
-        faviconImages.forEach((img: Element, index: number) => {
-          const domain = img.getAttribute('data-domain');
-          const fallback = img.parentElement?.querySelector('.website-fallback-icon');
-          
-          if (!domain || !fallback) return;
-          fallback.classList.remove('hidden');
-          img.classList.add('hidden');
-          
-          const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/^www\./, '');
-    
-          const directFaviconUrl = `https://${cleanDomain}/favicon.ico`;
+        if (!domain || !fallback) return;
+        fallback.classList.remove('hidden');
+        img.classList.add('hidden');
+        
+        const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/^www\./, '');
+
+        const faviconUrls = [
+          `https://${cleanDomain}/favicon.ico`,
+          `https://${cleanDomain}/favicon.png`,
+          `https://${cleanDomain}/apple-touch-icon.png`,
+          `https://${cleanDomain}/apple-touch-icon-precomposed.png`,
+          `https://${cleanDomain}/icon.png`
+        ];
+        
+        let currentIndex = 0;
+        
+        function tryNextFavicon() {
+          if (currentIndex >= faviconUrls.length) {
+            console.log(`⚠️ No favicon found for ${domain}, keeping fallback`);
+            return;
+          }
           
           const tempImg = new Image();
           
           tempImg.onload = () => {
             if (tempImg.width >= 24 && tempImg.height >= 24) {
-              img.setAttribute('src', directFaviconUrl);
+              img.setAttribute('src', faviconUrls[currentIndex]);
               img.classList.remove('hidden');
-              fallback.classList.add('hidden');
+              if (fallback) {
+                fallback.classList.add('hidden');
+              }
+              console.log(`✅ Favicon loaded for ${domain} from ${faviconUrls[currentIndex]}`);
             } else {
-              console.log(`⚠️ Direct favicon too small for ${domain}, keeping fallback`);
+              console.log(`⚠️ Favicon too small for ${domain} from ${faviconUrls[currentIndex]}, trying next...`);
+              currentIndex++;
+              tryNextFavicon();
             }
-          };          
-          tempImg.src = directFaviconUrl;
-        });
-      }
+          };
+          
+          tempImg.onerror = () => {
+            currentIndex++;
+            tryNextFavicon();
+          };
+          
+          tempImg.src = faviconUrls[currentIndex];
+        }
+        
+        tryNextFavicon();
+      });
+    }
 
     document
       .getElementById("add-website-btn")
