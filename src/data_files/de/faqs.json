@@ -1,0 +1,53 @@
+{
+  "subTitle": "Finden Sie schnelle Antworten auf häufige Fragen zu PeekVisor und seinen datenschutzfreundlichen Analysefunktionen.",
+  "faqs": [
+    {
+      "question": "Was ist PeekVisor und wie schützt es die Privatsphäre der Nutzer?",
+      "answer": "PeekVisor ist eine datenschutzfreundliche Analyseplattform, die umfassende Einblicke in das Publikum liefert, ohne die Benutzerdaten zu gefährden. Wir sind vollständig DSGVO-konform und verwenden keine Cookies oder sammeln persönliche Informationen, wodurch ein vollständiger Datenschutz für Website-Besucher gewährleistet wird."
+    },
+    {
+      "question": "Wie viele Websites kann ich mit PeekVisor tracken?",
+      "answer": "Die Anzahl der Websites hängt von Ihrem Plan ab. Der Basis-Plan ermöglicht das Tracking für 1 Website, während höhere Pläne mehrere Websites unterstützen, wobei unser Top-Plan unbegrenztes Website-Tracking bietet."
+    },
+    {
+      "question": "Welche Analysedaten bietet PeekVisor?",
+      "answer": "PeekVisor bietet Kernanalysen einschließlich Seitenaufrufen, Besucherzahlen, geografischen Daten (Länder), Geräteinformationen und Browser-Statistiken. Erweiterte Pläne umfassen auch benutzerdefiniertes Event-Tracking, UTM-Kampagnenüberwachung und Umweltauswirkungsberichte."
+    },
+    {
+      "question": "Wie lange werden meine Analysedaten aufbewahrt?",
+      "answer": "Die Datenaufbewahrung variiert je nach Plan. Der Basis-Plan bewahrt Daten für 30 Tage auf, während Premium-Pläne verlängerte Aufbewahrungsfristen bieten, wobei unsere höchste Stufe unbegrenzte Datenaufbewahrung bietet."
+    },
+    {
+      "question": "Bietet PeekVisor Umweltauswirkungs-Tracking?",
+      "answer": "Ja, unsere erweiterten Pläne umfassen CO₂- und Umwelt-Tracking-Funktionen, mit denen Sie die Umweltauswirkungen Ihres Website-Traffics und Ihrer digitalen Aktivitäten überwachen und messen können."
+    },
+    {
+      "question": "Kann ich meine Analysedaten exportieren?",
+      "answer": "Alle Pläne beinhalten grundlegende Datenexportfunktionen. Premium-Pläne bieten erweiterte Exportoptionen einschließlich Excel- und CSV-Formaten für umfassende Datenanalyse und Berichterstattung."
+    },
+    {
+      "question": "Was sind benutzerdefinierte Events und wie funktionieren sie?",
+      "answer": "Benutzerdefinierte Events ermöglichen es Ihnen, spezifische Benutzerinteraktionen auf Ihrer Website über Standard-Seitenaufrufe hinaus zu verfolgen, wie z.B. Button-Klicks, Formularübermittlungen oder Downloads. Diese Funktion ist in unseren Premium-Plänen verfügbar."
+    },
+    {
+      "question": "Bietet PeekVisor API-Zugriff?",
+      "answer": "API-Zugriff ist in unserem Top-Tier-Plan verfügbar, sodass Entwickler PeekVisor-Daten direkt in ihre Anwendungen integrieren und benutzerdefinierte Analyselösungen erstellen können."
+    },
+    {
+      "question": "Welche Zahlungsmethoden werden akzeptiert und wie verwalte ich die Abrechnung?",
+      "answer": "Zahlungen werden sicher über LemonSqueezy, unseren vertrauenswürdigen Zahlungspartner, abgewickelt. Sie können direkt von Ihrem PeekVisor-Dashboard auf Ihr Abrechnungsportal zugreifen, um Abonnements zu verwalten, Zahlungsmethoden zu aktualisieren und Rechnungen einzusehen. LemonSqueezy akzeptiert gängige Kreditkarten und verschiedene internationale Zahlungsmethoden."
+    },
+    {
+      "question": "Kann ich eine Rückerstattung erhalten, wenn ich mit meinem Abonnement nicht zufrieden bin?",
+      "answer": "Ja, Rückerstattungen sind verfügbar und werden über LemonSqueezy abgewickelt. Sie können eine Rückerstattung anfordern, indem Sie über Ihr Dashboard auf das Abrechnungsportal zugreifen oder unser Support-Team kontaktieren. Rückerstattungsrichtlinien und Bearbeitungszeiten werden von LemonSqueezy gemäß deren Bedingungen verwaltet."
+    },
+    {
+      "question": "Was passiert, wenn mein Abonnement abläuft oder wenn ich den Plan wechseln möchte?",
+      "answer": "Wenn Sie einen Plan abonnieren, bleibt er bis zu seinem Ablaufdatum aktiv. Sie können Ihr Abonnement jederzeit über das Abrechnungsportal kündigen, und wenn Sie dies tun, können Sie einen anderen Plan abonnieren. Wenn Sie vor Ablauf upgraden oder den Plan wechseln, tritt der neue Plan sofort in Kraft und bleibt bis zu seinem eigenen Ablaufdatum aktiv."
+    },
+    {
+      "question": "Gibt es Beschränkungen bei den Seitenaufrufen?",
+      "answer": "Nein, PeekVisor bietet unbegrenztes Tracking von Seitenaufrufen über alle Pläne hinweg, sodass Sie Ihren Website-Traffic überwachen können, ohne sich um Nutzungsgrenzen oder zusätzliche Gebühren sorgen zu müssen."
+    }
+  ]
+}

@@ -25,7 +25,7 @@ export function useTranslations(lang: keyof typeof ui) {
 }
 
 export function getRedirect(path: string, request: Request) {
-  const supportedLangs = ["en", "es", "fr","pt"] as const;
+  const supportedLangs = ["en", "es", "fr", "pt", "de"] as const;
   type SupportedLang = (typeof supportedLangs)[number];
 
   function getPreferredLanguage(): SupportedLang {

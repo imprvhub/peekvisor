@@ -5,6 +5,8 @@ import { getLangFromUrl, useTranslations } from "../../i18n/utils";
 import faqsDataEn from "@data/faqs.json";
 import faqsDataEs from "@data/es/faqs.json";
 import faqsDataFr from "@data/fr/faqs.json";
+import faqsDataPt from "@data/pt/faqs.json";
+import faqsDataDe from "@data/de/faqs.json";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -16,6 +18,12 @@ switch (lang) {
     break;
   case 'fr':
     faqsData = faqsDataFr;
+    break;
+  case 'pt':
+    faqsData = faqsDataPt;
+    break;
+  case 'de':
+    faqsData = faqsDataDe;
     break;
   default:
     faqsData = faqsDataEn;
