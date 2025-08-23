@@ -63,6 +63,14 @@ export interface AnalyticsData {
     browser: string;
     visitors: number;
   }>;
+  topOS: Array<{
+    os: string;
+    visitors: number;
+  }>;
+  topResolutions: Array<{
+    resolution: string;
+    visitors: number;
+  }>;
 }
 
 export interface PlanLimitsConfig {
