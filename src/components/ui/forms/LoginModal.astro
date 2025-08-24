@@ -1,30 +1,28 @@
 ---
-import EmailInput from "./input/EmailInput.astro";
-import PasswordInput from "./input/PasswordInput.astro";
-import Checkbox from "./input/Checkbox.astro";
-import AuthBtn from "@components/ui/buttons/AuthBtn.astro";
 import GoogleBtn from "@components/ui/buttons/GoogleBtn.astro";
+import { getLangFromUrl, useTranslations } from '../../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const config = {
   id: "hs-toggle-between-modals-login-modal",
-  title: "Sign in",
-  subTitle: "Don't have an account yet?",
-  registerBtn: "Sign up here",
-  registerBtnDataHS: "#hs-toggle-between-modals-register-modal",
 };
 ---
+
 <div
   id={config.id}
   class="hs-overlay hs-overlay-backdrop-open:bg-black/20 hs-overlay-backdrop-open:backdrop-blur-sm absolute start-0 top-0 z-50 hidden h-full w-full transition-all duration-300"
 >
   <div
-    class="hs-overlay-open:opacity-100 hs-overlay-open:mt-0 mt-20 flex min-h-screen items-center justify-center p-4 opacity-0 transition-all duration-500 ease-out"
+    class="hs-overlay-open:opacity-100 hs-overlay-open:scale-100 scale-95 flex min-h-screen items-center justify-center p-2 sm:p-4 opacity-0 transition-all duration-300 ease-out"
   >
     <div class="w-full max-w-md">
       <div
         class="rounded-xl border border-neutral-200 bg-neutral-100 shadow-lg dark:border-neutral-700 dark:bg-neutral-800"
       >
         <div class="relative p-4 sm:p-7">
+          <!-- Close button -->
           <button
             type="button"
             class="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-600 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
@@ -45,46 +43,59 @@ const config = {
             </svg>
           </button>
 
-          <div class="text-center">
-            <div
-              class="block text-2xl font-bold text-neutral-800 dark:text-neutral-200"
-              role="heading"
-              aria-level="1"
-              aria-label={config.title}
-            >
-              {config.title}
-            </div>
+          <!-- Header -->
+          <div class="text-center mb-2">
+            <h1 class="text-2xl font-bold text-neutral-800 dark:text-neutral-200">
+              {t("login.modal.title")}
+            </h1>
             <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-              {config.subTitle}
-              <button
-                class="text-brand dark:text-brand rounded-lg p-1 font-medium decoration-2 ring-zinc-500 outline-hidden hover:underline focus-visible:ring-3 dark:ring-zinc-200 dark:focus:outline-hidden"
-                data-hs-overlay={config.registerBtnDataHS}
-              >
-                {config.registerBtn}
-              </button>
+              {t("login.modal.subtitle")}
             </p>
           </div>
-          <div class="mt-5">
-            <GoogleBtn title="Sign in with Google" />
 
-            <div
-              class="flex items-center py-3 text-xs text-neutral-400 uppercase before:me-6 before:flex-[1_1_0%] before:border-t before:border-neutral-200 after:ms-6 after:flex-[1_1_0%] after:border-t after:border-neutral-200 dark:text-neutral-500 dark:before:border-neutral-600 dark:after:border-neutral-600"
-            >
-              Or
-            </div>
-            <form>
-              <div class="grid gap-y-4">
-                <EmailInput id="login-email" errorId="login-email-error" />
-                <PasswordInput
-                  forgot={true}
-                  id="password"
-                  errorId="login-password-error"
-                  content="8+ characters required"
-                />
-                <Checkbox id="remember-me" />
-                <AuthBtn title="Sign in" />
-              </div>
-            </form>
+          <!-- SVG Illustration -->
+          <div class="py-4 flex justify-center">
+            <img
+              src="/undraw_data-reports_l2u3.svg"
+              alt="Analytics Illustration"
+              class="h-auto w-full max-w-[280px]"
+            />
+          </div>
+
+          <!-- Passwordless badge -->
+          <div class="mb-4 flex justify-center">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-neutral-800 dark:bg-green-900/30 dark:text-neutral-300">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
+              {t("login.modal.passwordless")}
+            </span>
+          </div>
+
+          <!-- Google Sign In Button -->
+          <div class="mt-5">
+            <GoogleBtn title={t("login.modal.googleButton")} />
+          </div>
+
+          <!-- Terms and Privacy -->
+          <div class="mt-6 text-center">
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+              {t("login.modal.terms")}
+              {" "}
+              <a 
+                href={`/${lang}/terms`}
+                class="font-medium text-neutral-700 underline hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-100"
+              >
+                {t("login.modal.termsLink")}
+              </a>
+              {" "}{t("login.modal.and")}{" "}
+              <a 
+                href={`/${lang}/privacy`}
+                class="font-medium text-neutral-700 underline hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-100"
+              >
+                {t("login.modal.privacyLink")}
+              </a>
+            </p>
           </div>
         </div>
       </div>
