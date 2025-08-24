@@ -32,18 +32,18 @@ if (sessionToken) {
   <section class="relative overflow-hidden">
     <div class="absolute inset-0 bg-grid-neutral-100/50 dark:bg-grid-neutral-800/30 [mask-image:radial-gradient(ellipse_at_center,transparent,black)]"></div>
     
-    <div class="relative mx-auto max-w-7xl px-8 py-10 sm:py-16 lg:px-8">
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
       <div class="mx-auto max-w-3xl text-center">
         <div class="animate-fade-in">
-          <h1 class="text-4xl font-bold tracking-tight text-neutral-900 sm:text-6xl dark:text-white">
+          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 dark:text-white">
             <span class="text-blue-600 dark:text-neutral-400">{t("homepage.hero.title")}</span>
           </h1>
-          <p class="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300">
+          <p class="mt-4 sm:mt-6 text-base sm:text-lg leading-7 sm:leading-8 text-neutral-600 dark:text-neutral-300 px-4 sm:px-0">
             {t("homepage.value.subtitle")}.
           </p>
         </div>
         
-        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-6 animate-fade-in-up">
+        <div class="mt-8 sm:mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-6 animate-fade-in-up px-4 sm:px-0">
           {isAuthenticated ? (
             <a href={`/${lang}/websites`} class="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-neutral-800 hover:shadow-xl hover:-translate-y-0.5 hover:scale-105 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white">
               <span>{t("homepage.hero.viewDashboard")}</span>
@@ -67,121 +67,146 @@ if (sessionToken) {
   </section>
 
   <section class="py-6 sm:py-10">
-    <div class="mx-auto px-6 lg:px-8">
+    <div class="mx-auto px-4 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100/70 animate-fade-in">
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100/70 animate-fade-in px-4 sm:px-0">
         {t("homepage.privacy.title")}
         </h2>
-        <p class="mt-4 text-lg text-neutral-600 dark:text-neutral-300 animate-fade-in-up">
+        <p class="mt-4 text-base sm:text-lg text-neutral-600 dark:text-neutral-300 animate-fade-in-up px-4 sm:px-0">
           {t("homepage.hero.subtitle")}
         </p>
       </div>
 
-      <div class="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="text-center group">
-          <div class="mx-auto mb-4 flex text-neutral-800 dark:text-neutral-200 h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
-            <div class="w-6 h-6 sm:w-7 sm:h-7">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-combined-icon lucide-chart-no-axes-combined"><path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/><path d="M4 18v3"/><path d="M8 14v7"/></svg>
+      <div class="mx-auto mt-12 sm:mt-16 grid max-w-5xl grid-cols-1 gap-8 sm:gap-x-8 sm:gap-y-12 sm:grid-cols-2 lg:grid-cols-4 px-4 sm:px-0">
+        <div class="group">
+          <div class="flex flex-row sm:flex-col items-start sm:items-center gap-4 sm:gap-0">
+            <div class="flex-shrink-0">
+              <div class="flex text-neutral-800 dark:text-neutral-200 h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
+                <div class="w-6 h-6 sm:w-7 sm:h-7">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-combined-icon lucide-chart-no-axes-combined"><path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/><path d="M4 18v3"/><path d="M8 14v7"/></svg>
+                </div>
+              </div>
+            </div>
+            <div class="flex-1 sm:flex-none text-left sm:text-center">
+              <h3 class="mb-2 sm:mb-2 mt-0 sm:mt-4 text-sm sm:text-base font-semibold text-neutral-900 dark:text-neutral-100">
+                {t("homepage.value.realtime.title")}
+              </h3>
+              <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 break-words">
+                {t("homepage.features.visitors.description")}
+              </p>
             </div>
           </div>
-          <h3 class="mb-2 text-sm sm:text-base font-semibold text-neutral-900 dark:text-neutral-100">
-            {t("homepage.value.realtime.title")}
-          </h3>
-          <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
-            {t("homepage.features.visitors.description")}
-          </p>
         </div>
 
-        <div class="text-center group">
-          <div class="mx-auto mb-4 flex text-neutral-800 dark:text-neutral-200 h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-check-icon lucide-map-pin-check"><path d="M19.43 12.935c.357-.967.57-1.955.57-2.935a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 1.202 0 32.197 32.197 0 0 0 .813-.728"/><circle cx="12" cy="10" r="3"/><path d="m16 18 2 2 4-4"/></svg>
+        <div class="group">
+          <div class="flex flex-row sm:flex-col items-start sm:items-center gap-4 sm:gap-0">
+            <div class="flex-shrink-0">
+              <div class="flex text-neutral-800 dark:text-neutral-200 h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-check-icon lucide-map-pin-check"><path d="M19.43 12.935c.357-.967.57-1.955.57-2.935a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 1.202 0 32.197 32.197 0 0 0 .813-.728"/><circle cx="12" cy="10" r="3"/><path d="m16 18 2 2 4-4"/></svg>
+              </div>
+            </div>
+            <div class="flex-1 sm:flex-none text-left sm:text-center">
+              <h3 class="mb-2 sm:mb-2 mt-0 sm:mt-4 text-sm sm:text-base font-semibold text-neutral-900 dark:text-neutral-100">
+                {t("homepage.features.geography.title")}
+              </h3>
+              <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 break-words">
+                {t("homepage.features.geography.description")}
+              </p>
+            </div>
           </div>
-          <h3 class="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">
-            {t("homepage.features.geography.title")}
-          </h3>
-          <p class="text-sm text-neutral-600 dark:text-neutral-400">
-            {t("homepage.features.geography.description")}
-          </p>
         </div>
 
-        <div class="text-center group">
-          <div class="mx-auto mb-4 text-neutral-800 dark:text-neutral-200 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-smartphone-icon lucide-monitor-smartphone"><path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8"/><path d="M10 19v-3.96 3.15"/><path d="M7 19h5"/><rect width="6" height="10" x="16" y="12" rx="2"/></svg>
+        <div class="group">
+          <div class="flex flex-row sm:flex-col items-start sm:items-center gap-4 sm:gap-0">
+            <div class="flex-shrink-0">
+              <div class="flex text-neutral-800 dark:text-neutral-200 h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-smartphone-icon lucide-monitor-smartphone"><path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8"/><path d="M10 19v-3.96 3.15"/><path d="M7 19h5"/><rect width="6" height="10" x="16" y="12" rx="2"/></svg>
+              </div>
+            </div>
+            <div class="flex-1 sm:flex-none text-left sm:text-center">
+              <h3 class="mb-2 sm:mb-2 mt-0 sm:mt-4 text-sm sm:text-base font-semibold text-neutral-900 dark:text-neutral-100">
+                {t("homepage.features.devices.title")}
+              </h3>
+              <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 break-words">
+                {t("homepage.features.devices.description")}
+              </p>
+            </div>
           </div>
-          <h3 class="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">
-            {t("homepage.features.devices.title")}
-          </h3>
-          <p class="text-sm text-neutral-600 dark:text-neutral-400">
-            {t("homepage.features.devices.description")}
-          </p>
         </div>
 
-        <div class="text-center group">
-          <div class="mx-auto mb-4 flex text-neutral-800 dark:text-neutral-200 h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rocket-icon lucide-rocket"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+        <div class="group">
+          <div class="flex flex-row sm:flex-col items-start sm:items-center gap-4 sm:gap-0">
+            <div class="flex-shrink-0">
+              <div class="flex text-neutral-800 dark:text-neutral-200 h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-neutral-800 group-hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rocket-icon lucide-rocket"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+              </div>
+            </div>
+            <div class="flex-1 sm:flex-none text-left sm:text-center">
+              <h3 class="mb-2 sm:mb-2 mt-0 sm:mt-4 text-sm sm:text-base font-semibold text-neutral-900 dark:text-neutral-100">
+                {t("homepage.features.campaigns.title")}
+              </h3>
+              <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 break-words">
+                {t("homepage.features.campaigns.description")}
+              </p>
+            </div>
           </div>
-          <h3 class="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">
-            {t("homepage.features.campaigns.title")}
-          </h3>
-          <p class="text-sm text-neutral-600 dark:text-neutral-400">
-            {t("homepage.features.campaigns.description")}
-          </p>
         </div>
       </div>
+
     </div>
   </section>
 
-  <section id="pattern-section" class="py-10 sm:py-18 step-patterns shadow-2xl rounded-3xl">
-    <div class="mx-auto max-w-5xl">
+  <section id="pattern-section" class="py-10 sm:py-18 step-patterns shadow-2xl rounded-xl sm:rounded-3xl mx-4 sm:mx-6 lg:mx-auto max-w-7xl">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6">
       <div class="mx-auto max-w-2xl text-center">
-            <h2 class="text-4xl !bottom-4 relative font-bold tracking-tight text-neutral-900 dark:text-neutral-100 animate-fade-in">
+            <h2 class="text-3xl sm:text-4xl !bottom-4 relative font-bold tracking-tight text-neutral-900 dark:text-neutral-100 animate-fade-in px-4 sm:px-0">
             {t("homepage.howItWorks.title")}
             </h2>
       </div>
       <br>
       <br>
-      <div class="grid grid-cols-1 gap-12 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-8 sm:gap-12 lg:grid-cols-3">
             
         <div class="relative text-center how-it-works-step group">
       
-          <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-2xl font-bold text-blue-600 dark:bg-blue-900/30 dark:text-neutral-800 transition-transform group-hover:scale-110 group-hover:shadow-lg drop-shadow-2xl">
+          <div class="mx-auto mb-4 sm:mb-6 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-blue-100 text-xl sm:text-2xl font-bold text-blue-600 dark:bg-blue-900/30 dark:text-neutral-800 transition-transform group-hover:scale-110 group-hover:shadow-lg drop-shadow-2xl">
             <span class="drop-shadow-lg">1</span>
           </div>
-          <h3 class="mb-2 text-lg font-semibold text-neutral-900 dark:text-neutral-100 drop-shadow-lg">
+          <h3 class="mb-2 text-base sm:text-lg font-semibold text-neutral-900 dark:text-neutral-100 drop-shadow-lg px-2">
             {t("homepage.how.step1.title")}
           </h3>
-          <p class="text-sm text-neutral-600 dark:text-neutral-400 drop-shadow-lg">
+          <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 drop-shadow-lg px-4">
             {t("homepage.how.step1.description")}
           </p>
         </div>
         
         <div class="relative text-center how-it-works-step group">
-          <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-2xl font-bold text-blue-600 dark:bg-blue-900/30 dark:text-neutral-800 transition-transform group-hover:scale-110 group-hover:shadow-lg drop-shadow-2xl">
+          <div class="mx-auto mb-4 sm:mb-6 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-blue-100 text-xl sm:text-2xl font-bold text-blue-600 dark:bg-blue-900/30 dark:text-neutral-800 transition-transform group-hover:scale-110 group-hover:shadow-lg drop-shadow-2xl">
             <span class="drop-shadow-lg">2</span>
           </div>
-          <h3 class="mb-6 text-lg font-semibold text-neutral-900 dark:text-neutral-100 drop-shadow-lg">
+          <h3 class="mb-2 sm:mb-6 text-base sm:text-lg font-semibold text-neutral-900 dark:text-neutral-100 drop-shadow-lg px-2">
             {t("homepage.how.step2.title")}
           </h3>
-          <p class="text-sm text-neutral-600 dark:text-neutral-400 drop-shadow-lg">
+          <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 drop-shadow-lg px-4">
             {t("homepage.how.step2.description")}
           </p>
         </div>
         
         <div class="text-center how-it-works-step group">
-          <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-2xl font-bold text-neutral-600 dark:bg-green-900/30 dark:text-neutral-800 transition-transform group-hover:scale-110 group-hover:shadow-lg drop-shadow-2xl">
+          <div class="mx-auto mb-4 sm:mb-6 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-green-100 text-xl sm:text-2xl font-bold text-neutral-600 dark:bg-green-900/30 dark:text-neutral-800 transition-transform group-hover:scale-110 group-hover:shadow-lg drop-shadow-2xl">
             <span class="drop-shadow-lg">3</span>
           </div>
-          <h3 class="mb-2 text-lg font-semibold text-neutral-900 dark:text-neutral-100 drop-shadow-lg">
+          <h3 class="mb-2 text-base sm:text-lg font-semibold text-neutral-900 dark:text-neutral-100 drop-shadow-lg px-2">
             {t("homepage.how.step3.title")}
           </h3>
-          <p class="text-sm text-neutral-600 dark:text-neutral-400 drop-shadow-lg">
+          <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 drop-shadow-lg px-4">
             {t("homepage.how.step3.description")}
           </p>
         </div>
 
-       <div class="lg:col-span-3 mt-8 flex flex-wrap w-full items-center justify-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm  text-[#7D87FF] dark:text-[#A4B3FF] animate-fade-in">
+       <div class="lg:col-span-3 mt-6 sm:mt-8 flex flex-wrap w-full items-center justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-xs sm:text-sm text-[#7D87FF] dark:text-[#A4B3FF] animate-fade-in px-4">
         <div class="flex items-center gap-1.5 sm:gap-2 font-semibold">
-          <svg class="w-5 h-5 sm:w-6 sm:h-6 shrink-0  fill-[#7D87FF] dark:fill-[#A4B3FF] font-semibold shadow-xl" width="48" height="48" viewBox="0 -960 960 960">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 shrink-0 fill-[#7D87FF] dark:fill-[#A4B3FF] font-semibold shadow-xl" width="48" height="48" viewBox="0 -960 960 960">
             <path d="m346-60-76-130-151-31 17-147-96-112 96-111-17-147 151-31 76-131 134 62 134-62 77 131 150 31-17 147 96 111-96 112 17 147-150 31-77 130-134-62-134 62Zm27-79 107-45 110 45 67-100 117-30-12-119 81-92-81-94 12-119-117-28-69-100-108 45-110-45-67 100-117 28 12 119-81 94 81 92-12 121 117 28 70 100Zm107-341Zm-43 133 227-225-45-41-182 180-95-99-46 45 141 140Z"/>
           </svg>
           <span>{t("homepage.hero.gdpr")}</span>
@@ -208,15 +233,15 @@ if (sessionToken) {
     </div>
   </section>
 
-  <section class="py-6 sm:py-12">
+  <section class="py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-7xl">
     <div class="mx-auto max-w-7xl">
-      <div class="grid gap-8 lg:grid-cols-2">
+      <div class="grid gap-6 sm:gap-8 lg:grid-cols-2">
         <!-- Trust Indicators Card -->
-        <div class="relative overflow-hidden rounded-3xl bg-white p-8 shadow-xl dark:bg-neutral-800/50 backdrop-blur">
-          <div class="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-blue-500/10 blur-3xl"></div>
+        <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-white p-6 sm:p-8 shadow-xl dark:bg-neutral-800/50 backdrop-blur">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 h-24 sm:h-32 w-24 sm:w-32 rounded-full bg-blue-500/10 blur-3xl"></div>
           <div class="relative">
-            <h3 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
+            <h3 class="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4 sm:mb-6">
               {t("homepage.trust.title")}
             </h3>
             <div class="space-y-4">
@@ -230,15 +255,15 @@ if (sessionToken) {
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="w-6 h-6 shrink-0 text-blue-500">
+                    class="w-5 h-5 sm:w-6 sm:h-6 shrink-0 text-blue-500 mt-0.5">
                   <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
                   <path d="m9 12 2 2 4-4"/>
                 </svg>
-                <div>
-                  <p class="font-semibold text-neutral-900 dark:text-neutral-100">
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-sm sm:text-base text-neutral-900 dark:text-neutral-100">
                     {t("homepage.trust.security.title")}
                   </p>
-                  <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                  <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 break-words">
                     {t("homepage.trust.security.description")}
                   </p>
                 </div>
@@ -253,18 +278,18 @@ if (sessionToken) {
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="w-6 h-6 shrink-0 text-blue-500">
+                    class="w-5 h-5 sm:w-6 sm:h-6 shrink-0 text-blue-500 mt-0.5">
                   <path d="M14 18a2 2 0 0 0-4 0"/>
                   <path d="m19 11-2.11-6.657a2 2 0 0 0-2.752-1.148l-1.276.61A2 2 0 0 1 12 4H8.5a2 2 0 0 0-1.925 1.456L5 11"/>
                   <path d="M2 11h20"/>
                   <circle cx="17" cy="18" r="3"/>
                   <circle cx="7" cy="18" r="3"/>
                 </svg>
-                <div>
-                  <p class="font-semibold text-neutral-900 dark:text-neutral-100">
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-sm sm:text-base text-neutral-900 dark:text-neutral-100">
                     {t("homepage.trust.ownership.title")}
                   </p>
-                  <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                  <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 break-words">
                     {t("homepage.trust.ownership.description")}
                   </p>
                 </div>
@@ -279,15 +304,15 @@ if (sessionToken) {
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="w-6 h-6 shrink-0 text-blue-500">
+                    class="w-5 h-5 sm:w-6 sm:h-6 shrink-0 text-blue-500 mt-0.5">
                   <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
                   <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
                 </svg>
-                <div>
-                  <p class="font-semibold text-neutral-900 dark:text-neutral-100">
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-sm sm:text-base text-neutral-900 dark:text-neutral-100">
                     {t("homepage.trust.transparent.title")}
                   </p>
-                  <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                  <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 break-words">
                     {t("homepage.trust.transparent.description")}
                   </p>
                 </div>
@@ -299,13 +324,13 @@ if (sessionToken) {
 
 
         <!-- Get Help Card -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-neutral-800 dark:to-neutral-900 p-8 shadow-xl">
-          <div class="absolute bottom-0 left-0 -mb-12 -ml-12 h-32 w-32 rounded-full bg-blue-500/20 blur-3xl"></div>
+        <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-neutral-800 dark:to-neutral-900 p-6 sm:p-8 shadow-xl">
+          <div class="absolute bottom-0 left-0 -mb-12 -ml-12 h-24 sm:h-32 w-24 sm:w-32 rounded-full bg-blue-500/20 blur-3xl"></div>
           <div class="relative">
-            <h3 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
+            <h3 class="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
               {t("homepage.help.title")}
             </h3>
-            <p class="text-neutral-600 dark:text-neutral-300 mb-6">
+            <p class="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 mb-4 sm:mb-6">
               {t("homepage.help.description")}
             </p>
             <div class="space-y-3">
