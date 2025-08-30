@@ -29,13 +29,30 @@ if (sessionToken) {
   }
 }
 
+const paymentLinks: Record<string, { monthly: string; annual: string }> = {
+  flex: {
+    monthly: 'https://peekvisor.lemonsqueezy.com/buy/5e5239ef-7323-41d7-9d68-34de61a19efd',
+    annual: 'https://peekvisor.lemonsqueezy.com/buy/b2518b69-e832-4f8e-ae59-3e7b1f632a01'
+  },
+  pro: {
+    monthly: 'https://peekvisor.lemonsqueezy.com/buy/1c589ba0-cd2e-4384-8eb3-4a3252c90562',
+    annual: 'https://peekvisor.lemonsqueezy.com/buy/3b3ca709-9997-49d2-8d82-8a09a1b75c2c'
+  }
+};
+
 const plans = [
   {
     id: 'basic',
     name: t('pricing.basic.name'),
     description: t('pricing.basic.description'),
-    price: t('pricing.free'),
-    priceAmount: 0,
+    price: {
+      monthly: t('pricing.free'),
+      annual: t('pricing.free')
+    },
+    priceAmount: {
+      monthly: 0,
+      annual: 0
+    },
     popular: false,
     features: [
       { text: `1 ${t('pricing.features.website')}`, included: true },
@@ -54,8 +71,14 @@ const plans = [
     id: 'flex',
     name: t('pricing.flex.name'),
     description: t('pricing.flex.description'),
-    price: '$12',
-    priceAmount: 12,
+    price: {
+      monthly: '$12',
+      annual: '$79.99'
+    },
+    priceAmount: {
+      monthly: 12,
+      annual: 79.99
+    },
     popular: true,
     features: [
       { text: `5 ${t('pricing.features.websites')}`, included: true },
@@ -75,8 +98,14 @@ const plans = [
     id: 'pro',
     name: t('pricing.pro.name'),
     description: t('pricing.pro.description'),
-    price: '$15',
-    priceAmount: 15,
+    price: {
+      monthly: '$15',
+      annual: '$99.99'
+    },
+    priceAmount: {
+      monthly: 15,
+      annual: 99.99
+    },
     popular: false,
     features: [
       { text: `${t('pricing.unlimited')} ${t('pricing.features.websites')}`, included: true },
@@ -98,73 +127,102 @@ const plans = [
   customDescription={t('pricing.metaDescription')}
   customOgTitle={t('pricing.ogTitle')}
 >
-  <section class="py-16 sm:py-20">
+  <section class="py-8 sm:py-12 lg:py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       
       <!-- Header -->
-      <div class="text-center mb-16">
-        <h1 class="text-4xl font-bold text-neutral-800 dark:text-neutral-200 tracking-tight mb-4">
+      <div class="text-center mb-8 sm:mb-12 lg:mb-16">
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-800 dark:text-neutral-200 tracking-tight mb-3 sm:mb-4">
           {t('pricing.title')}
         </h1>
-        <p class="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
+        <p class="text-sm sm:text-base lg:text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto px-4">
           {t('pricing.subtitle')}
         </p>
       </div>
 
+      <!-- Billing Toggle -->
+      <div class="flex justify-center mb-8 sm:mb-12">
+        <div class="bg-neutral-100 dark:bg-neutral-800 rounded-lg p-1 inline-flex">
+          <button 
+            id="monthly-toggle"
+            class="billing-toggle px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 shadow-sm"
+          >
+            {t('pricing.billingToggle.monthly')}
+          </button>
+          <button 
+            id="annual-toggle"
+            class="billing-toggle px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-neutral-600 dark:text-neutral-400"
+          >
+            {t('pricing.billingToggle.annual')}
+            <span class="ml-1 text-xs text-brand-coral font-semibold">
+              {t('pricing.billingToggle.savePercent').replace('{percent}', '44')}
+            </span>
+          </button>
+        </div>
+      </div>
+
       <!-- Pricing Cards -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
         {plans.map((plan) => (
-          <div class={`relative bg-white dark:bg-neutral-800 rounded-2xl border-2 transition-all duration-300 hover:shadow-xl ${
+          <div class={`relative flex flex-col bg-white dark:bg-neutral-800 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 hover:shadow-xl ${
             plan.popular 
-              ? 'border-brand-coral shadow-lg scale-105' 
+              ? 'border-brand-coral shadow-lg md:scale-105' 
               : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
           }`}>
             
             {/* Popular Badge */}
             {plan.popular && (
-              <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span class="bg-brand-coral text-white px-4 py-1 rounded-full text-sm font-medium">
+              <div class="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2 z-10">
+                <span class="bg-brand-coral text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap">
                   {t('pricing.mostPopular')}
                 </span>
               </div>
             )}
 
-            <div class="p-8">
+            <div class="p-4 sm:p-6 lg:p-8 flex flex-col flex-1">
               <!-- Plan Header -->
-              <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-200 mb-2">
+              <div class="text-center mb-6 sm:mb-8">
+                <h3 class="text-xl sm:text-2xl font-bold text-neutral-800 dark:text-neutral-200 mb-2">
                   {plan.name}
                 </h3>
-                <p class="text-neutral-600 dark:text-neutral-400 text-sm mb-6">
+                <p class="text-neutral-600 dark:text-neutral-400 text-xs sm:text-sm mb-4 sm:mb-6 min-h-[2.5rem] sm:min-h-[3rem]">
                   {plan.description}
                 </p>
                 
                 <!-- Price -->
-                <div class="mb-6">
-                  <span class="text-4xl font-bold text-neutral-800 dark:text-neutral-200">
-                    {plan.price}
+                <div class="mb-4 sm:mb-6">
+                  <span class="price-display text-3xl sm:text-4xl font-bold text-neutral-800 dark:text-neutral-200" data-monthly={plan.price.monthly} data-annual={plan.price.annual}>
+                    {plan.price.monthly}
                   </span>
-                  {plan.priceAmount > 0 && (
-                    <span class="text-neutral-600 dark:text-neutral-400 text-lg">
-                      {t('pricing.perMonth')}
-                    </span>
+                  {plan.priceAmount.monthly > 0 && (
+                    <>
+                      <span class="period-display text-neutral-600 dark:text-neutral-400 text-base sm:text-lg">
+                        {t('pricing.perMonth')}
+                      </span>
+                      <div class="annual-info hidden text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                        {t('pricing.billedAnnually')}
+                      </div>
+                    </>
                   )}
                 </div>
 
                 <!-- CTA Button -->
                 <button 
-                  class={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                  class={`pricing-cta w-full py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 ${
                     userPlan === plan.id
                       ? 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 cursor-not-allowed'
                       : plan.popular
                         ? 'bg-brand-coral text-white hover:bg-brand-coral/90 shadow-lg hover:shadow-xl'
                         : 'bg-neutral-800 dark:bg-neutral-700 text-white hover:bg-neutral-700 dark:hover:bg-neutral-600'
                   }`}
+                  data-plan={plan.id}
+                  data-monthly-link={paymentLinks[plan.id]?.monthly || ''}
+                  data-annual-link={paymentLinks[plan.id]?.annual || ''}
                   disabled={userPlan === plan.id}
                 >
                   {userPlan === plan.id 
                     ? t('pricing.currentPlan')
-                    : plan.priceAmount === 0 
+                    : plan.priceAmount.monthly === 0 
                       ? t('pricing.getStarted')
                       : t('pricing.subscribe')
                   }
@@ -172,25 +230,25 @@ const plans = [
               </div>
 
               <!-- Features List -->
-              <div class="space-y-4">
+              <div class="space-y-3 sm:space-y-4 flex-1">
                 {plan.features.map((feature) => (
-                  <div class="flex items-start space-x-3">
+                  <div class="flex items-start space-x-2 sm:space-x-3">
                     <div class="flex-shrink-0 mt-0.5">
                       {feature.included ? (
-                        <div class="w-5 h-5 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                          <svg class="w-3 h-3 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-4 h-4 sm:w-5 sm:h-5 bg-neutral-100 dark:bg-neutral-900/30 rounded-full flex items-center justify-center">
+                          <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-neutral-600 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                           </svg>
                         </div>
                       ) : (
-                        <div class="w-5 h-5 bg-neutral-100 dark:bg-neutral-700 rounded-full flex items-center justify-center">
-                          <svg class="w-3 h-3 text-neutral-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-4 h-4 sm:w-5 sm:h-5 bg-neutral-100 dark:bg-neutral-700 rounded-full flex items-center justify-center">
+                          <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-neutral-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                           </svg>
                         </div>
                       )}
                     </div>
-                    <span class={`text-sm ${
+                    <span class={`text-xs sm:text-sm ${
                       feature.included 
                         ? (feature as any).highlight 
                           ? 'text-brand-coral font-medium' 
@@ -207,10 +265,11 @@ const plans = [
         ))}
       </div>
 
-      <div class="flex justify-center mt-16">
+      <!-- Back Button -->
+      <div class="flex justify-center mt-8 sm:mt-12 lg:mt-16">
         <button 
           id="back-button"
-          class="btn-gradient hover:btn-gradient-hover px-6 py-3 rounded-lg font-medium text-white text-sm sm:text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          class="btn-gradient hover:btn-gradient-hover px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium text-white text-sm sm:text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           {t('ui.goBack')}
         </button>
@@ -221,6 +280,14 @@ const plans = [
   <script define:vars={{ lang }} is:inline>
     document.addEventListener('DOMContentLoaded', function() {
       const backButton = document.getElementById('back-button');
+      const monthlyToggle = document.getElementById('monthly-toggle');
+      const annualToggle = document.getElementById('annual-toggle');
+      const priceDisplays = document.querySelectorAll('.price-display');
+      const periodDisplays = document.querySelectorAll('.period-display');
+      const annualInfos = document.querySelectorAll('.annual-info');
+      const pricingCTAs = document.querySelectorAll('.pricing-cta');
+      
+      let currentBilling = 'monthly';
       
       if (backButton) {
         backButton.addEventListener('click', function() {
@@ -231,6 +298,87 @@ const plans = [
           }
         });
       }
+      
+      function updateBillingDisplay(billing) {
+        currentBilling = billing;
+        
+        if (billing === 'annual') {
+          monthlyToggle.classList.remove('bg-white', 'dark:bg-neutral-700', 'text-neutral-800', 'dark:text-neutral-200', 'shadow-sm');
+          monthlyToggle.classList.add('text-neutral-600', 'dark:text-neutral-400');
+          
+          annualToggle.classList.add('bg-white', 'dark:bg-neutral-700', 'text-neutral-800', 'dark:text-neutral-200', 'shadow-sm');
+          annualToggle.classList.remove('text-neutral-600', 'dark:text-neutral-400');
+          
+          priceDisplays.forEach(display => {
+            const annualPrice = display.dataset.annual;
+            if (annualPrice) {
+              display.textContent = annualPrice;
+            }
+          });
+          
+          periodDisplays.forEach(display => {
+            const perYearText = display.closest('[data-plan]') ? '/year' : '';
+            if (perYearText && display.parentElement.querySelector('.price-display').dataset.annual !== 'Free') {
+              display.textContent = perYearText;
+            }
+          });
+          
+          annualInfos.forEach(info => {
+            info.classList.remove('hidden');
+          });
+        } else {
+          annualToggle.classList.remove('bg-white', 'dark:bg-neutral-700', 'text-neutral-800', 'dark:text-neutral-200', 'shadow-sm');
+          annualToggle.classList.add('text-neutral-600', 'dark:text-neutral-400');
+          
+          monthlyToggle.classList.add('bg-white', 'dark:bg-neutral-700', 'text-neutral-800', 'dark:text-neutral-200', 'shadow-sm');
+          monthlyToggle.classList.remove('text-neutral-600', 'dark:text-neutral-400');
+          
+          priceDisplays.forEach(display => {
+            const monthlyPrice = display.dataset.monthly;
+            if (monthlyPrice) {
+              display.textContent = monthlyPrice;
+            }
+          });
+          
+          periodDisplays.forEach(display => {
+            const perMonthText = display.closest('[data-plan]') ? '/month' : '';
+            if (perMonthText && display.parentElement.querySelector('.price-display').dataset.monthly !== 'Free') {
+              display.textContent = perMonthText;
+            }
+          });
+          
+          annualInfos.forEach(info => {
+            info.classList.add('hidden');
+          });
+        }
+      }
+      
+      monthlyToggle.addEventListener('click', function() {
+        updateBillingDisplay('monthly');
+      });
+      
+      annualToggle.addEventListener('click', function() {
+        updateBillingDisplay('annual');
+      });
+      
+      pricingCTAs.forEach(button => {
+        button.addEventListener('click', function() {
+          if (button.disabled) return;
+          
+          const plan = button.dataset.plan;
+          if (plan === 'basic') {
+            window.location.href = `/${lang}/login`;
+          } else {
+            const link = currentBilling === 'annual' 
+              ? button.dataset.annualLink 
+              : button.dataset.monthlyLink;
+            
+            if (link) {
+              window.open(link, '_blank');
+            }
+          }
+        });
+      });
     });
   </script>
 </MainLayout>
