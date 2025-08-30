@@ -9,6 +9,87 @@ import Icon from "@components/ui/icons/Icon.astro";
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
+const wizardTranslations: Record<string, string> = {};
+
+const wizardKeys = [
+  'websites.wizard.title',
+  'websites.wizard.checkingStatus',
+  'websites.wizard.recheck',
+  'websites.wizard.chooseMethod',
+  'websites.wizard.chooseMethodDesc',
+  'websites.wizard.automatic',
+  'websites.wizard.automaticDesc',
+  'websites.wizard.manual',
+  'websites.wizard.manualDesc',
+  'websites.wizard.recommended',
+  'websites.wizard.trackingScript',
+  'websites.wizard.copy',
+  'websites.wizard.copied',
+  'websites.wizard.installSteps',
+  'websites.wizard.step1Copy',
+  'websites.wizard.step2Paste',
+  'websites.wizard.step3Deploy',
+  'websites.wizard.step4Check',
+  'websites.wizard.step1of3',
+  'websites.wizard.step2of3',
+  'websites.wizard.step3of3',
+  'websites.wizard.selectOS',
+  'websites.wizard.selectOSDesc',
+  'websites.wizard.selectFramework',
+  'websites.wizard.selectFrameworkDesc',
+  'websites.wizard.fileLocation',
+  'websites.wizard.fileLocationDesc',
+  'websites.wizard.yesKnowFile',
+  'websites.wizard.yesKnowFileDesc',
+  'websites.wizard.noHelpFind',
+  'websites.wizard.noHelpFindDesc',
+  'websites.wizard.fileContentAnalysis',
+  'websites.wizard.pasteForAnalysis',
+  'websites.wizard.pasteFileContent',
+  'websites.wizard.pasteFilePlaceholder',
+  'websites.wizard.analyzeFile',
+  'websites.wizard.analyzing',
+  'websites.wizard.selected',
+  'websites.wizard.projectStructure',
+  'websites.wizard.generateTree',
+  'websites.wizard.installTree',
+  'websites.wizard.generateProjectTree',
+  'websites.wizard.runFromRoot',
+  'websites.wizard.pasteTreeOutput',
+  'websites.wizard.pasteTreePlaceholder',
+  'websites.wizard.analyzeStructure',
+  'websites.wizard.finalInstructions',
+  'websites.wizard.followSteps',
+  'websites.wizard.locationFound',
+  'websites.wizard.file',
+  'websites.wizard.findLine',
+  'websites.wizard.addScript',
+  'websites.wizard.saveAndDeploy',
+  'websites.wizard.startOver',
+  'websites.wizard.recheckStatus',
+  'websites.wizard.analysisComplete',
+  'websites.wizard.useDefault',
+  'websites.wizard.continueInstructions',
+  'websites.wizard.refinementNeeded',
+  'websites.wizard.runCleanerCommand',
+  'websites.wizard.fileFound',
+  'websites.wizard.pasteContentContinue',
+  'websites.wizard.pasteContentOf',
+  'websites.wizard.analyzeFileContent',
+  'websites.wizard.analysisError',
+  'websites.wizard.couldNotAnalyze',
+  'websites.wizard.failedAnalyze',
+  'websites.wizard.statusInstalled',
+  'websites.wizard.statusInstalledNoData',
+  'websites.wizard.statusNotInstalled',
+  'websites.wizard.statusCheckFailed',
+  'websites.wizard.availableVia'
+];
+
+wizardKeys.forEach(key => {
+  wizardTranslations[key] = t(key);
+});
+
 const sessionToken = Astro.cookies.get("app_auth_token")?.value;
 if (!sessionToken) return Astro.redirect(`/${lang}/`);
 
@@ -310,14 +391,6 @@ if (reachedBasicLimit || reachedFlexLimit) {
                <div class="settings-dropdown absolute right-0 top-12 w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-lg z-10 hidden">
                  <div class="p-2">
                    <button
-                     class="test-connection-btn w-full flex items-center gap-3 px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
-                     data-website-id={website.id}
-                     data-domain={website.domain}
-                   >
-                     <Icon name="check" />
-                     Test Connection
-                   </button>
-                   <button
                      class="delete-website-btn w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                      data-website-id={website.id}
                      data-website-name={website.name}
@@ -366,10 +439,8 @@ if (reachedBasicLimit || reachedFlexLimit) {
                    </div>
                    {t("websites.viewAnalytics")}
                  </a>
-                 
-                 <div class="grid grid-cols-2 gap-2">
-                   <button
-                     class="tracking-code-btn flex items-center justify-center gap-2 rounded-xl border border-neutral-300 px-3 py-3 text-xs font-medium text-neutral-800 dark:text-neutral-200 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-600 dark:hover:bg-neutral-700"
+                <button
+                     class="tracking-code-btn flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium text-neutral-800 dark:text-neutral-200 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-600 dark:hover:bg-neutral-700"
                      data-website-id={website.id}
                    >
                      <div class="text-neutral-700 dark:text-neutral-300">
@@ -377,20 +448,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
                      </div>
                      <span class="hidden sm:inline">{t("websites.trackingCode")}</span>
                      <span class="sm:hidden">Code</span>
-                   </button>
-                   
-                   <button
-                     class="test-connection-btn flex items-center justify-center gap-2 rounded-xl border border-neutral-300 px-3 py-3 text-xs font-medium text-neutral-800 dark:text-neutral-200 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-600 dark:hover:bg-neutral-700"
-                     data-website-id={website.id}
-                     data-domain={website.domain}
-                   >
-                     <div class="text-neutral-700 dark:text-neutral-300">
-                       <Icon name="check" />
-                     </div>
-                     <span class="hidden sm:inline">Test</span>
-                     <span class="sm:hidden">Test</span>
-                   </button>
-                 </div>
+                </button>
                </div>
              </div>
            </div>
@@ -543,7 +601,9 @@ if (reachedBasicLimit || reachedFlexLimit) {
        </div>
      </div>
    </div>
-
+  <script define:vars={{ wizardTranslations }}>
+    window.__wizardTranslations = wizardTranslations;
+  </script>
   <script>
     import { apiClient } from '../../utils/api-client.ts';
     import { createTrackingModal } from '../../utils/tracking-modal.ts';
@@ -574,13 +634,12 @@ if (reachedBasicLimit || reachedFlexLimit) {
           ];
           
           let currentIndex = 0;
-          
+        
           function tryNextFavicon() {
             if (currentIndex >= faviconUrls.length) {
               console.log(`⚠️ No favicon found for ${domain}, keeping fallback`);
               return;
-            }
-            
+            }      
             const tempImg = new Image();
             
             tempImg.onload = () => {
@@ -590,9 +649,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
                 if (fallback) {
                   fallback.classList.add('hidden');
                 }
-                console.log(`✅ Favicon loaded for ${domain} from ${faviconUrls[currentIndex]}`);
               } else {
-                console.log(`⚠️ Favicon too small for ${domain} from ${faviconUrls[currentIndex]}, trying next...`);
                 currentIndex++;
                 tryNextFavicon();
               }
@@ -609,6 +666,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
           tryNextFavicon();
         });
       }
+
     document
       .getElementById("add-website-btn")
       ?.addEventListener("click", openModal);
@@ -632,15 +690,6 @@ if (reachedBasicLimit || reachedFlexLimit) {
         const websiteId = button?.getAttribute("data-website-id");
         if (websiteId) {
           showTrackingCode(websiteId);
-        }
-      }
-      
-      if (target.classList.contains("test-connection-btn") || target.closest(".test-connection-btn")) {
-        const button = target.classList.contains("test-connection-btn") ? target : target.closest(".test-connection-btn");
-        const websiteId = button?.getAttribute("data-website-id");
-        const domain = button?.getAttribute("data-domain");
-        if (websiteId && domain) {
-          testConnection(websiteId, domain);
         }
       }
     });
@@ -685,10 +734,6 @@ if (reachedBasicLimit || reachedFlexLimit) {
           const button = target.closest(".test-connection-btn");
           const websiteId = button?.getAttribute("data-website-id");
           const domain = button?.getAttribute("data-domain");
-          if (websiteId && domain) {
-            testConnection(websiteId, domain);
-            button?.closest('.settings-dropdown')?.classList.add('hidden');
-          }
         }
         if (target.closest(".settings-dropdown .delete-website-btn")) {
           const button = target.closest(".delete-website-btn");
@@ -870,7 +915,9 @@ if (reachedBasicLimit || reachedFlexLimit) {
     async function showTrackingCode(websiteId: string) {
       try {
         const data = await apiClient.getTrackingCode(websiteId);
-        const modal = createTrackingModal(data);
+        const translations = (window as any).__wizardTranslations as Record<string, string>;
+        const t = (key: string) => translations[key] || key;
+        const modal = createTrackingModal(data, t);
         document.body.appendChild(modal);
       } catch (error) {
         console.error("Error fetching tracking code:", error);
@@ -878,110 +925,11 @@ if (reachedBasicLimit || reachedFlexLimit) {
       }
     }
 
-    async function testConnection(websiteId: string, domain: string) {
-      const button = document.querySelector(`[data-website-id="${websiteId}"].test-connection-btn`);
-      if (!button) return;
-      
-      const originalContent = button.innerHTML;
-      button.innerHTML = `
-        <div class="animate-spin h-4 w-4 border-2 border-neutral-600 border-t-transparent rounded-full"></div>
-        <span class="hidden sm:inline">Testing...</span>
-        <span class="sm:hidden">...</span>
-      `;
-      
-      try {
-        const scriptUrl = `https://peekvisor.vercel.app/peekvisor.js`;
-        const scriptResponse = await fetch(scriptUrl, { method: 'HEAD' });
-        
-        if (!scriptResponse.ok) {
-          throw new Error('Script not accessible');
-        }
-        
-        const data = await apiClient.getAnalytics(websiteId, 1);
-        const hasRecentActivity = data.overview.pageViews > 0;
-        
-        const modal = document.createElement("div");
-        modal.className = "fixed inset-0 bg-neutral-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4";
-        
-        const status = hasRecentActivity ? 'success' : 'warning';
-        const statusColor = hasRecentActivity ? 'green' : 'yellow';
-        
-        modal.innerHTML = `
-          <div class="bg-white dark:bg-neutral-800 connected-pattern border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-xl max-w-md w-full">
-            <div class="p-8">
-              <div class="flex items-center gap-4 mb-6">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-${statusColor}-100 dark:bg-${statusColor}-900/30">
-                  <svg class="h-6 w-6 text-neutral-800 dark:text-neutral-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    ${hasRecentActivity ? 
-                      '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' :
-                      '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />'
-                    }
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-                    Connection Test
-                  </h3>
-                  <p class="text-sm text-neutral-500 dark:text-neutral-400">${domain}</p>
-                </div>
-              </div>
-              
-              <div class="space-y-4 mb-8">
-                <div class="flex items-center gap-3">
-                  <div class="h-3 w-3 rounded-full bg-green-500"></div>
-                  <span class="text-sm text-neutral-700 dark:text-neutral-300">Script accessible</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <div class="h-3 w-3 rounded-full bg-${hasRecentActivity ? 'green' : 'yellow'}-500"></div>
-                  <span class="text-sm text-neutral-700 dark:text-neutral-300">
-                    ${hasRecentActivity ? 'Recent activity detected' : 'No recent activity (last 24h)'}
-                  </span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <div class="h-3 w-3 rounded-full bg-green-500"></div>
-                  <span class="text-sm text-neutral-700 dark:text-neutral-300">Analytics endpoint working</span>
-                </div>
-              </div>
-              
-              ${!hasRecentActivity ? `
-                <div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-xl border border-yellow-200 dark:border-yellow-800 mb-6">
-                  <p class="text-sm text-yellow-800 dark:text-yellow-200">
-                    <strong>Tip:</strong> Visit ${domain} to generate test data, then refresh analytics.
-                  </p>
-                </div>
-              ` : ''}
-              
-             <div class="flex justify-end">
-              <button class="close-modal rounded-xl bg-neutral-900 dark:bg-neutral-100 px-6 py-3 text-white dark:text-neutral-900 transition-all duration-200 hover:bg-neutral-800 dark:hover:bg-white hover:scale-105 active:scale-95">
-                Close
-              </button>
-            </div>
-            </div>
-          </div>
-        `;
-        
-        modal.querySelector('.close-modal')?.addEventListener('click', () => modal.remove());
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) modal.remove();
-        });
-        
-        document.body.appendChild(modal);
-        
-      } catch (error) {
-        console.error('Connection test failed:', error);
-        const msg = error instanceof Error ? error.message : String(error);
-        alert('Connection test failed: ' + msg);
-      } finally {
-        button.innerHTML = originalContent;
-      }
-    }
-
     (window as any).showTrackingCode = showTrackingCode;
-    (window as any).testConnection = testConnection;
     document.getElementById("back-button")?.addEventListener("click", () => {
       window.history.back();
     });
-  </script>
+ </script>
 <style>
   @keyframes gradient-animation {
     0% { background-position: 0% 50%; }
