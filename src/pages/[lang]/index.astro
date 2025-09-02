@@ -30,7 +30,7 @@ if (sessionToken) {
 
 <MainLayout title="PeekVisor | Privacy-first Analytics">
   <section class="relative overflow-hidden">
-    <div class="absolute inset-0 bg-grid-neutral-100/50 dark:bg-grid-neutral-800/30 [mask-image:radial-gradient(ellipse_at_center,transparent,black)]"></div>
+    <div class="absolute inset-0"></div>
     
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
       <div class="mx-auto max-w-3xl text-center">
@@ -45,7 +45,7 @@ if (sessionToken) {
         
         <div class="mt-8 sm:mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-6 animate-fade-in-up px-4 sm:px-0">
           {isAuthenticated ? (
-            <a href={`/${lang}/websites`} class="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-neutral-800 hover:shadow-xl hover:-translate-y-0.5 hover:scale-105 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white">
+            <a href={`/${lang}/dashboard`} class="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-neutral-800 hover:shadow-xl hover:-translate-y-0.5 hover:scale-105 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white">
               <span>{t("homepage.hero.viewDashboard")}</span>
               <Icon name="arrowRight" class="group-hover:rotate-45 transition-transform" />
             </a>

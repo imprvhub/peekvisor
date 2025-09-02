@@ -1,0 +1,224 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { eq } from "drizzle-orm";
+import { db } from "../../db/index";
+import { sessions } from "../../db/schema";
+import Icon from "@components/ui/icons/Icon.astro";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const sessionToken = Astro.cookies.get("app_auth_token")?.value;
+if (!sessionToken) return Astro.redirect(`/${lang}/`);
+
+const userInfo = await db.query.sessions.findFirst({
+  where: eq(sessions.id, sessionToken),
+  with: { user: true },
+});
+if (!userInfo?.user) return Astro.redirect(`/${lang}/`);
+
+const user = userInfo.user;
+const userEmail = user.email;
+
+let subscriptionData = null;
+try {
+  const backendUrl = import.meta.env.BACKEND_API_URL || "https://peekvisor.vercel.app";
+  const res = await fetch(`${backendUrl}/api/subscription/sync/${userEmail}`);
+  if (res.ok) {
+    subscriptionData = await res.json();
+  }
+} catch (err) {
+  console.error("Error fetching subscription:", err);
+}
+
+const plan = subscriptionData?.plan || user.plan || "basic";
+const subscription = subscriptionData?.subscription || null;
+---
+
+<MainLayout
+  title={t("subscription.pageTitle")}
+  customDescription="Your Subscription Details"
+>
+  <div class="min-h-screen">
+    <div class="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+      
+      <!-- Header -->
+      <div class="mb-8">
+        <a
+          href={`/${lang}/dashboard`}
+          class="inline-flex items-center text-neutral-500 transition-colors hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
+        >
+          <Icon name="arrowLeft" />
+          <span class="ml-1 text-lg">{t("nav.dashboard")}</span>
+        </a>
+
+        <h1 class="mt-4 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+          {t("subscription.title")}
+        </h1>
+        <p class="mt-2 text-lg text-neutral-600 dark:text-neutral-400">
+          {t("subscription.description")}
+        </p>
+      </div>
+
+      {subscription ? (
+        <div class="space-y-8">
+          <!-- Plan Overview -->
+          <div class="rounded-xl border border-neutral-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-8 shadow-sm dark:border-neutral-700 dark:from-neutral-800 dark:to-neutral-800">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                  {subscription.product_name}
+                </h2>
+                <p class="mt-1 text-neutral-600 dark:text-neutral-400">
+                  {subscription.variant_name}
+                </p>
+              </div>
+              <span class="rounded-full bg-green-100 px-3 py-1 text-sm font-medium dark:bg-green-900/30 text-neutral-600 dark:text-neutral-400">
+                {t(`subscription.status.${subscription.status.toLowerCase()}`)}
+              </span>
+            </div>
+          </div>
+
+     
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <!-- Billing Information -->
+            <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+              <h3 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                {t("subscription.billingInfo")}
+              </h3>
+              <div class="space-y-4">
+                <div>
+                  <p class="text-sm text-neutral-500 dark:text-neutral-400">{t("subscription.customer")}</p>
+                  <p class="font-medium text-neutral-900 dark:text-neutral-100">
+                    {subscription.user_name}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500 dark:text-neutral-400">{t("subscription.email")}</p>
+                  <p class="font-medium text-neutral-900 dark:text-neutral-100">
+                    {subscription.user_email}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500 dark:text-neutral-400">{t("subscription.paymentMethod")}</p>
+                  <p class="font-medium capitalize text-neutral-900 dark:text-neutral-100">
+                    {subscription.card_brand} •••• {subscription.card_last_four}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500 dark:text-neutral-400">{t("subscription.billingCycle")}</p>
+                  <p class="font-medium text-neutral-900 dark:text-neutral-100">
+                    {subscription.variant_name?.toLowerCase().includes('annual') || subscription.variant_name?.toLowerCase().includes('yearly') 
+                      ? t("subscription.billing.annual") 
+                      : t("subscription.billing.monthly")}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500 dark:text-neutral-400">{t("subscription.nextRenewal")}</p>
+                  <p class="font-medium text-neutral-900 dark:text-neutral-100">
+                    {subscription.renews_at
+                      ? new Date(subscription.renews_at).toLocaleDateString(lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : lang === 'pt' ? 'pt-BR' : 'de-DE', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })
+                      : t("subscription.notAvailable")}
+                  </p>
+                </div>
+                {subscription.first_subscription_item?.subscription_id && (
+                  <div>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">{t("subscription.subscriptionId")}</p>
+                    <p class="font-medium text-neutral-900 dark:text-neutral-100">
+                      #{subscription.first_subscription_item.subscription_id}
+                    </p>
+                  </div>
+                )}
+                
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+              <h3 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                {t("subscription.quickActions")}
+              </h3>
+
+              <div class="py-4 flex justify-center">
+                <img
+                src="/online_payments.svg"
+                alt="Analytics Illustration"
+                class="h-auto w-full max-w-[280px]"
+                />
+            </div>
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {subscription.urls?.customer_portal && (
+                <a
+                  href={subscription.urls.customer_portal}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-3 rounded-lg border border-neutral-200 p-4 transition-all hover:bg-neutral-50 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105 dark:border-neutral-700 dark:hover:bg-neutral-700/50"
+                >
+                  <Icon name="settings" class="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+                  <span class="text-neutral-800 dark:text-neutral-200">{t("subscription.billingPortal")}</span>
+                </a>
+              )}
+              {subscription.urls?.update_payment_method && (
+                <a
+                  href={subscription.urls.update_payment_method}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-3 rounded-lg border border-neutral-200 p-4 transition-all hover:bg-neutral-50 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105 dark:border-neutral-700 dark:hover:bg-neutral-700/50"
+                >
+                  <Icon name="creditCard" class="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+                  <span class="text-neutral-800 dark:text-neutral-200">{t("subscription.updatePayment")}</span>
+                </a>
+              )}
+              {subscription.urls?.customer_portal_update_subscription && (
+                <a
+                  href={subscription.urls.customer_portal_update_subscription}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-3 rounded-lg border border-neutral-200 p-4 transition-all hover:bg-neutral-50 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105 dark:border-neutral-700 dark:hover:bg-neutral-700/50"
+                >
+                  <Icon name="calendarSync" class="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+                  <span class="text-neutral-800 dark:text-neutral-200">{t("subscription.changePlan")}</span>
+                </a>
+              )}
+              <a
+                href={`/${lang}/contact`}
+                class="flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-800 p-4 transition-all hover:bg-neutral-700 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105 dark:border-neutral-700 dark:bg-neutral-200 dark:hover:bg-neutral-300"
+              >
+                <Icon name="messageCircleQuestion" class="h-5 w-5 text-neutral-200 dark:text-neutral-800" />
+                <span class="text-neutral-200 dark:text-neutral-800">{t("subscription.needHelp")}</span>
+              </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="rounded-xl border border-neutral-200 bg-white p-8 text-center shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+          <h2 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+            {t("subscription.noSubscription")}
+          </h2>
+          <div class="py-4 mt-2 flex justify-center">
+            <img
+              src="/stepping_up.svg"
+              alt="Analytics Illustration"
+              class="h-auto w-full max-w-[280px]"
+              />
+          </div>
+          <p class="mt-2 text-neutral-600 dark:text-neutral-400">
+            {t("subscription.noSubscriptionDesc")}
+          </p>
+          <a
+            href={`/${lang}/pricing`}
+            class="mt-4 mb-4 inline-block rounded-xl bg-neutral-900 px-6 py-3 text-white transition-all hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
+          >
+            {t("subscription.viewPlans")}
+          </a>
+        </div>
+      )}
+    </div>
+  </div>
+</MainLayout>

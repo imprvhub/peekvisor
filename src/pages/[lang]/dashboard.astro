@@ -121,6 +121,19 @@ try {
   console.error('Failed to fetch websites from backend:', error);
 }
 
+try {
+  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://peekvisor.vercel.app';
+  await fetch(`${backendUrl}/api/user/sync-subscription`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${sessionToken}`,
+      'Content-Type': 'application/json'
+    }
+  });
+} catch (error) {
+  console.error('Failed to sync subscription:', error);
+}
+
 const websiteCount = userWebsites.length;
 let userPlan: string = 'basic';
 let websiteLimit = 1;
@@ -345,7 +358,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
 
           <!-- Pricing -->
           <a
-            href={`/${lang}/pricing`}
+            href={`/${lang}/subscription`}
             class="group flex items-center rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:bg-neutral-50 hover:shadow-sm dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40"
           >
             <div
@@ -362,103 +375,117 @@ if (reachedBasicLimit || reachedFlexLimit) {
                 {t(manageOrUpgradeKey)}
               </p>
               <p class="text-xs text-neutral-500 dark:text-neutral-400">
-                {t("nav.pricing")}
+                {t("dashboard.quickActions.subscriptionDetails")}
               </p>
             </div>
           </a>
         </div>
       </div>
-      <h2
-          class="mb-6 text-xl font-semibold text-neutral-900 dark:text-neutral-100"
-        >
-          {t("websites.title")}
-        </h2>
-      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        
-         {userWebsites.map((website: any) => (
-         <div class="group rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40 relative">
-           <div class="absolute top-4 right-4">
-             <div class="relative">
-               <button 
-                 class="settings-menu-btn p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
-                 data-website-id={website.id}
-                 data-website-name={website.name}
-                 data-website-domain={website.domain}
-               >
-                 <Icon name="settingsCard" />
-               </button>
 
-               <div class="settings-dropdown absolute right-0 top-12 w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-lg z-10 hidden">
-                 <div class="p-2">
-                   <button
-                     class="delete-website-btn w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                     data-website-id={website.id}
-                     data-website-name={website.name}
-                     data-website-domain={website.domain}
-                   >
-                     <Icon name="trash" />
-                     Delete Website
-                   </button>
-                 </div>
-               </div>
-             </div>
-           </div>
+     
+      <h2 class="mb-6 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+        {t("websites.title")}
+      </h2>
 
-           <div class="flex items-start justify-between">
-             <div class="flex-1 min-w-0">
-               <div class="flex items-center gap-4 mb-6">
-                 <div class="relative flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-700 overflow-hidden">
-                   <img
-                     class="website-favicon h-8 w-8 rounded absolute hidden"
-                     data-domain={website.domain}
-                     alt={`${website.name} favicon`}
-                   />
-                   <div class="website-fallback-icon text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
-                     <svg class="w-6 h-6" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
-                       <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-82v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q20-22 36-47.5t26.5-53q10.5-27.5 16-56.5t5.5-59q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/>
-                     </svg>
-                   </div>
-                 </div>
-                 <div class="flex-1 min-w-0">
-                   <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 truncate mb-1">
-                     {website.name}
-                   </h3>
-                   <p class="text-sm text-neutral-500 dark:text-neutral-400 truncate">
-                     {website.domain}
-                   </p>
-                 </div>
-               </div>
-               
-               <div class="space-y-3">
-                <a 
-                   href={`/${lang}/analytics/${website.id}`}
-                   class="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium text-neutral-800 dark:text-neutral-200 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-600 dark:hover:bg-neutral-700"
-                 >
-                   <div class="text-neutral-700 dark:text-neutral-300">
-                     <Icon name="analytics" />
-                   </div>
-                   {t("websites.viewAnalytics")}
-                 </a>
-                <button
-                     class="tracking-code-btn flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium text-neutral-800 dark:text-neutral-200 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-600 dark:hover:bg-neutral-700"
-                     data-website-id={website.id}
-                   >
-                     <div class="text-neutral-700 dark:text-neutral-300">
-                       <Icon name="code" />
-                     </div>
-                     <span class="hidden sm:inline">{t("websites.trackingCode")}</span>
-                     <span class="sm:hidden">Code</span>
-                </button>
-               </div>
-             </div>
-           </div>
-         </div>
-         ))}
-       </div>
+      {userWebsites.length === 0 ? (
+        <div class="rounded-xl border border-neutral-200 bg-white p-8 text-center shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+          <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+            {t("dashboard.quickActions.noWebsitesYet")}
+          </h3>
+          <div class="py-4 mt-2 flex justify-center">
+            <img
+              src="/add_domain.svg"
+              alt="Add Domain Illustration"
+              class="h-auto w-full max-w-[280px]"
+            />
+          </div>
+          <p class="mt-2 text-neutral-600 dark:text-neutral-400">
+            {t("dashboard.quickActions.startTracking")}
+          </p>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {userWebsites.map((website: any) => (
+            <div class="group rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40 relative">
+              <div class="absolute top-4 right-4">
+                <div class="relative">
+                  <button 
+                    class="settings-menu-btn p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                    data-website-id={website.id}
+                    data-website-name={website.name}
+                    data-website-domain={website.domain}
+                  >
+                    <Icon name="settingsCard" />
+                  </button>
 
-    </div>
-  </div>
+                  <div class="settings-dropdown absolute right-0 top-12 w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-lg z-10 hidden">
+                    <div class="p-2">
+                      <button
+                        class="delete-website-btn w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        data-website-id={website.id}
+                        data-website-name={website.name}
+                        data-website-domain={website.domain}
+                      >
+                        <Icon name="trash" />
+                        Delete Website
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
+              <div class="flex items-start justify-between">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-4 mb-6">
+                    <div class="relative flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-700 overflow-hidden">
+                      <img
+                        class="website-favicon h-8 w-8 rounded absolute hidden"
+                        data-domain={website.domain}
+                        alt={`${website.name} favicon`}
+                      />
+                      <div class="website-fallback-icon text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
+                        <svg class="w-6 h-6" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
+                          <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-82v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q20-22 36-47.5t26.5-53q10.5-27.5 16-56.5t5.5-59q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 truncate mb-1">
+                        {website.name}
+                      </h3>
+                      <p class="text-sm text-neutral-500 dark:text-neutral-400 truncate">
+                        {website.domain}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div class="space-y-3">
+                    <a 
+                      href={`/${lang}/analytics/${website.id}`}
+                      class="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium text-neutral-800 dark:text-neutral-200 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-600 dark:hover:bg-neutral-700"
+                    >
+                      <div class="text-neutral-700 dark:text-neutral-300">
+                        <Icon name="analytics" />
+                      </div>
+                      {t("websites.viewAnalytics")}
+                    </a>
+                    <button
+                      class="tracking-code-btn flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium text-neutral-800 dark:text-neutral-200 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-600 dark:hover:bg-neutral-700"
+                      data-website-id={website.id}
+                    >
+                      <div class="text-neutral-700 dark:text-neutral-300">
+                        <Icon name="code" />
+                      </div>
+                      <span class="hidden sm:inline">{t("websites.trackingCode")}</span>
+                      <span class="sm:hidden">Code</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
   <!-- Add Domain Modal -->
    <div
      id="add-website-modal"
@@ -484,21 +511,26 @@ if (reachedBasicLimit || reachedFlexLimit) {
            </div>
            <form id="add-website-form">
              <div class="mb-6">
-               <label
-                 for="domain"
-                 class="mb-3 block text-sm font-medium text-neutral-700 dark:text-neutral-300"
-               >
-                 {t("websites.modal.domain")}
-               </label>
-               <input
-                 type="text"
-                 id="domain"
-                 name="domain"
-                 placeholder={t("websites.modal.domainPlaceholder")}
-                 class="w-full rounded-xl border border-neutral-300 px-4 py-3 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100 dark:focus:border-blue-400"
-                 required
-               />
-             </div>
+              <label
+                for="domain"
+                class="mb-3 block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+              >
+                {t("websites.modal.domain")}
+              </label>
+              <div class="flex items-center">
+                <span class="inline-flex items-center px-3 py-3 rounded-l-xl border border-r-0 border-neutral-300 dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 text-sm font-medium">
+                  https://
+                </span>
+                <input
+                  type="text"
+                  id="domain"
+                  name="domain"
+                  placeholder={t("websites.modal.domainPlaceholder")}
+                  class="flex-1 rounded-r-xl border border-neutral-300 px-4 py-3 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100 dark:focus:border-blue-400"
+                  required
+                />
+              </div>
+            </div>
              <div class="mb-8">
                <label
                  for="name"
@@ -515,7 +547,14 @@ if (reachedBasicLimit || reachedFlexLimit) {
                  required
                />
              </div>
-             <div class="flex justify-end space-x-4">
+             <div class="py-4 mt-4 mb-4 flex justify-center">
+              <img
+                src="/add_domain_modal.svg"
+                alt="Analytics Illustration"
+                class="h-auto w-full max-w-[220px]"
+                />
+              </div>
+             <div class="flex justify-between space-x-4">
                <button
                  type="button"
                  id="cancel-add-website"
@@ -535,6 +574,49 @@ if (reachedBasicLimit || reachedFlexLimit) {
        </div>
      </div>
    </div>
+
+   <!-- HTTP Warning Modal -->
+    <div
+      id="http-warning-modal"
+      class="fixed inset-0 z-50 hidden bg-neutral-900/50 backdrop-blur-sm"
+    >
+      <div class="flex min-h-screen items-center justify-center p-4">
+        <div
+          class="w-full max-w-md rounded-2xl border border-amber-200 bg-white shadow-xl dark:border-amber-700 dark:bg-neutral-800"
+        >
+          <div class="p-8">
+            <div class="mb-6 flex items-center justify-between">
+              <h3 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+                {t("websites.httpWarning.title")}
+              </h3>
+              <button
+                id="close-http-warning-btn"
+                class="rounded-xl p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-900/30 dark:hover:text-neutral-300"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
+              <p class="text-sm text-neutral-800 dark:text-neutral-200">
+                {t("websites.httpWarning.message")}
+              </p>
+            </div>
+            
+            <div class="flex justify-end">
+              <button
+                id="understood-http-warning"
+                class="rounded-xl bg-neutral-900 dark:bg-neutral-100 px-6 py-3 text-white dark:text-neutral-900 transition-all duration-200 hover:bg-neutral-800 dark:hover:bg-white hover:scale-105 active:scale-95"
+              >
+                {t("websites.httpWarning.understood")}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
    <!-- Delete Website Modal -->
    <div
@@ -897,8 +979,19 @@ if (reachedBasicLimit || reachedFlexLimit) {
       e.preventDefault();
 
       const formData = new FormData(e.target as HTMLFormElement);
+      let domain = (formData.get("domain") as string).trim();
+
+      if (domain.startsWith("http://")) {
+        showHttpWarning();
+        return;
+      }
+      
+      domain = domain.replace(/^https?:\/\//i, '');
+
+      const fullDomain = `https://${domain}`;
+      
       const data = {
-        domain: formData.get("domain") as string,
+        domain: fullDomain,
         name: formData.get("name") as string,
       };
 
@@ -911,6 +1004,32 @@ if (reachedBasicLimit || reachedFlexLimit) {
         alert(error instanceof Error ? error.message : "Error adding website");
       }
     }
+
+    function showHttpWarning() {
+      const modal = document.getElementById("http-warning-modal");
+      modal?.classList.remove("hidden");
+    }
+
+    function closeHttpWarning() {
+      const modal = document.getElementById("http-warning-modal");
+      modal?.classList.add("hidden");
+    }
+
+    document
+      .getElementById("close-http-warning-btn")
+      ?.addEventListener("click", closeHttpWarning);
+
+    document
+      .getElementById("understood-http-warning")
+      ?.addEventListener("click", closeHttpWarning);
+
+    document
+      .getElementById("http-warning-modal")
+      ?.addEventListener("click", (e) => {
+        if ((e.target as HTMLElement)?.id === "http-warning-modal") {
+          closeHttpWarning();
+        }
+      });
 
     async function showTrackingCode(websiteId: string) {
       try {
