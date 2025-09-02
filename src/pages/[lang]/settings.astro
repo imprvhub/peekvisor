@@ -109,8 +109,51 @@ function capitalizeFirstWord(text: string) {
                         {new Date(accountCreated!).toLocaleDateString()}
                       </span>
                     </div>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                      <a
+                        href={`/${lang}/dashboard`}
+                        class="group flex items-center rounded-xl border border-neutral-200 bg-white p-2 transition-all hover:bg-neutral-50 hover:shadow-sm dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40"
+                      >
+                        <div
+                          class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 group-hover:bg-neutral-200 dark:bg-neutral-700 dark:group-hover:bg-neutral-600"
+                        >
+                          <div class="text-neutral-700 dark:text-neutral-300">
+                            <svg
+                              class="h-5 w-5 flex-none fill-current"
+                              viewBox="0 -960 960 960"
+                            >
+                              <path d="M510-570v-270h330v270H510ZM120-450v-390h330v390H120Zm390 330v-390h330v390H510Zm-390 0v-270h330v270H120Zm60-390h210v-270H180v270Zm390 330h210v-270H570v270Zm0-450h210v-150H570v150ZM180-180h210v-150H180v150Zm210-330Zm180-120Zm0 180ZM390-330Z" />
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="ml-3">
+                          <p class="text-md text-neutral-800 dark:text-neutral-200">
+                            {t("dashboard.title")}
+                          </p>
+                        </div>
+                      </a>
+                      <a
+                        href={`/${lang}/subscription`}
+                        class="group flex items-center rounded-xl border border-neutral-200 bg-white p-2 transition-all hover:bg-neutral-50 hover:shadow-sm dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40"
+                      >
+                        <div
+                          class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 group-hover:bg-neutral-200 dark:bg-neutral-700 dark:group-hover:bg-neutral-600"
+                        >
+                          <div class="text-neutral-700 dark:text-neutral-300">
+                            <Icon name="rocket" />
+                          </div>
+                        </div>
+                        <div class="ml-3">
+                          <p class="text-md text-neutral-800 dark:text-neutral-200">
+                            {t("dashboard.planCard.manage")}
+                          </p>
+                        </div>
+                      </a>
+                    </div>
                   </div>
+                  
                 </div>
+                
               </div>
             </div>
           </div>
@@ -198,7 +241,7 @@ function capitalizeFirstWord(text: string) {
                         </div>
                         <div>
                           {sessionToken === log.sessionId ? (
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-neutral-100 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-neutral-300 dark:bg-neutral-700 text-[#7C86FF] dark:text-[#A2B3FF]">
                               {t('settings.sessions.currentDevice')}
                             </span>
                           ) : (
@@ -261,6 +304,15 @@ function capitalizeFirstWord(text: string) {
                 </button>
               </div>
             </div>
+          </div>
+
+           <div class="mt-6 sm:mt-8 flex justify-center">
+            <button
+              id="back-button"
+              class="btn-gradient hover:btn-gradient-hover rounded-lg px-4 py-2.5 sm:px-6 sm:py-3 text-sm font-medium text-white transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none sm:text-base"
+            >
+              {t("ui.goBack")}
+            </button>
           </div>
         </div>
       </div>
@@ -378,6 +430,7 @@ function capitalizeFirstWord(text: string) {
       const currentPath = window.location.pathname;
       const pathSegments = currentPath.split('/').filter(segment => segment !== '');
       const currentLang = pathSegments[0] || 'en';
+      
       
       const languageSelector = document.getElementById('language-selector') as HTMLSelectElement | null;
       const themeSelector = document.getElementById('theme-selector') as HTMLSelectElement | null;
