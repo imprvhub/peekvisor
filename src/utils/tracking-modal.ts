@@ -84,8 +84,8 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
               </h3>
               <div class="flex items-center gap-2 mt-1">
                 <div id="status-indicator" class="h-2 w-2 rounded-full bg-gray-400"></div>
-                <span id="status-text" class="text-xs text-neutral-500 dark:text-neutral-400">${t('websites.wizard.checkingStatus')}</span>
-                <button id="recheck-btn" class="text-xs text-blue-600 dark:text-blue-400 hover:underline ml-2">${t('websites.wizard.recheck')}</button>
+                <span id="status-text" class="text-md text-neutral-500 dark:text-neutral-400">${t('websites.wizard.checkingStatus')}</span>
+                <button id="recheck-btn" class="text-md text-blue-600 dark:text-blue-400 hover:underline ml-2">${t('websites.wizard.recheck')}</button>
               </div>
             </div>
           </div>
@@ -108,21 +108,16 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button id="automatic-btn" class="install-option-btn p-6 border-2 border-blue-500 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-400 rounded-xl transition-all hover:scale-105">
-              <div class="flex items-center gap-4 mb-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700">
-                  <svg class="h-5 w-5 text-neutral-600 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div class="text-left">
-                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-neutral-800 dark:text-neutral-200">
-                    ${t('websites.wizard.recommended')}
-                  </span>
-                </div>
+              <div class="py-4 flex justify-center">
+                <img
+                src="/code_generation.svg"
+                alt="Analytics Illustration"
+                class="h-auto w-full max-w-[280px]"
+                />
               </div>
-              <div class="text-left">
+              <div class="text-center">
                 <h5 class="font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-                  ${t('websites.wizard.automatic')}
+                  ${t('websites.wizard.automatic')} (${t('websites.wizard.recommended')})
                 </h5>
                 <p class="text-sm text-neutral-600 dark:text-neutral-400">
                   ${t('websites.wizard.automaticDesc')}
@@ -131,14 +126,14 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
             </button>
             
             <button id="manual-btn" class="install-option-btn p-6 border-2 border-neutral-200 dark:border-neutral-600 rounded-xl transition-all hover:scale-105 hover:border-neutral-300 dark:hover:border-neutral-500">
-              <div class="flex items-center gap-4 mb-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700">
-                  <svg class="h-5 w-5 text-neutral-600 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                  </svg>
-                </div>
+              <div class="py-4 flex justify-center">
+                <img
+                src="/programmer1.svg"
+                alt="Analytics Illustration"
+                class="h-auto w-full max-w-[280px]"
+                />
               </div>
-              <div class="text-left">
+              <div class="text-center">
                 <h5 class="font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
                   ${t('websites.wizard.manual')}
                 </h5>
