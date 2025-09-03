@@ -37,52 +37,51 @@ const socialLinks = {
   <div
     class="mx-auto w-full max-w-[85rem] px-4 py-10 sm:px-6 lg:px-16 lg:pt-20 2xl:max-w-(--breakpoint-2xl)"
   >
-    <div class="grid grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-5">
-      <div class="col-span-full lg:col-span-2">
+    <div class="grid grid-cols-1 gap-6 min-[560px]:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+      <div class="col-span-full flex flex-col items-center min-[560px]:items-start lg:col-span-2">
         <!-- Brand Logo -->
         <BrandLogo class="h-auto w-32" />
-         <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+        <p class="mt-2 text-center text-sm text-neutral-600 dark:text-neutral-400 min-[560px]:text-left">
           © <span id="current-year"></span> {SITE.title} Analytics. {t("footer.rights")}
         </p>
-        
       </div>
       
       <!-- An array of links for Product and Company sections -->
       {
-        footerLinks.map((section) => (
-          <div class="col-span-1">
-            <ul class="mt-3 grid space-y-3">
-              {section.links.map((link) => (
-                <li>
-                  <a
-                    href={link.url}
-                    class="inline-flex gap-x-2 rounded-lg text-neutral-600 outline-hidden ring-zinc-500 transition duration-300 hover:text-neutral-500 focus-visible:ring-3 dark:text-neutral-400 dark:ring-zinc-200 dark:hover:text-neutral-300 dark:focus:outline-hidden"
-                  >
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
+      footerLinks.map((section) => (
+        <div class="col-span-1 max-[560px]:text-center">
+          <ul class="mt-3 grid space-y-3">
+            {section.links.map((link) => (
+              <li>
+                <a
+                  href={link.url}
+                  class="inline-flex gap-x-2 rounded-lg text-sm max-[560px]:text-xs text-neutral-600 outline-hidden ring-zinc-500 transition duration-300 hover:text-neutral-500 focus-visible:ring-3 dark:text-neutral-400 dark:ring-zinc-200 dark:hover:text-neutral-300 dark:focus:outline-hidden max-[560px]:justify-center"
+                >
+                  {link.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
     </div>
 
     <div
-      class="mt-9 grid gap-y-2 sm:mt-12 sm:flex sm:items-center sm:justify-between sm:gap-y-0"
+      class="mt-9 flex flex-col items-center gap-4 sm:mt-12 sm:flex-row sm:justify-between sm:gap-0"
     >
-      <div class="flex items-center justify-between">
+      <div class="flex items-center">
         <a href="https://www.lemonsqueezy.com/" target="_blank" rel="noopener noreferrer">
           <img
             src="/Lemon-Squeezy-Powered-Badge-Purple-Soft.svg"
             alt="Lemon Squeezy Badge"
-            class="h-auto w-full max-w-[280px]"
+            class="h-auto w-[180px] sm:w-[220px] lg:w-[280px]"
           />
         </a>
       </div>
       
       <!-- Social Brands -->
-      <div>
+      <div class="flex items-center">
         <FooterSocialLink url={socialLinks.github}
           ><Icon name="githubFooter" />
         </FooterSocialLink>
