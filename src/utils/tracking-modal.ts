@@ -1,6 +1,6 @@
 export function createTrackingModal(data: any, t: (key: string) => string): HTMLElement {
   const modal = document.createElement("div");
-  modal.className = "fixed inset-0 bg-neutral-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4";
+  modal.className = "fixed inset-0 bg-neutral-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto";
 
   const style = document.createElement('style');
   style.textContent = `
@@ -26,8 +26,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
   document.head.appendChild(style);
 
   const modalContent = document.createElement("div");
-  modalContent.className = "bg-white dark:bg-neutral-800 border connected-pattern border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto";
-
+  modalContent.className = "bg-white dark:bg-neutral-800 border connected-pattern border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-xl max-w-4xl w-full max-h-[65vh] min-[750px]:max-h-[75vh] sm:max-h-[85vh] mt-20 min-[750px]:my-4 sm:my-auto overflow-y-auto";
   const osIcons = {
     'Windows': '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 50 50"><path fill="currentColor" d="M 18.652344 3.0449219 C 14.379795 3.0802246 11.595937 5.0308594 11.414062 5.1621094 C 11.219062 5.3031094 11.081391 5.5101406 11.025391 5.7441406 L 7.7871094 19.517578 C 7.7081094 19.856578 7.8105937 20.212031 8.0585938 20.457031 C 8.3065937 20.702031 8.6649531 20.80075 9.0019531 20.71875 C 12.409953 19.64175 17.581625 19.490031 22.890625 22.457031 C 23.040625 22.541031 23.207953 22.583984 23.376953 22.583984 C 23.510953 22.583984 23.645484 22.557906 23.771484 22.503906 C 24.056484 22.380906 24.269703 22.131078 24.345703 21.830078 L 28.142578 6.9472656 C 28.249578 6.5292656 28.076891 6.0894219 27.712891 5.8574219 C 24.316141 3.6917969 21.215873 3.0237402 18.652344 3.0449219 z M 30.765625 8.1992188 C 30.609875 8.1832188 30.452234 8.2046719 30.302734 8.2636719 C 30.001734 8.3806719 29.776266 8.6342656 29.697266 8.9472656 L 25.923828 23.740234 C 25.821828 24.138234 25.974594 24.558828 26.308594 24.798828 C 29.739594 27.264828 33.206719 28 36.136719 28 C 38.978719 28 41.315094 27.309547 42.621094 26.810547 C 42.931094 26.692547 43.162281 26.428469 43.238281 26.105469 L 46.972656 10.228516 C 47.067656 9.8235156 46.901641 9.4029219 46.556641 9.1699219 C 46.211641 8.9389219 45.756016 8.9445 45.416016 9.1875 C 45.164016 9.3665 39.224937 13.652469 31.210938 8.3554688 C 31.075437 8.2674687 30.921375 8.2152187 30.765625 8.1992188 z M 13.603516 22.025391 C 10.846516 22.095516 8.5932031 22.842813 7.3457031 23.320312 C 7.0347031 23.438312 6.8045156 23.702391 6.7285156 24.025391 L 3.0253906 39.771484 C 3.0083906 39.846484 3 39.967922 3 40.044922 C 3 40.418922 3.2099687 40.759641 3.5429688 40.931641 C 3.8719688 41.101641 4.5820313 40.857422 4.5820312 40.857422 C 4.5820312 40.857422 10.454406 36.499578 18.066406 41.267578 C 18.222406 41.359578 18.397219 41.40625 18.574219 41.40625 C 18.704219 41.40625 18.835984 41.382078 18.958984 41.330078 C 19.249984 41.209078 19.467922 40.959297 19.544922 40.654297 L 23.3125 25.880859 C 23.4185 25.461859 23.246766 25.024016 22.884766 24.791016 C 19.622266 22.562016 16.360516 21.955266 13.603516 22.025391 z M 25.931641 27.083984 C 25.777516 27.070984 25.620156 27.094797 25.472656 27.154297 C 25.177656 27.274297 24.956906 27.525984 24.878906 27.833984 L 21.107422 42.617188 C 21.003422 43.020187 21.162906 43.444594 21.503906 43.683594 C 25.198906 46.265594 28.586516 47 31.228516 47 C 32.090516 47 32.8745 46.914828 33.5625 46.798828 C 36.6205 46.284828 38.508891 44.935906 38.587891 44.878906 C 38.798891 44.725906 38.940375 44.451641 38.984375 44.181641 L 42.177734 30.613281 C 42.256734 30.274281 42.15525 29.918828 41.90625 29.673828 C 41.65725 29.428828 41.299844 29.329109 40.964844 29.412109 C 35.856844 30.677109 30.785094 29.951469 26.371094 27.230469 C 26.236094 27.146969 26.085766 27.096984 25.931641 27.083984 z"/></svg>',
     'macOS': '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 30 30"><path fill="currentColor" d="M25.565,9.785c-0.123,0.077-3.051,1.702-3.051,5.305c0.138,4.109,3.695,5.55,3.756,5.55 c-0.061,0.077-0.537,1.963-1.947,3.94C23.204,26.283,21.962,28,20.076,28c-1.794,0-2.438-1.135-4.508-1.135 c-2.223,0-2.852,1.135-4.554,1.135c-1.886,0-3.22-1.809-4.4-3.496c-1.533-2.208-2.836-5.673-2.882-9 c-0.031-1.763,0.307-3.496,1.165-4.968c1.211-2.055,3.373-3.45,5.734-3.496c1.809-0.061,3.419,1.242,4.523,1.242 c1.058,0,3.036-1.242,5.274-1.242C21.394,7.041,23.97,7.332,25.565,9.785z M15.001,6.688c-0.322-1.61,0.567-3.22,1.395-4.247 c1.058-1.242,2.729-2.085,4.17-2.085c0.092,1.61-0.491,3.189-1.533,4.339C18.098,5.937,16.488,6.872,15.001,6.688z"/></svg>',
@@ -70,7 +69,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
 
   function renderEntryScreen() {
     return `
-      <div class="p-8">
+      <div class="p-4 sm:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-4">
             <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30">
@@ -78,14 +77,14 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
               </svg>
             </div>
-            <div>
-              <h3 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+           <div>
+              <h3 class="text-base sm:text-lg lg:text-xl font-semibold text-neutral-900 dark:text-neutral-100 line-clamp-1">
                 ${t('websites.wizard.title')} - ${data.website.name}
               </h3>
-              <div class="flex items-center gap-2 mt-1">
-                <div id="status-indicator" class="h-2 w-2 rounded-full bg-gray-400"></div>
-                <span id="status-text" class="text-xs text-neutral-500 dark:text-neutral-400">${t('websites.wizard.checkingStatus')}</span>
-                <button id="recheck-btn" class="text-xs text-blue-600 dark:text-blue-400 hover:underline ml-2">${t('websites.wizard.recheck')}</button>
+              <div class="flex flex-wrap items-center gap-1 sm:gap-2 mt-1">
+                <div id="status-indicator" class="h-2 w-2 rounded-full bg-gray-400 flex-shrink-0"></div>
+                <span id="status-text" class="text-xs sm:text-sm lg:text-md text-neutral-500 dark:text-neutral-400">${t('websites.wizard.checkingStatus')}</span>
+                <button id="recheck-btn" class="text-xs sm:text-sm lg:text-md text-blue-600 dark:text-blue-400 hover:underline ml-1 sm:ml-2">${t('websites.wizard.recheck')}</button>
               </div>
             </div>
           </div>
@@ -108,21 +107,16 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button id="automatic-btn" class="install-option-btn p-6 border-2 border-blue-500 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-400 rounded-xl transition-all hover:scale-105">
-              <div class="flex items-center gap-4 mb-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700">
-                  <svg class="h-5 w-5 text-neutral-600 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div class="text-left">
-                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-neutral-800 dark:text-neutral-200">
-                    ${t('websites.wizard.recommended')}
-                  </span>
-                </div>
+              <div class="py-2 sm:py-4 flex justify-center">
+                <img
+                src="/code_generation.svg"
+                alt="Analytics Illustration"
+                class="h-auto w-full max-w-[180px] sm:max-w-[280px]"
+                />
               </div>
-              <div class="text-left">
+              <div class="text-center">
                 <h5 class="font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-                  ${t('websites.wizard.automatic')}
+                  ${t('websites.wizard.automatic')} (${t('websites.wizard.recommended')})
                 </h5>
                 <p class="text-sm text-neutral-600 dark:text-neutral-400">
                   ${t('websites.wizard.automaticDesc')}
@@ -131,14 +125,14 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
             </button>
             
             <button id="manual-btn" class="install-option-btn p-6 border-2 border-neutral-200 dark:border-neutral-600 rounded-xl transition-all hover:scale-105 hover:border-neutral-300 dark:hover:border-neutral-500">
-              <div class="flex items-center gap-4 mb-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700">
-                  <svg class="h-5 w-5 text-neutral-600 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                  </svg>
-                </div>
+              <div class="py-4 flex justify-center">
+                <img
+                src="/programmer1.svg"
+                alt="Analytics Illustration"
+                class="h-auto w-full max-w-[280px]"
+                />
               </div>
-              <div class="text-left">
+              <div class="text-center">
                 <h5 class="font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
                   ${t('websites.wizard.manual')}
                 </h5>
@@ -156,7 +150,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
   function renderManualInstallation() {
     const encodedScript = scriptHtml.replace(/</g, "&lt;").replace(/>/g, "&gt;");
     return `
-      <div class="p-8">
+      <div class="p-4 sm:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-4">
             <button id="back-btn" class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
@@ -221,7 +215,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
 
   function renderOSSelection() {
     return `
-      <div class="p-8">
+      <div class="p-4 sm:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-4">
             <button id="back-btn" class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
@@ -253,7 +247,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
             </p>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             <button class="os-btn p-6 border-2 border-neutral-200 dark:border-neutral-600 rounded-xl transition-all hover:scale-105 hover:border-blue-400 dark:hover:border-blue-400" data-os="Windows">
               <div class="flex flex-col items-center gap-3">
                 <div class="text-neutral-700 dark:text-neutral-300">
@@ -288,7 +282,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
 
   function renderFrameworkSelection() {
     return `
-      <div class="p-8">
+      <div class="p-4 sm:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-4">
             <button id="back-btn" class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
@@ -320,7 +314,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
             </p>
           </div>
           
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             ${['HTML', 'React', 'Astro', 'Next.js', 'Vue', 'Vanilla JS',  'Svelte', 'SvelteKit', 'SolidJS', 'Qwik', 'Lit', 'Other'].map(framework => `
               <button class="framework-btn p-4 border-2 border-neutral-200 dark:border-neutral-600 rounded-xl transition-all hover:scale-105 hover:border-blue-400 dark:hover:border-blue-400 text-sm font-medium text-neutral-900 dark:text-neutral-100" data-framework="${framework}">
                 ${framework}
@@ -334,7 +328,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
 
   function renderFileKnowledge() {
     return `
-      <div class="p-8">
+      <div class="p-4 sm:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-4">
             <button id="back-btn" class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
@@ -402,7 +396,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
 
   function renderFileInput() {
     return `
-      <div class="p-8">
+      <div class="p-4 sm:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-4">
             <button id="back-btn" class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
@@ -500,7 +494,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
     };
 
     return `
-      <div class="p-8">
+      <div class="p-4 sm:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-4">
             <button id="back-btn" class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
@@ -592,7 +586,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
   };
 
   return `
-    <div class="p-8">
+    <div class="p-4 sm:p-8">
       <div class="flex items-center justify-between mb-8">
         <div class="flex items-center gap-4">
           <button id="back-btn" class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors">
