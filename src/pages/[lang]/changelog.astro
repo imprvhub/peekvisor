@@ -38,50 +38,42 @@ function processMarkdown(text: string) {
 
     return (
         text
-            // Headers
             .replace(
                 /^### (.*$)/gim,
-                '<h3 class="text-lg font-semibold text-neutral-800 dark:text-neutral-200 mt-4 mb-2">$1</h3>',
+                '<h3 class="text-base sm:text-lg font-semibold text-neutral-800 dark:text-neutral-200 mt-4 mb-2">$1</h3>',
             )
             .replace(
                 /^## (.*$)/gim,
-                '<h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mt-6 mb-3">$1</h2>',
+                '<h2 class="text-lg sm:text-xl font-semibold text-neutral-800 dark:text-neutral-200 mt-6 mb-3">$1</h2>',
             )
             .replace(
                 /^# (.*$)/gim,
-                '<h1 class="text-2xl font-bold text-neutral-800 dark:text-neutral-200 mt-8 mb-4">$1</h1>',
+                '<h1 class="text-xl sm:text-2xl font-bold text-neutral-800 dark:text-neutral-200 mt-8 mb-4">$1</h1>',
             )
-            // Bold
             .replace(
                 /\*\*(.*?)\*\*/g,
                 '<strong class="font-semibold text-neutral-800 dark:text-neutral-200">$1</strong>',
             )
-            // Italic
             .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-            // Code
             .replace(
                 /`(.*?)`/g,
-                '<code class="bg-neutral-100 dark:bg-neutral-700 px-1 py-0.5 rounded text-sm font-mono">$1</code>',
+                '<code class="bg-neutral-100 dark:bg-neutral-700 px-1 py-0.5 rounded text-xs sm:text-sm font-mono break-all">$1</code>',
             )
-            // Links
             .replace(
                 /\[([^\]]+)\]\(([^)]+)\)/g,
-                '<a href="$2" class="text-brand-coral hover:underline" target="_blank" rel="noopener noreferrer">$1</a>',
+                '<a href="$2" class="text-brand-coral hover:underline break-words" target="_blank" rel="noopener noreferrer">$1</a>',
             )
-            // Line breaks
             .replace(
                 /\n\n/g,
-                '</p><p class="text-sm text-neutral-600 dark:text-neutral-400 mb-3">',
+                '</p><p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 mb-3">',
             )
-            // List items
             .replace(
                 /^- (.*$)/gim,
-                '<li class="text-sm text-neutral-600 dark:text-neutral-400 ml-4">• $1</li>',
+                '<li class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 ml-4">• $1</li>',
             )
-            // Wrap in paragraph if not already wrapped
             .replace(
                 /^(?!<[h|l|p])/gm,
-                '<p class="text-sm text-neutral-600 dark:text-neutral-400 mb-3">',
+                '<p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 mb-3">',
             )
     );
 }
@@ -92,84 +84,86 @@ function processMarkdown(text: string) {
     customDescription={t("changelog.metaDescription")}
     customOgTitle={t("changelog.ogTitle")}
 >
-    <div class="mt-8 mb-8 flex justify-center">
+    <div class="w-full flex justify-center mt-4 sm:mt-8 mb-4 sm:mb-8 px-1 min-[400px]:px-2 sm:px-4">
         <div
-            class="w-full max-w-4xl rounded-lg border border-yellow-100/40 px-6 py-10  md:px-8 md:py-12 dark:border-neutral-700/40"
+            class="w-[calc(100%-16px)] mx-auto max-w-5xl rounded-lg border border-yellow-100/40 py-3 px-2 min-[400px]:px-3 sm:py-8 sm:px-6 md:py-10 md:px-8 dark:border-neutral-700/40"
         >
             <h1
-                class="mb-8 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100"
+                class="mb-6 sm:mb-8 text-center text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100"
             >
                 {t("changelog.title")}
             </h1>
 
             {
                 error ? (
-                    <div class="py-8 text-center">
-                        <p class="mb-4 text-red-600 dark:text-red-400">
+                    <div class="py-6 sm:py-8 text-center">
+                        <p class="mb-4 text-sm sm:text-base text-red-600 dark:text-red-400">
                             {t("changelog.error")}: {error}
                         </p>
                     </div>
                 ) : releases.length === 0 ? (
-                    <div class="py-8 text-center">
-                        <p class="text-neutral-600 dark:text-neutral-400">
+                    <div class="py-6 sm:py-8 text-center">
+                        <p class="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
                             {t("changelog.loading")}
                         </p>
                     </div>
                 ) : (
-                    <div class="max-h-[70vh] space-y-8 overflow-y-auto pr-2">
+                    <div class="max-h-[60vh] sm:max-h-[70vh] space-y-4 sm:space-y-6 overflow-y-auto overflow-x-hidden">
                         {releases.map((release: any, index: number) => (
                             <div
-                                class="mb-6 rounded-[24px] border border-[#7C86FF] p-6"
+                                class="w-full mb-4 sm:mb-6 rounded-[12px] min-[400px]:rounded-[16px] sm:rounded-[24px] border border-[#7C86FF] p-2 min-[400px]:p-3 sm:p-5 md:p-6 overflow-hidden"
                                 style="border-color: #7C86FF;"
                             >
-                                <div class="mb-4 flex items-start justify-between">
-                                    <div>
-                                        <h2 class="mb-2 text-xl font-semibold text-neutral-800 dark:text-neutral-200">
-                                            {t("changelog.version")}{" "}
-                                            {release.tag_name}
-                                            {release.name &&
-                                                release.name !==
-                                                    release.tag_name && (
-                                                    <span class="ml-2 text-lg font-normal text-neutral-600 dark:text-neutral-400">
-                                                        - {release.name}
-                                                    </span>
-                                                )}
-                                        </h2>
-                                        <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                                            {t("changelog.releaseDate")}{" "}
-                                            {formatDate(
-                                                release.published_at,
-                                                lang,
+                                 <div class="mb-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                                    <div class="min-w-0 flex-1 text-center sm:text-left">
+                                        <h2 class="mb-2 text-lg sm:text-xl font-semibold text-neutral-800 dark:text-neutral-200 break-words">
+                                        <span class="block sm:inline">{t("changelog.version")} {release.tag_name}</span>
+                                        {release.name &&
+                                            release.name !==
+                                            release.tag_name && (
+                                            <span class="block sm:inline sm:ml-2 text-base sm:text-lg font-normal text-neutral-600 dark:text-neutral-400 mt-1 sm:mt-0">
+                                                - {release.name}
+                                            </span>
                                             )}
+                                        </h2>
+                                        <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
+                                        {t("changelog.releaseDate")}{" "}
+                                        {formatDate(
+                                            release.published_at,
+                                            lang,
+                                        )}
                                         </p>
                                     </div>
-                                    <a
+                                    <div class="flex justify-center sm:block">
+                                        <a
                                         href={release.html_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="inline-flex items-center rounded-lg border border-neutral-200 bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600"
-                                    >
+                                        class="inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-neutral-100 px-1.5 py-1.5 min-[400px]:px-2 min-[400px]:py-2 sm:px-3 sm:py-1.5 text-xs font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600"
+                                        aria-label="View on GitHub"
+                                        >
                                         <svg
-                                            class="mr-1 h-3 w-3"
+                                            class="h-4 w-4 sm:mr-1 sm:h-3 sm:w-3"
                                             fill="currentColor"
                                             viewBox="0 0 20 20"
                                         >
                                             <path
-                                                fill-rule="evenodd"
-                                                d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
-                                                clip-rule="evenodd"
+                                            fill-rule="evenodd"
+                                            d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
+                                            clip-rule="evenodd"
                                             />
                                         </svg>
-                                        {t("changelog.viewOnGitHub")}
-                                    </a>
-                                </div>
+                                        <span class="ml-2 sm:inline">{t("changelog.viewOnGitHub")}</span>
+                                        </a>
+                                    </div>
+                                    </div>
 
                                 {release.body && (
-                                    <div class="prose prose-sm max-w-none text-neutral-600 dark:text-neutral-400">
+                                    <div class="w-full overflow-hidden">
                                         <div
-                                            set:html={processMarkdown(
-                                                release.body,
-                                            )}
+                                            class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400"
+                                            style="word-break: break-word; overflow-wrap: anywhere; hyphens: auto;"
+                                            set:html={processMarkdown(release.body)}
                                         />
                                     </div>
                                 )}
@@ -179,10 +173,10 @@ function processMarkdown(text: string) {
                 )
             }
 
-            <div class="mt-8 flex justify-center">
+            <div class="mt-6 sm:mt-8 flex justify-center">
                 <button
                     id="back-button"
-                    class="btn-gradient hover:btn-gradient-hover rounded-lg px-6 py-3 text-sm font-medium text-white transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none sm:text-base"
+                    class="btn-gradient hover:btn-gradient-hover rounded-lg px-4 py-2 sm:px-6 sm:py-3 text-sm font-medium text-white transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
                 >
                     {t("ui.goBack")}
                 </button>
