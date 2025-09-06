@@ -199,7 +199,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
   customDescription="Your PeekVisor analytics dashboard"
 >
   <div class="min-h-screen">
-    <div class="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+    <div class="mx-auto max-w-7xl px-3 sm:px-6 py-8 lg:px-8">
       <!-- Header -->
       <div class="mb-8">
         <h1
@@ -213,7 +213,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
       </div>
 
       <!-- Stats Overview -->
-      <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="mb-8 grid grid-cols-1 gap-4 px-0 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <!-- Websites Count -->
         <div
           class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800"
@@ -303,7 +303,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
         >
           {t("dashboard.quickActions.title")}
         </h2>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-3 px-0 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <!-- Add Domain Button -->
           {
             buttonAction === "redirect" ? (
@@ -388,7 +388,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
       </h2>
 
       {userWebsites.length === 0 ? (
-        <div class="rounded-xl border border-neutral-200 bg-white p-8 text-center shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+        <div class="rounded-xl border border-neutral-200 bg-white p-6 sm:p-8 text-center shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
           <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
             {t("dashboard.quickActions.noWebsitesYet")}
           </h3>
@@ -404,9 +404,9 @@ if (reachedBasicLimit || reachedFlexLimit) {
           </p>
         </div>
       ) : (
-        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-4 px-0 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {userWebsites.map((website: any) => (
-            <div class="group rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40 relative">
+            <div class="group rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40 relative">
               <div class="absolute top-4 right-4">
                 <div class="relative">
                   <button 
@@ -980,7 +980,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
 
       const formData = new FormData(e.target as HTMLFormElement);
       let domain = (formData.get("domain") as string).trim();
-
+      
       if (domain.startsWith("http://")) {
         showHttpWarning();
         return;
