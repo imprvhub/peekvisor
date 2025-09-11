@@ -2,7 +2,7 @@ export const API_CONFIG = {
   BACKEND_URL:
     import.meta.env.BACKEND_API_URL ||
     import.meta.env.BACKEND_API_URL_PROD ||
-    "https://peekvisor.vercel.app",
+    "https://script.peekvisor.com",
 
   ENDPOINTS: {
     WEBSITES: "/api/websites",

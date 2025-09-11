@@ -105,7 +105,7 @@ if (!userInfo?.user) return Astro.redirect(`/${lang}/`);
 const user = userInfo.user;
 let userWebsites: any[] = [];
 try {
-  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://peekvisor.vercel.app';
+  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
   const response = await fetch(`${backendUrl}/api/websites`, {
     headers: {
       'Authorization': `Bearer ${sessionToken}`,
@@ -122,7 +122,7 @@ try {
 }
 
 try {
-  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://peekvisor.vercel.app';
+  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
   await fetch(`${backendUrl}/api/user/sync-subscription`, {
     method: 'POST',
     headers: {
@@ -141,7 +141,7 @@ let canAddMore = true;
 let planLabelKey = 'dashboard.planCard.basicPlan';
 let manageOrUpgradeKey = 'dashboard.planCard.upgrade';
 try {
-  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://peekvisor.vercel.app';
+  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
   const profileRes = await fetch(`${backendUrl}/api/user/profile`, {
     headers: {
       'Authorization': `Bearer ${sessionToken}`,

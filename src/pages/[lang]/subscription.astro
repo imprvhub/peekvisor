@@ -23,7 +23,7 @@ const userEmail = user.email;
 
 let subscriptionData = null;
 try {
-  const backendUrl = import.meta.env.BACKEND_API_URL || "https://peekvisor.vercel.app";
+  const backendUrl = import.meta.env.BACKEND_API_URL || "https://script.peekvisor.com";
   const res = await fetch(`${backendUrl}/api/subscription/sync/${userEmail}`);
   if (res.ok) {
     subscriptionData = await res.json();

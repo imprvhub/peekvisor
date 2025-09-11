@@ -39,7 +39,7 @@ export function createTrackingModal(data: any, t: (key: string) => string): HTML
   let knowsFile = false;
   let currentFileContent = ''; // Store file content for later use
 
-  const scriptUrl = 'https://peekvisor.vercel.app/hello.js';
+  const scriptUrl = 'https://script.peekvisor.com/hello.js';
   const scriptHtml = `<script src="${scriptUrl}"></script>`;
 
   function renderContent() {
