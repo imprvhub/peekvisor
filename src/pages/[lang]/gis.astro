@@ -1,0 +1,674 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { eq } from "drizzle-orm";
+import { db } from "../../db/index";
+import { sessions } from "../../db/schema";
+import Icon from "@components/ui/icons/Icon.astro";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const sessionToken = Astro.cookies.get("app_auth_token")?.value;
+if (!sessionToken) return Astro.redirect(`/${lang}/`);
+
+const userInfo = await db.query.sessions.findFirst({
+  where: eq(sessions.id, sessionToken),
+  with: { user: true },
+});
+if (!userInfo?.user) return Astro.redirect(`/${lang}/`);
+
+const userPlan = userInfo.user.plan || 'basic';
+if (userPlan === 'basic') {
+  return Astro.redirect(`/${lang}/dashboard`);
+}
+
+let insights: any = null;
+let siteInsights: any = null;
+const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
+try {
+  const [respGlobal, respSites] = await Promise.all([
+    fetch(`${backendUrl}/api/insights/global`, { headers: { 'Authorization': `Bearer ${sessionToken}`, 'Content-Type': 'application/json' } }),
+    fetch(`${backendUrl}/api/insights/global/sites`, { headers: { 'Authorization': `Bearer ${sessionToken}`, 'Content-Type': 'application/json' } })
+  ]);
+  if (respGlobal.ok) insights = await respGlobal.json();
+  if (respSites.ok) siteInsights = await respSites.json();
+} catch {}
+
+const pct = Number(insights?.globalImpact?.changePct ?? 0);
+const pctLabel = Number.isFinite(pct) ? `${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%` : '--';
+const digital = insights?.digital || {};
+const eco = insights?.eco || {};
+
+interface SiteInsight {
+  website: {
+    id: string;
+    name?: string;
+    domain: string;
+  };
+  metrics: {
+    globalImpact: {
+      changePct: number;
+    };
+    digital: {
+      changePct: number;
+    };
+    eco: {
+      changePct: number;
+    };
+  };
+}
+
+const sites = (siteInsights?.sites || []) as SiteInsight[];
+---
+
+<MainLayout title={t("gis.title")} customDescription={t("gis.subtitle")}>
+  <div class="rounded-[24px] shadow-2xl mt-8 mb-8 bg-gray-50 border dark:border-neutral-700/40 dark:bg-[#171717]">
+    <div class="mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 lg:px-8">
+      <a href={`/${lang}/dashboard`} class="inline-flex items-center gap-2 rounded-xl border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>
+          </svg>
+          {t('gis.backToDashboard')}
+      </a>
+      <div class="mb-6 sm:mb-8 mt-3 sm:mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">{t("gis.title")}</h1>
+          <p class="mt-2 text-base sm:text-lg text-neutral-600 dark:text-neutral-400">{t("gis.subtitle")}</p>
+        </div>
+      </div>
+
+      <div class="mb-6 sm:mb-8">
+        <h2 class="mb-4 sm:mb-6 text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t("gis.overview")}</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div class="lg:col-span-1 rounded-xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-sm dark:border-neutral-700 dark:bg-[#171717] flex flex-col items-center justify-center">
+            <div class="relative w-full max-w-[200px] aspect-square">
+              <canvas id="gaugeGlobal" class="w-full h-full" data-pct={pct}></canvas>
+            </div>
+            <div class="mt-4 text-center">
+              <p class="text-sm font-medium text-neutral-600 dark:text-neutral-400">{t("gis.currentGIS")}</p>
+              <p class={`text-4xl text-neutral-800 dark:text-neutral-200 font-bold mt-2 ${pct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>{pctLabel}</p>
+              <button id="open-gis-modal" class="mt-4 inline-flex items-center gap-2 rounded-xl bg-blue-100 px-4 py-2 text-sm font-medium text-neutral-800 dark:bg-blue-900 dark:text-neutral-300 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                </svg>
+                {t("gis.howCalculated")}
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-2 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717]">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{t("gis.quickComparisons")}</h3>
+              <div class="flex gap-4 text-xs">
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full" style="background-color: #6b7280;"></div>
+                  <span class="text-neutral-600 dark:text-neutral-400">{t("gis.previousWeek")}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full" style="background-color: #10b981;"></div>
+                  <span class="text-neutral-600 dark:text-neutral-400">{t("gis.currentWeek")} (+)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full" style="background-color: #ef4444;"></div>
+                  <span class="text-neutral-600 dark:text-neutral-400">{t("gis.currentWeek")} (-)</span>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-6">
+              <div>
+                <div class="flex justify-between items-center text-sm mb-2">
+                  <span class="font-medium text-neutral-700 dark:text-neutral-300">{t("gis.pageViews")}</span>
+                  <div class="flex gap-4 text-xs text-neutral-500 dark:text-neutral-400">
+                    <span>{digital?.pageViews?.previous ?? 0}</span>
+                    <span>→</span>
+                    <span>{digital?.pageViews?.current ?? 0}</span>
+                  </div>
+                </div>
+                <canvas id="barPV" class="w-full" style="height: 50px;" data-a={Number(digital?.pageViews?.previous ?? 0)} data-b={Number(digital?.pageViews?.current ?? 0)} data-improve="up"></canvas>
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center text-sm mb-2">
+                  <span class="font-medium text-neutral-700 dark:text-neutral-300">{t("gis.avgTime")} ({t("gis.avgTimeUnit")})</span>
+                  <div class="flex gap-4 text-xs text-neutral-500 dark:text-neutral-400">
+                    <span>{digital?.avgDurationSeconds?.previous ?? 0}</span>
+                    <span>→</span>
+                    <span>{digital?.avgDurationSeconds?.current ?? 0}</span>
+                  </div>
+                </div>
+                <canvas id="barAVG" class="w-full" style="height: 50px;" data-a={Number(digital?.avgDurationSeconds?.previous ?? 0)} data-b={Number(digital?.avgDurationSeconds?.current ?? 0)} data-improve="up"></canvas>
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center text-sm mb-2">
+                  <span class="font-medium text-neutral-700 dark:text-neutral-300">{t("gis.co2PerVisit")} ({t("gis.co2Unit")})</span>
+                  <div class="flex gap-4 text-xs text-neutral-500 dark:text-neutral-400">
+                    <span>{Number(eco?.perVisitPrev?.co2_grams ?? 0).toFixed(3)}</span>
+                    <span>→</span>
+                    <span>{Number(eco?.perVisit?.co2_grams ?? 0).toFixed(3)}</span>
+                  </div>
+                </div>
+                <canvas id="barCO2" class="w-full" style="height: 50px;" data-a={Number(eco?.perVisitPrev?.co2_grams ?? 0)} data-b={Number(eco?.perVisit?.co2_grams ?? 0)} data-improve="up"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6 sm:mb-8">
+        <h2 class="mb-4 sm:mb-6 text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t("gis.metrics")}</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="metric-card animated-card rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717]">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-400">{t("gis.pageViews")}</p>
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                style={Number(digital?.pageViews?.changePct ?? 0) >= 0 ? { backgroundColor: '#dcfce7', color: '#065f46' } : { backgroundColor: '#fee2e2', color: '#991b1b' }}
+              >
+                {Number(digital?.pageViews?.changePct ?? 0) >= 0 ? '+' : ''}{Number(digital?.pageViews?.changePct ?? 0).toFixed(1)}%
+              </span>
+            </div>
+            <p class="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100">{digital?.pageViews?.current ?? 0}</p>
+          </div>
+
+          <div class="metric-card animated-card rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717]">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-400">{t("gis.avgTime")}</p>
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                style={Number(digital?.avgDurationSeconds?.changePct ?? 0) >= 0 ? { backgroundColor: '#dcfce7', color: '#065f46' } : { backgroundColor: '#fee2e2', color: '#991b1b' }}
+              >
+                {Number(digital?.avgDurationSeconds?.changePct ?? 0) >= 0 ? '+' : ''}{Number(digital?.avgDurationSeconds?.changePct ?? 0).toFixed(1)}%
+              </span>
+            </div>
+            <p class="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100">{digital?.avgDurationSeconds?.current ?? 0}{t("gis.avgTimeUnit")}</p>
+          </div>
+
+          <div class="metric-card animated-card rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717]">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-400">{t("gis.co2PerVisit")}</p>
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                style={Number(eco?.changePct ?? 0) >= 0 ? { backgroundColor: '#dcfce7', color: '#065f46' } : { backgroundColor: '#fee2e2', color: '#991b1b' }}
+              >
+                {Number(eco?.changePct ?? 0) >= 0 ? '+' : ''}{Number(eco?.changePct ?? 0).toFixed(1)}%
+              </span>
+            </div>
+            <p class="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100">{Number(eco?.perVisit?.co2_grams ?? 0).toFixed(3)} {t("gis.co2Unit")}</p>
+          </div>
+
+          <div class="metric-card animated-card rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717]">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-400">{t("gis.energyPerVisit")}</p>
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                style={Number(eco?.changePct ?? 0) >= 0 ? { backgroundColor: '#dcfce7', color: '#065f46' } : { backgroundColor: '#fee2e2', color: '#991b1b' }}
+              >
+                {Number(eco?.changePct ?? 0) >= 0 ? '+' : ''}{Number(eco?.changePct ?? 0).toFixed(1)}%
+              </span>
+            </div>
+            <p class="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100">{Number(eco?.perVisit?.energy_wh ?? 0).toFixed(3)} {t("gis.energyUnit")}</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6 sm:mt-8">
+        <h2 class="mb-4 sm:mb-6 text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t("websites.title")}</h2>
+        {sites.length === 0 ? (
+          <div class="rounded-xl border border-neutral-200 bg-white p-8 text-center shadow-sm dark:border-neutral-700 dark:bg-[#171717]">
+            <p class="text-neutral-600 dark:text-neutral-400">{t("dashboard.quickActions.noWebsitesYet")}</p>
+          </div>
+        ) : (
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            {sites.map((site) => {
+              const siteGIS = Number(site.metrics?.globalImpact?.changePct ?? 0);
+              const siteGISLabel = Number.isFinite(siteGIS) ? `${siteGIS >= 0 ? '+' : ''}${siteGIS.toFixed(1)}%` : '--';
+              const digitalPct = Number(site.metrics?.digital?.changePct ?? 0);
+              const ecoPct = Number(site.metrics?.eco?.changePct ?? 0);
+              
+              return (
+                <div class="animated-card rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717]">
+                  <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                      <div class="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-700 overflow-hidden">
+                        <img
+                          class="website-favicon h-8 w-8 rounded absolute hidden"
+                          data-domain={site.website?.domain}
+                          alt={`${site.website?.name} favicon`}
+                        />
+                        <div class="website-fallback-icon text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
+                          <svg class="w-6 h-6" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
+                            <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-82v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q20-22 36-47.5t26.5-53q10.5-27.5 16-56.5t5.5-59q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 truncate">
+                          {site.website?.name || site.website?.domain}
+                        </h3>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400 truncate">
+                          {site.website?.domain}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      class="ml-3 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium flex-shrink-0"
+                      style={siteGIS >= 0 ? { backgroundColor: '#dcfce7', color: '#065f46' } : { backgroundColor: '#fee2e2', color: '#991b1b' }}
+                    >
+                      {siteGISLabel}
+                    </span>
+                  </div>
+                  
+                  <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Digital</p>
+                      <p
+                        class="text-lg font-semibold"
+                        style={{ color: digitalPct >= 0 ? '#059669' : '#dc2626' }}
+                      >
+                        {digitalPct >= 0 ? '+' : ''}{digitalPct.toFixed(1)}%
+                      </p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Eco</p>
+                      <p
+                        class="text-lg font-semibold"
+                        style={{ color: ecoPct >= 0 ? '#059669' : '#dc2626' }}
+                      >
+                        {ecoPct >= 0 ? '+' : ''}{ecoPct.toFixed(1)}%
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <a 
+                    href={`/${lang}/analytics/${site.website?.id}`}
+                    data-website-id={site.website?.id}
+                    data-analytics-link
+                    class="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-800 dark:text-neutral-200 transition-all hover:bg-neutral-100 dark:border-neutral-600 dark:hover:bg-neutral-700"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+                    </svg>
+                    {t("websites.viewAnalytics")}
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+  </div>
+
+  <div id="gis-modal" class="fixed inset-0 z-[10000] hidden bg-neutral-900/50 backdrop-blur-sm">
+    <div class="flex min-h-screen items-center justify-center p-4">
+      <div class="w-full max-w-xl rounded-2xl border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-[#171717]">
+        <div class="p-6 sm:p-8">
+          <div class="mb-6 flex items-center justify-between">
+            <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t("gis.modal.title")}</h3>
+            <button id="close-gis-modal" class="rounded-xl p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <ol class="list-decimal pl-5 space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
+            <li>{t("gis.calculation.step1")}</li>
+            <li>{t("gis.calculation.step2")}</li>
+            <li>{t("gis.calculation.step3")}</li>
+            <li>{t("gis.calculation.step4")}</li>
+            <li>{t("gis.calculation.step5")}</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  @keyframes gradient-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .animated-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animated-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(
+      45deg,
+      transparent,
+      transparent,
+      rgba(99, 102, 241, 0.5),
+      transparent,
+      transparent
+    );
+    background-size: 200% 200%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .animated-card:hover::before {
+    opacity: 1;
+    animation: gradient-flow 3s ease infinite;
+  }
+
+  .animated-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15);
+  }
+
+  .metric-card:hover {
+    transform: translateY(-2px);
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  function ease(t) { return 1 - Math.pow(1 - t, 3); }
+  
+  function theme() {
+    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+  }
+  
+  function palette() {
+    const isDark = theme() === 'dark';
+    return {
+      track: isDark ? '#374151' : '#e5e7eb',
+      tick: isDark ? '#4b5563' : '#d1d5db',
+      ok: isDark ? '#505675' : '#505675',
+      warn: isDark ? '#f59e0b' : '#f59e0b',
+      bad: isDark ? '#ef4444' : '#ef4444',
+      neutral: isDark ? '#9ca3af' : '#6b7280',
+      primary: isDark ? '#3b82f6' : '#3b82f6',
+      indigo: isDark ? '#6366f1' : '#6366f1',
+      text: isDark ? '#e5e7eb' : '#111827'
+    };
+  }
+
+  function drawGauge(id, pct) {
+    const c = document.getElementById(id);
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    
+    const dpr = window.devicePixelRatio || 1;
+    const rect = c.getBoundingClientRect();
+    c.width = rect.width * dpr;
+    c.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    
+    const W = rect.width;
+    const H = rect.height;
+    const cx = W / 2;
+    const cy = H / 2;
+    const r = Math.min(W, H) / 2 - 20;
+    
+    const clampPct = Math.max(-100, Math.min(100, Number(pct || 0)));
+    let t = 0;
+    const dur = 1000;
+    const start = performance.now();
+    
+    function anim(now) {
+      t = Math.min(1, (now - start) / dur);
+      const p = ease(t) * (clampPct / 100);
+      
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+      
+      const pal = palette();
+      
+      ctx.strokeStyle = pal.track;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, Math.PI * 0.75, Math.PI * 2.25);
+      ctx.stroke();
+      
+      for (let i = 0; i <= 20; i++) {
+        const ang = Math.PI * 0.75 + (Math.PI * 1.5) * (i / 20);
+        const tx = cx + Math.cos(ang) * (r - 8);
+        const ty = cy + Math.sin(ang) * (r - 8);
+        ctx.fillStyle = pal.tick;
+        ctx.beginPath();
+        ctx.arc(tx, ty, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      ctx.strokeStyle = clampPct >= 0 ? '#10b981' : pal.bad;
+      ctx.lineWidth = 18;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, Math.PI * 0.75, Math.PI * 0.75 + (Math.PI * 1.5) * p);
+      ctx.stroke();
+      
+      const a = Math.PI * 0.75 + (Math.PI * 1.5) * p;
+      ctx.strokeStyle = pal.neutral;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * (r - 20), cy + Math.sin(a) * (r - 20));
+      ctx.stroke();
+      
+      ctx.fillStyle = pal.neutral;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+      ctx.fill();
+      
+      if (t < 1) requestAnimationFrame(anim);
+    }
+    
+    requestAnimationFrame(anim);
+  }
+
+  function drawCompareBar(id, a, b, improve = 'up', style = 'ok') {
+    const c = document.getElementById(id);
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    
+    const dpr = window.devicePixelRatio || 1;
+    const rect = c.getBoundingClientRect();
+    c.width = rect.width * dpr;
+    c.height = 50 * dpr;
+    ctx.scale(dpr, dpr);
+    
+    const W = rect.width;
+    const H = 50;
+    const L = 0;
+    const R = 80;
+    const th = 10;
+    const y1 = Math.floor(H * 0.3);
+    const y2 = Math.floor(H * 0.7);
+    
+    const max = Math.max(1, a, b);
+    const pal = palette();
+    const good = improve === 'up' ? (b >= a) : (b <= a);
+    const colorB = good ? '#10b981' : '#ef4444';
+    
+    let t = 0;
+    const dur = 900;
+    const start = performance.now();
+    
+    function anim(now) {
+      t = Math.min(1, (now - start) / dur);
+      const p = ease(t);
+      
+      ctx.clearRect(0, 0, W, H);
+      
+      const trackW = W - L - R;
+      const wA = Math.max(2, trackW * (a / max) * p);
+      const wB = Math.max(2, trackW * (b / max) * p);
+      
+      ctx.fillStyle = pal.track;
+      ctx.beginPath();
+      ctx.roundRect(L, y1 - th / 2, trackW, th, th / 2);
+      ctx.fill();
+      
+      ctx.fillStyle = pal.track;
+      ctx.beginPath();
+      ctx.roundRect(L, y2 - th / 2, trackW, th, th / 2);
+      ctx.fill();
+      
+      ctx.fillStyle = pal.neutral;
+      ctx.beginPath();
+      ctx.roundRect(L, y1 - th / 2, wA, th, th / 2);
+      ctx.fill();
+      
+      ctx.fillStyle = colorB;
+      ctx.beginPath();
+      ctx.roundRect(L, y2 - th / 2, wB, th, th / 2);
+      ctx.fill();
+      
+      ctx.fillStyle = pal.text;
+      ctx.font = '12px system-ui, -apple-system, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      
+      const xA = Math.min(L + wA + 35, W - 4);
+      const xB = Math.min(L + wB + 35, W - 4);
+      
+      const displayA = a < 10 && a !== Math.floor(a) ? a.toFixed(2) : Math.round(a);
+      const displayB = b < 10 && b !== Math.floor(b) ? b.toFixed(2) : Math.round(b);
+      
+      ctx.fillText(String(displayA), xA, y1);
+      ctx.fillText(String(displayB), xB, y2);
+      
+      if (t < 1) requestAnimationFrame(anim);
+    }
+    
+    requestAnimationFrame(anim);
+  }
+
+  function redrawAll() {
+    const g = document.getElementById('gaugeGlobal');
+    if (g) drawGauge('gaugeGlobal', Number(g.dataset.pct || 0));
+    
+    const pv = document.getElementById('barPV');
+    if (pv) drawCompareBar('barPV', Number(pv.dataset.a || 0), Number(pv.dataset.b || 0), 'up');
+    
+    const avg = document.getElementById('barAVG');
+    if (avg) drawCompareBar('barAVG', Number(avg.dataset.a || 0), Number(avg.dataset.b || 0), 'up');
+    
+    const co2 = document.getElementById('barCO2');
+    if (co2) drawCompareBar('barCO2', Number(co2.dataset.a || 0), Number(co2.dataset.b || 0), 'up');
+  }
+
+  function loadFavicons() {
+    const faviconImages = document.querySelectorAll('.website-favicon');
+
+    faviconImages.forEach((img) => {
+      const domain = img.getAttribute('data-domain');
+      const fallback = img.parentElement?.querySelector('.website-fallback-icon');
+
+      if (!domain || !fallback) return;
+      fallback.classList.remove('hidden');
+      img.classList.add('hidden');
+
+      const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/^www\./, '');
+
+      const faviconUrls = [
+        `https://${cleanDomain}/favicon.ico`,
+        `https://${cleanDomain}/favicon.png`,
+        `https://${cleanDomain}/images/favicons/favicon.ico`,
+        `https://${cleanDomain}/images/favicons/favicon.png`,
+        `https://${cleanDomain}/favicons/favicon.ico`,
+        `https://${cleanDomain}/favicons/favicon.png`,
+        `https://${cleanDomain}/apple-touch-icon.png`,
+        `https://${cleanDomain}/apple-touch-icon-precomposed.png`,
+        `https://${cleanDomain}/icon.png`,
+      ];
+
+      let currentIndex = 0;
+
+      function tryNextFavicon() {
+        if (currentIndex >= faviconUrls.length) {
+          return;
+        }
+        const tempImg = new Image();
+
+        tempImg.onload = () => {
+          if (tempImg.width >= 24 && tempImg.height >= 24) {
+            img.setAttribute('src', faviconUrls[currentIndex]);
+            img.classList.remove('hidden');
+            if (fallback) {
+              fallback.classList.add('hidden');
+            }
+          } else {
+            currentIndex++;
+            tryNextFavicon();
+          }
+        };
+
+        tempImg.onerror = () => {
+          currentIndex++;
+          tryNextFavicon();
+        };
+
+        tempImg.src = faviconUrls[currentIndex];
+      }
+
+      tryNextFavicon();
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    redrawAll();
+    loadFavicons();
+    window.addEventListener('resize', () => redrawAll());
+    
+    const openBtn = document.getElementById('open-gis-modal');
+    const closeBtn = document.getElementById('close-gis-modal');
+    const modal = document.getElementById('gis-modal');
+    
+    if (openBtn) {
+      openBtn.addEventListener('click', () => modal?.classList.remove('hidden'));
+    }
+    
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => modal?.classList.add('hidden'));
+    }
+    
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.add('hidden');
+      });
+    }
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+        modal.classList.add('hidden');
+      }
+    });
+    
+    const observer = new MutationObserver(() => {
+      setTimeout(redrawAll, 50);
+    });
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+    
+    document.querySelectorAll('[data-analytics-link]').forEach(link => {
+      const websiteId = link.getAttribute('data-website-id');
+      
+      if (!websiteId || websiteId === 'undefined' || websiteId === 'null') {
+        link.style.opacity = '0.5';
+        link.style.cursor = 'not-allowed';
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          alert('Website ID is missing. Cannot navigate to analytics.');
+        });
+      }
+    });
+  });
+</script>
