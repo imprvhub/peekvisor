@@ -11,38 +11,38 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 ---
 
-<section class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+<section class="mx-auto max-w-[85rem] px-4 py-6 sm:py-10 sm:px-6 lg:px-8 lg:py-14">
   <div class="mx-auto max-w-2xl lg:max-w-5xl">
     <div class="text-center">
       <h1
-        class="text-2xl font-bold tracking-tight text-balance text-neutral-800 md:text-4xl md:leading-tight dark:text-neutral-200"
+        class="text-xl font-bold tracking-tight text-balance text-neutral-800 sm:text-2xl md:text-4xl md:leading-tight dark:text-neutral-200"
       >
         {t("contact.title")}
       </h1>
-      <p class="mt-1 text-pretty text-neutral-600 dark:text-neutral-400">
+      <p class="mt-1 text-sm sm:text-base text-pretty text-neutral-600 dark:text-neutral-400">
         {t("contact.subTitle")}
       </p>
     </div>
 
-    <div class="mt-12 grid items-center gap-6 lg:grid-cols-2 lg:gap-16">
-      <div class="flex flex-col rounded-xl p-4 sm:p-6 lg:p-8">
+    <div class="mt-6 sm:mt-8 md:mt-12 grid items-center gap-4 sm:gap-6 lg:grid-cols-2 lg:gap-16">
+      <div class="flex flex-col rounded-xl p-3 sm:p-4 md:p-6 lg:p-8">
         <h2
-          class="mb-8 text-xl font-bold text-neutral-700 dark:text-neutral-300"
+          class="mb-4 sm:mb-6 md:mb-8 text-lg sm:text-xl font-bold text-neutral-700 dark:text-neutral-300"
         >
           {t("contact.form.title")}
         </h2>
         
-        <div id="success-message" class="hidden mb-4 p-4 rounded-lg bg-indigo-400 text-white">
-          <p>{t("contact.form.result")}</p>
+        <div id="success-message" class="hidden mb-3 sm:mb-4 p-3 sm:p-4 rounded-lg bg-indigo-400 text-white">
+          <p class="text-sm sm:text-base">{t("contact.form.result")}</p>
         </div>
         
-        <div id="error-message" class="hidden mb-4 p-4 rounded-lg bg-red-100 border border-red-400 text-red-700">
-          <p id="error-text">Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.</p>
+        <div id="error-message" class="hidden mb-3 sm:mb-4 p-3 sm:p-4 rounded-lg bg-red-100 border border-red-400 text-red-700">
+          <p id="error-text" class="text-sm sm:text-base">Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.</p>
         </div>
 
         <form id="contact-form">
-          <div class="grid gap-4">
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class="grid gap-3 sm:gap-4">
+            <div class="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
               <TextInput
                 id="hs-firstname-contacts"
                 label={t("contact.form.firstName")}
@@ -54,17 +54,20 @@ const t = useTranslations(lang);
                 name="hs-lastname-contacts"
               />
             </div>
+            
             <EmailContactInput id="hs-email-contacts" />
+
             <div>
               <label
                 for="contact-reason"
-                class="mb-2 block text-sm font-medium dark:text-white"
-                >{t("contact.form.reason.label")}</label
+                class="mb-1.5 sm:mb-2 block text-sm font-medium dark:text-white"
               >
+                {t("contact.form.reason.label")}
+              </label>
               <select
                 id="contact-reason"
                 name="contact-reason"
-                class="block w-full rounded-lg border-neutral-200 px-4 py-3 text-sm focus:border-neutral-500 focus:ring-neutral-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:focus:ring-neutral-600"
+                class="block w-full rounded-lg border-neutral-200 px-3 py-2.5 sm:px-4 sm:py-3 text-sm focus:border-neutral-500 focus:ring-neutral-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:focus:ring-neutral-600"
               >
                 <option value="">{t("contact.form.reason.select")}</option>
                 <option value="feature">{t("contact.form.reason.billing")}</option>
@@ -72,6 +75,7 @@ const t = useTranslations(lang);
                 <option value="other">{t("contact.form.reason.other")}</option>
               </select>
             </div>
+            
             <TextAreaInput
               id="hs-about-contacts"
               label={t("contact.form.details")}
@@ -79,11 +83,11 @@ const t = useTranslations(lang);
             />
           </div>
 
-          <div class="mt-4 grid">
+          <div class="mt-3 sm:mt-4 grid">
             <button
               type="submit"
               id="submit-button"
-              class="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-neutral-800 hover:shadow-xl hover:-translate-y-0.5 hover:scale-105 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
+              class="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-4 py-2.5 sm:px-6 sm:py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-neutral-800 hover:shadow-xl hover:-translate-y-0.5 hover:scale-105 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
             >
               <span id="button-text">{t("contact.form.send")}</span>
               <span id="loading-spinner" class="hidden ml-2">
@@ -95,8 +99,8 @@ const t = useTranslations(lang);
             </button>
           </div>
 
-          <div class="mt-3 text-center">
-            <p class="text-sm text-neutral-600 dark:text-neutral-400">
+          <div class="mt-2 sm:mt-3 text-center">
+            <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
               {t("contact.form.replyTime")}
             </p>
           </div>
@@ -111,23 +115,27 @@ const t = useTranslations(lang);
           linkTitle={t("contact.blocks.faq.linkTitle")}
           linkURL={`/${lang}/faq`}
           isArrowVisible={true}
-          ><Icon name="chatBubbleFilled" />
+        >
+          <Icon name="chatBubbleFilled" />
         </ContactIconBlock>
+
         <ContactIconBlock
           heading={t("contact.blocks.email.heading")}
           content={t("contact.blocks.email.content")}
           isLinkVisible={true}
           linkTitle="info@peekvisor.com"
           linkURL="mailto:info@peekvisor.com"
-          ><Icon name="mailFilled" />
+        >
+          <Icon name="mailFilled" />
         </ContactIconBlock>
+
       </div>
     </div>
 
-    <div class="mt-8 flex justify-center">
+    <div class="mt-6 sm:mt-8 flex justify-center">
       <button
         id="back-button"
-        class="btn-gradient hover:btn-gradient-hover rounded-lg px-6 py-3 text-sm font-medium text-white transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none sm:text-base"
+        class="btn-gradient hover:btn-gradient-hover rounded-lg px-4 py-2.5 sm:px-6 sm:py-3 text-sm font-medium text-white transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none sm:text-base"
       >
         {t("ui.goBack")}
       </button>

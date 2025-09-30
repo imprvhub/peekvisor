@@ -1,5 +1,4 @@
 ---
-import LoginModal from "@components/ui/forms/LoginModal.astro";
 import RegisterModal from "@components/ui/forms/RegisterModal.astro";
 import RecoverModal from "@components/ui/forms/RecoverModal.astro";
 import LoginBtn from "@components/ui/buttons/LoginBtn.astro";
@@ -18,8 +17,6 @@ const { userId } = Astro.locals as { userId?: string };
   <>
     <!-- Login Button -->
     <LoginBtn />
-    <!-- Login Modal -->
-    <LoginModal />
     <!-- Register Modal -->
     <RegisterModal />
     <!-- Password Recovery Modal -->
