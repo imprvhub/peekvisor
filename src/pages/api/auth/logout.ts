@@ -16,7 +16,7 @@ export async function GET({ cookies }: APIContext) {
   }
   await db.delete(sessions).where(eq(sessions.id, sessionId));
 
-  cookies.delete("app_auth_token",{path:"/"});
+  cookies.delete("app_auth_token", { path: "/" });
 
   return new Response(null, {
     status: 302,

@@ -3,7 +3,11 @@ import type { APIContext } from "astro";
 import { eq, and, ne } from "drizzle-orm";
 import { db } from "../../../db";
 import { sessions } from "../../../db/schema";
-import { revokeGoogleAccessToken, deleteOauthToken, deleteUser } from "../../../lib/auth";
+import {
+  revokeGoogleAccessToken,
+  deleteOauthToken,
+  deleteUser,
+} from "../../../lib/auth";
 import getUser from "../../../lib/getUser";
 
 export async function POST({ cookies }: APIContext) {
@@ -43,24 +47,25 @@ export async function POST({ cookies }: APIContext) {
       },
     });
 
-    const googleAccessToken = userSession?.user?.oauthTokens?.find(token => token.strategy === 'google')?.accessToken;
+    const googleAccessToken = userSession?.user?.oauthTokens?.find(
+      (token) => token.strategy === "google",
+    )?.accessToken;
 
     if (googleAccessToken) {
       try {
         await revokeGoogleAccessToken(googleAccessToken);
       } catch (e) {
-        console.warn(`Could not revoke google access token for user ${userId}, probably it was already revoked.`)
+        console.warn(
+          `Could not revoke google access token for user ${userId}, probably it was already revoked.`,
+        );
       }
       await deleteOauthToken(userId, "google");
     }
 
-    await db.delete(sessions).where(
-      and(
-        eq(sessions.userId, userId),
-        ne(sessions.id, sessionToken)
-      )
-    );
-    
+    await db
+      .delete(sessions)
+      .where(and(eq(sessions.userId, userId), ne(sessions.id, sessionToken)));
+
     await deleteUser(userId);
 
     await db.delete(sessions).where(eq(sessions.id, sessionToken));

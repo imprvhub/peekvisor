@@ -16,14 +16,14 @@ export async function POST({ request, cookies }: APIContext) {
         { error: "authentication_error", message: "Log in" },
         {
           status: 401,
-        }
+        },
       );
     }
 
     const sessionInfo = await db.query.sessions.findFirst({
       where: and(
         eq(sessions.id, authToken),
-        gte(sessions.expiresAt, new Date().getTime())
+        gte(sessions.expiresAt, new Date().getTime()),
       ),
       with: {
         user: true,
@@ -35,7 +35,7 @@ export async function POST({ request, cookies }: APIContext) {
         { error: "authorization_error", message: "Log in" },
         {
           status: 403,
-        }
+        },
       );
     }
     await db
@@ -50,7 +50,7 @@ export async function POST({ request, cookies }: APIContext) {
       { success: true, message: "Profile Updated Sucessfully" },
       {
         status: 200,
-      }
+      },
     );
   } catch (error) {
     console.log("error while creating profile", error);
@@ -60,7 +60,7 @@ export async function POST({ request, cookies }: APIContext) {
         error: "server_error",
         message: "Internal server error. Try again later",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
