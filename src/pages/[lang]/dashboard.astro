@@ -83,9 +83,86 @@ const wizardKeys = [
   'websites.wizard.statusInstalledNoData',
   'websites.wizard.statusNotInstalled',
   'websites.wizard.statusCheckFailed',
-  'websites.wizard.availableVia'
-];
+  'websites.wizard.availableVia',
 
+  'dashboard.publicModal.title',
+  'dashboard.publicModal.websiteLabel',
+  'dashboard.publicModal.domainLabel',
+  'dashboard.publicModal.publicUrlLabel',
+  'dashboard.publicModal.statusPublic',
+  'dashboard.publicModal.statusPrivate',
+  'dashboard.publicModal.makePublic',
+  'dashboard.publicModal.makePrivate',
+  'dashboard.publicModal.copy',
+  'dashboard.publicModal.copied',
+  'dashboard.publicModal.cancel',
+
+  'dashboard.confirmModal.title',
+  'dashboard.confirmModal.makePublicMessage',
+  'dashboard.confirmModal.makePrivateMessage',
+  'dashboard.confirmModal.confirm',
+  'dashboard.confirmModal.makePublic',
+  'dashboard.confirmModal.makePrivate',
+  'dashboard.confirmModal.cancel',
+
+  'dashboard.publicDashboards.title',
+  'dashboard.publicDashboards.count',
+  'dashboard.publicDashboards.dashboard',
+
+  'websites.copyPublicUrl',
+  'websites.makePrivate',
+  'websites.makePublic',
+
+  'dashboard.planCard.basicPlan',
+  'dashboard.planCard.proPlan',
+  'dashboard.planCard.flexPlan',
+  'dashboard.planCard.title',
+  'dashboard.planCard.upgrade',
+  'dashboard.planCard.manage',
+  'dashboard.quickActions.addWebsite',
+  'dashboard.quickActions.noWebsitesYet',
+  'dashboard.quickActions.addAnother',
+  'dashboard.quickActions.title',
+  'dashboard.quickActions.subscriptionDetails',
+  'dashboard.usage.websitesUsed',
+  'dashboard.globalTrends.title',
+  'dashboard.recentActivity.active',
+  'dashboard.recentActivity.none',
+  'dashboard.title',
+  'dashboard.welcome',
+  'dashboard.pageTitle',
+  'settings.title',
+  'dashboard.userCard.viewSettings',
+  'websites.title',
+  'websites.modal.title',
+  'websites.modal.domain',
+  'websites.modal.domainPlaceholder',
+  'websites.modal.name',
+  'websites.modal.namePlaceholder',
+  'websites.modal.add',
+  'websites.modal.cancel',
+  'websites.viewAnalytics',
+  'websites.trackingCode',
+  'websites.deleteModal.title',
+  'websites.deleteModal.warning',
+  'websites.deleteModal.confirmText',
+  'websites.deleteModal.placeholder',
+  'websites.deleteModal.confirm',
+  'websites.deleteModal.cancel',
+  'websites.deleteModal.success',
+  'websites.deleteModal.error',
+  'websites.deleteModal.invalidDomain',
+  'websites.httpWarning.title',
+  'websites.httpWarning.message',
+  'websites.httpWarning.understood',
+  'seePricing',
+  'websites.startTracking',
+  'dashboard.publicModal.websiteLabel',
+  'dashboard.publicModal.domainLabel',
+  'dashboard.publicModal.publicUrlLabel',
+  'dashboard.publicModal.copy'
+
+];
 wizardKeys.forEach(key => {
   wizardTranslations[key] = t(key);
 });
@@ -112,7 +189,7 @@ try {
       'Content-Type': 'application/json'
     }
   });
-  
+
   if (response.ok) {
     const data = await response.json();
     userWebsites = data.websites || [];
@@ -121,25 +198,31 @@ try {
   console.error('Failed to fetch websites from backend:', error);
 }
 
-try {
-  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
-  await fetch(`${backendUrl}/api/user/sync-subscription`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${sessionToken}`,
-      'Content-Type': 'application/json'
+let syncedPlan = 'basic';
+  try {
+    const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
+    const syncRes = await fetch(`${backendUrl}/api/user/sync-subscription`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${sessionToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (syncRes.ok) {
+      const syncData = await syncRes.json();
+      syncedPlan = syncData.plan || 'basic';
     }
-  });
-} catch (error) {
-  console.error('Failed to sync subscription:', error);
-}
+  } catch (error) {
+    console.error('Failed to sync subscription:', error);
+  }
 
 const websiteCount = userWebsites.length;
-let userPlan: string = 'basic';
+let userPlan: string = syncedPlan;
 let websiteLimit = 1;
 let canAddMore = true;
 let planLabelKey = 'dashboard.planCard.basicPlan';
 let manageOrUpgradeKey = 'dashboard.planCard.upgrade';
+
 try {
   const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
   const profileRes = await fetch(`${backendUrl}/api/user/profile`, {
@@ -150,11 +233,12 @@ try {
   });
   if (profileRes.ok) {
     const profile = await profileRes.json();
-    userPlan = (profile?.user?.plan as string) || 'basic';
+    userPlan = profile?.user?.plan || syncedPlan || 'basic';
     const max = Number(profile?.planLimits?.max_websites ?? 1);
     const normalizedLimit = max < 0 ? Number.POSITIVE_INFINITY : max;
     websiteLimit = isNaN(normalizedLimit) ? 1 : normalizedLimit;
     canAddMore = websiteCount < websiteLimit;
+
     switch (userPlan) {
       case 'pro':
         planLabelKey = 'dashboard.planCard.proPlan';
@@ -165,6 +249,7 @@ try {
         manageOrUpgradeKey = 'dashboard.planCard.upgrade';
         break;
       default:
+        userPlan = 'basic';
         planLabelKey = 'dashboard.planCard.basicPlan';
         manageOrUpgradeKey = 'dashboard.planCard.upgrade';
     }
@@ -172,6 +257,24 @@ try {
 } catch (error) {
   console.error('Failed to fetch user profile from backend:', error);
   canAddMore = websiteCount < websiteLimit;
+}
+
+let globalImpactChangePct: number | null = null;
+try {
+  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
+  const insightsRes = await fetch(`${backendUrl}/api/insights/global`, {
+    headers: {
+      'Authorization': `Bearer ${sessionToken}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  if (insightsRes.ok) {
+    const insights = await insightsRes.json();
+    const val = Number(insights?.globalImpact?.changePct);
+    if (!Number.isNaN(val)) globalImpactChangePct = val;
+  }
+} catch (e) {
+  console.error('Failed to fetch global insights:', e);
 }
 
 let buttonSubtitle;
@@ -189,7 +292,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
   if (websiteCount === 0) {
     buttonSubtitle = t("dashboard.quickActions.noWebsitesYet");
   } else {
-    buttonSubtitle = "Add another";
+    buttonSubtitle = t("dashboard.quickActions.addAnother");
   }
 }
 ---
@@ -198,197 +301,184 @@ if (reachedBasicLimit || reachedFlexLimit) {
   title={t("dashboard.pageTitle")}
   customDescription="Your PeekVisor analytics dashboard"
 >
-  <div class="min-h-screen">
-    <div class="mx-auto max-w-7xl px-3 sm:px-6 py-8 lg:px-8">
+  <div class="rounded-[24px] shadow-2xl mt-8 mb-8 bg-gray-50 border dark:border-neutral-700/40 dark:bg-[#171717]">
+    <div class="dashboard-container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 lg:px-8">
       <!-- Header -->
-      <div class="mb-8">
+      <div class="mb-6 sm:mb-8">
         <h1
-          class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100"
+          class="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100"
         >
           {t("dashboard.title")}
         </h1>
-        <p class="mt-2 text-lg text-neutral-600 dark:text-neutral-400">
+        <p class="mt-2 text-base sm:text-lg text-neutral-600 dark:text-neutral-400">
           {t("dashboard.welcome")}, {user.fullName}
         </p>
       </div>
 
-      <!-- Stats Overview -->
-      <div class="mb-8 grid grid-cols-1 gap-4 px-0 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <!-- Websites Count -->
-        <div
-          class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800"
-        >
-          <div class="flex items-center">
-            <div
-              class="flex h-12 w-12 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700"
-            >
-              <div class="text-neutral-700 dark:text-neutral-300">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 shrink-0"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></svg>
+      <div class="stats-grid mb-6 sm:mb-8">
+        <!-- Add Domain Button -->
+        {
+          buttonAction === "redirect" ? (
+           <a href={buttonHref} class="stat-card animated-card group rounded-xl border-0 p-4 sm:p-6 shadow-sm text-left w-full">
+              <div class="flex items-center">
+                <div class="stat-icon-container flex items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
+                  <Icon name="plus" />
+                </div>
+                <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+                  <p class="text-xs sm:text-sm font-medium truncate">
+                    {t("dashboard.quickActions.addWebsite")}
+                  </p>
+                  <p class="text-xs opacity-80 truncate">{buttonSubtitle}</p>
+                </div>
               </div>
-            </div>
-            <div class="ml-4">
-              <p
-                class="text-sm font-medium text-neutral-600 dark:text-neutral-400"
-              >
-                {t("dashboard.usage.websitesUsed")}
-              </p>
-              <p
-                class="text-2xl font-bold text-neutral-900 dark:text-neutral-100"
-              >
-                {websiteCount}
-              </p>
-            </div>
-          </div>
-        </div>
+            </a>
+          ) : (
+            <button id="add-website-btn" class="stat-card animated-card group rounded-xl border-0 p-4 sm:p-6 shadow-sm text-left w-full">
+              <div class="flex items-center">
+                <div class="stat-icon-container flex items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
+                  <Icon name="plus" />
+                </div>
+                <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+                  <p class="text-xs sm:text-sm font-medium truncate">
+                    {t("dashboard.quickActions.addWebsite")}
+                  </p>
+                  <p class="text-xs opacity-80 truncate">{buttonSubtitle}</p>
+                </div>
+              </div>
+            </button>
+          )
+        }
 
         <!-- Current Plan -->
-        <div
-          class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800"
+        <a
+          href={`/${lang}/subscription`}
+          class="stat-card animated-card group rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717] cursor-pointer transition-all"
         >
           <div class="flex items-center">
-            <div
-              class="flex h-12 w-12 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700"
-            >
+            <div class="stat-icon-container flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700">
               <div class="text-neutral-700 dark:text-neutral-300">
                 <Icon name="verified" />
               </div>
             </div>
-            <div class="ml-4">
-              <p
-                class="text-sm font-medium text-neutral-600 dark:text-neutral-400"
-              >
+            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+              <p class="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-400 truncate">
                 {t("dashboard.planCard.title")}
               </p>
-              <p
-                class="text-2xl font-bold text-neutral-900 dark:text-neutral-100"
-              >
+              <p class="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                 {t(planLabelKey)}
               </p>
             </div>
           </div>
-        </div>
+        </a>
 
-        <!-- Quick Access -->
-        <div
-          class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800"
+        <!-- Unified Trends -->
+        {userPlan !== 'basic' && (
+        <a
+          href={`/${lang}/gis`}
+          id="global-trends-card"
+          class="stat-card animated-card group rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717] cursor-pointer transition-all"
         >
           <div class="flex items-center">
-            <div
-              class="flex h-12 w-12 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700"
-            >
+            <div class="stat-icon-container flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700">
               <div class="text-neutral-700 dark:text-neutral-300">
                 <Icon name="realtime" />
               </div>
             </div>
-            <div class="ml-4">
-              <p
-                class="text-sm font-medium text-neutral-600 dark:text-neutral-400"
-              >
-                {t("dashboard.recentActivity.title")}
+            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+              <p class="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-400 truncate">
+                {t("dashboard.globalTrends.title")}
               </p>
-              <p
-                class="text-2xl font-bold text-neutral-900 dark:text-neutral-100"
-              >
-                {websiteCount > 0 ? "Active" : "None"}
+              <p class="text-base sm:text-xl font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+                <span id="global-impact-value" data-target={globalImpactChangePct !== null ? globalImpactChangePct.toFixed(1) : ''}>{globalImpactChangePct !== null ? `${globalImpactChangePct >= 0 ? '+' : ''}${globalImpactChangePct.toFixed(1)}` : '--'}</span>%
+                <button type="button" id="gis-label" class="inline-flex items-center mt-0.5 rounded-[24px] bg-blue-100 px-2.5 py-0.5 text-[11px] font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">GIS</button>
               </p>
             </div>
           </div>
-        </div>
-      </div>
+        </a>
+        )}
 
-      <!-- Quick Actions -->
-      <div class="mb-8">
-        <h2
-          class="mb-6 text-xl font-semibold text-neutral-900 dark:text-neutral-100"
+        <!-- Public Dashboards Count -->
+        {userPlan === 'pro' && (
+          <div id="public-dashboards-card" class="stat-card animated-card group rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717] cursor-pointer transition-all" role="button" tabindex="0">
+            <div class="flex items-center">
+              <div class="stat-icon-container flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700">
+                <div class="text-neutral-700 dark:text-neutral-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:w-6 sm:h-6">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </div>
+              </div>
+              <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+                <p class="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-400 truncate">
+                  {t("dashboard.publicDashboards.title")}
+                </p>
+                <p class="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                  <span id="public-dashboards-count">{userWebsites.filter((w: any) => w.public_dashboard).length}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <!-- Settings -->
+        <a
+          href={`/${lang}/settings`}
+          class="stat-card animated-card group rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717] cursor-pointer transition-all"
         >
-          {t("dashboard.quickActions.title")}
-        </h2>
-        <div class="grid grid-cols-1 gap-3 px-0 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <!-- Add Domain Button -->
-          {
-            buttonAction === "redirect" ? (
-              <a href={buttonHref} class="btn-add-website group">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
-                  <Icon name="plus" />
-                </div>
-                <div class="ml-3 text-left">
-                  <p class="text-sm font-medium">
-                    {t("dashboard.quickActions.addWebsite")}
-                  </p>
-                  <p class="text-xs opacity-80">{buttonSubtitle}</p>
-                </div>
-              </a>
-            ) : (
-              <button id="add-website-btn" class="btn-add-website group">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
-                  <Icon name="plus" />
-                </div>
-                <div class="ml-3 text-left">
-                  <p class="text-sm font-medium">
-                    {t("dashboard.quickActions.addWebsite")}
-                  </p>
-                  <p class="text-xs opacity-80">{buttonSubtitle}</p>
-                </div>
-              </button>
-            )
-          }
-          <!-- Settings -->
-          <a
-            href={`/${lang}/settings`}
-            class="group flex items-center rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:bg-neutral-50 hover:shadow-sm dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40"
-          >
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 group-hover:bg-neutral-200 dark:bg-neutral-700 dark:group-hover:bg-neutral-600"
-            >
+          <div class="flex items-center">
+            <div class="stat-icon-container flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700">
               <div class="text-neutral-700 dark:text-neutral-300">
                 <Icon name="settings" />
               </div>
             </div>
-            <div class="ml-3">
-              <p
-                class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
-              >
+            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+              <p class="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-400 truncate">
                 {t("settings.title")}
               </p>
-              <p class="text-xs text-neutral-500 dark:text-neutral-400">
+              <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate">
                 {t("dashboard.userCard.viewSettings")}
               </p>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <!-- Pricing -->
-          <a
-            href={`/${lang}/subscription`}
-            class="group flex items-center rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:bg-neutral-50 hover:shadow-sm dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40"
-          >
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 group-hover:bg-neutral-200 dark:bg-neutral-700 dark:group-hover:bg-neutral-600"
-            >
+        <!-- Developers -->
+        <a
+          href={`/${lang}/api`}
+          class="stat-card animated-card group rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm dark:border-neutral-700 dark:bg-[#171717] cursor-pointer transition-all"
+        >
+          <div class="flex items-center">
+            <div class="stat-icon-container flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700">
               <div class="text-neutral-700 dark:text-neutral-300">
-                <Icon name="rocket" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:w-6 sm:h-6">
+                  <path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>
+                </svg>
               </div>
             </div>
-            <div class="ml-3">
-              <p
-                class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
-              >
-                {t(manageOrUpgradeKey)}
+            <div class="ml-3 sm:ml-4 min-w-0 flex-1">
+              <p class="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-400 truncate">
+                {t("dashboard.quickActions.devSettings")}
               </p>
-              <p class="text-xs text-neutral-500 dark:text-neutral-400">
-                {t("dashboard.quickActions.subscriptionDetails")}
+              <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate">
+                API Docs
               </p>
             </div>
-          </a>
-        </div>
+          </div>
+        </a>
       </div>
 
-     
-      <h2 class="mb-6 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-        {t("websites.title")}
-      </h2>
+      <div class="mb-4 sm:mb-6 flex items-center gap-3">
+        <h2 class="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+          {t("websites.title")}
+        </h2>
+        <span class="inline-flex items-center rounded-full bg-neutral-100 dark:bg-neutral-700 px-3 py-1 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+          {websiteCount}
+        </span>
+      </div>
 
       {userWebsites.length === 0 ? (
-        <div class="rounded-xl border border-neutral-200 bg-white p-6 sm:p-8 text-center shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+        <div class="rounded-xl border border-neutral-200 bg-white p-6 sm:p-8 text-center shadow-sm dark:border-neutral-700 dark:bg-[#171717]">
           <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
             {t("dashboard.quickActions.noWebsitesYet")}
           </h3>
@@ -404,22 +494,57 @@ if (reachedBasicLimit || reachedFlexLimit) {
           </p>
         </div>
       ) : (
-        <div class="grid grid-cols-1 gap-4 px-0 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="websites-grid">
           {userWebsites.map((website: any) => (
-            <div class="group rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40 relative">
-              <div class="absolute top-4 right-4">
+            <div class="website-card group rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 lg:p-8 shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 dark:border-neutral-700 dark:bg-[#171717] dark:hover:bg-neutral-700/40 relative">
+              <div class="absolute top-3 right-3 sm:top-4 sm:right-4">
                 <div class="relative">
-                  <button 
-                    class="settings-menu-btn p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                  <button
+                    class="settings-menu-btn p-1.5 sm:p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                     data-website-id={website.id}
                     data-website-name={website.name}
                     data-website-domain={website.domain}
                   >
                     <Icon name="settingsCard" />
                   </button>
-
-                  <div class="settings-dropdown absolute right-0 top-12 w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-lg z-10 hidden">
-                    <div class="p-2">
+                  <div class="settings-dropdown absolute right-0 top-12 w-48 bg-white dark:bg-[#171717] border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-lg z-10 hidden">
+                   <div class="p-2">
+                      {userPlan === 'pro' && (
+                        <button
+                          class="dash-visibility-btn w-full flex items-center gap-3 px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700/50 rounded-lg transition-colors"
+                          data-website-id={website.id}
+                          data-website-name={website.name}
+                          data-website-domain={website.domain}
+                          data-is-public={website.public_dashboard ? 'true' : 'false'}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            {website.public_dashboard ? (
+                              <>
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                              </>
+                            ) : (
+                              <>
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                              </>
+                            )}
+                          </svg>
+                          <span>{website.public_dashboard ? t('websites.makePrivate') : t('websites.makePublic')}</span>
+                        </button>
+                      )}
+                      {website.public_dashboard ? (
+                        <button
+                          class="copy-public-url-btn w-full flex items-center gap-3 px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700/50 rounded-lg transition-colors"
+                          data-website-id={website.id}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                          </svg>
+                          <span>{t('websites.copyPublicUrl')}</span>
+                        </button>
+                      ) : null}
                       <button
                         class="delete-website-btn w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                         data-website-id={website.id}
@@ -427,7 +552,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
                         data-website-domain={website.domain}
                       >
                         <Icon name="trash" />
-                        Delete Website
+                        {t("websites.deleteModal.deleteButton")}
                       </button>
                     </div>
                   </div>
@@ -458,9 +583,9 @@ if (reachedBasicLimit || reachedFlexLimit) {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div class="space-y-3">
-                    <a 
+                    <a
                       href={`/${lang}/analytics/${website.id}`}
                       class="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium text-neutral-800 dark:text-neutral-200 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-600 dark:hover:bg-neutral-700"
                     >
@@ -486,14 +611,15 @@ if (reachedBasicLimit || reachedFlexLimit) {
           ))}
         </div>
       )}
-  <!-- Add Domain Modal -->
+
+ <!-- Add Domain Modal -->
    <div
      id="add-website-modal"
      class="fixed inset-0 z-50 hidden bg-neutral-900/50 backdrop-blur-sm"
    >
      <div class="flex min-h-screen items-center justify-center p-4">
        <div
-         class="w-full max-w-md rounded-2xl border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-neutral-800"
+         class="w-full max-w-md rounded-2xl border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-[#171717]"
        >
          <div class="p-8">
            <div class="mb-6 flex items-center justify-between">
@@ -574,20 +700,127 @@ if (reachedBasicLimit || reachedFlexLimit) {
        </div>
      </div>
    </div>
+    <!-- Public Dashboard Modal -->
+    <div id="public-dashboard-modal" class="fixed inset-0 z-[9999] hidden bg-neutral-900/50 backdrop-blur-sm">
+      <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="w-full max-w-md rounded-2xl connected-pattern border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-[#171717]">
+          <div class="p-8">
+            <div class="mb-6 flex items-center justify-between">
+              <h3 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+                {t("dashboard.publicModal.title")}
+              </h3>
+              <button id="close-public-modal-btn" class="rounded-xl p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
+            <div class="mb-6">
+              <div class="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-900/50">
+                <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                  <span class="font-semibold">{t("dashboard.publicModal.websiteLabel")}</span>
+                  <span id="modal-website-name"></span>
+                </p>
+                <p class="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                  <span class="font-semibold">{t("dashboard.publicModal.domainLabel")}</span>
+                  <span id="modal-website-domain"></span>
+                </p>
+              </div>
+
+              <div id="public-status-info" class="mt-4">
+                <p class="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                  <span id="public-status-text"></span>
+                </p>
+                <div id="public-url-container" class="hidden">
+                  <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                    {t("dashboard.publicModal.publicUrlLabel")}
+                  </label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="text"
+                      id="public-url-input"
+                      readonly
+                      class="flex-1 rounded-lg border text-neutral-800 dark:text-neutral-200 border-neutral-300 px-3 py-2 text-sm bg-neutral-50 dark:bg-neutral-900 dark:border-neutral-600"
+                    />
+                    <button id="copy-url-btn" class="rounded-lg bg-neutral-900 px-3 py-2 text-sm text-white hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600">
+                      {t("dashboard.publicModal.copy")}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+              <button
+                id="cancel-public-modal"
+                class="rounded-xl px-6 py-3 text-neutral-800 dark:text-neutral-200 bg-neutral-200 dark:bg-neutral-700 transition-all duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-600"
+              >
+                {t("dashboard.publicModal.cancel")}
+              </button>
+              <button
+                id="toggle-public-btn"
+                class="rounded-xl bg-black dark:bg-white dark:text-black px-6 py-3 text-white transition-all duration-200 hover:bg-blue-700 hover:scale-105 flex items-center gap-2"
+              >
+                <span id="toggle-btn-text"></span>
+
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="public-confirm-modal" class="fixed inset-0 z-[10000] hidden bg-neutral-900/50 backdrop-blur-sm">
+      <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="w-full max-w-md rounded-2xl connected-pattern border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-[#171717]">
+          <div class="p-8">
+            <div class="mb-4 flex items-center justify-center">
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-800 dark:text-neutral-200">
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </div>
+            </div>
+            <h4 class="mb-2 text-center text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+              {t("dashboard.confirmModal.title")}
+            </h4>
+            <p class="mb-6 text-center text-sm text-neutral-600 dark:text-neutral-400" id="confirm-message"></p>
+            <div class="flex justify-center space-x-3">
+              <button
+                id="cancel-confirm"
+                class="rounded-lg px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600"
+              >
+                {t("dashboard.confirmModal.cancel")}
+              </button>
+              <button
+                id="confirm-action"
+                class="rounded-xl bg-black dark:bg-white dark:text-black px-6 py-3 text-white transition-all duration-200 hover:bg-blue-700 hover:scale-105 flex items-center gap-2"
+              >
+                {t("dashboard.confirmModal.confirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
    <!-- HTTP Warning Modal -->
     <div
       id="http-warning-modal"
-      class="fixed inset-0 z-50 hidden bg-neutral-900/50 backdrop-blur-sm"
+      class="fixed inset-0 connected-pattern z-50 hidden bg-neutral-900/50 backdrop-blur-sm"
     >
       <div class="flex min-h-screen items-center justify-center p-4">
         <div
-          class="w-full max-w-md rounded-2xl border border-amber-200 bg-white shadow-xl dark:border-amber-700 dark:bg-neutral-800"
+          class="w-full max-w-md rounded-2xl border border-amber-200 bg-white shadow-xl dark:border-amber-700 dark:bg-[#171717]"
         >
           <div class="p-8">
             <div class="mb-6 flex items-center justify-between">
               <h3 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
                 {t("websites.httpWarning.title")}
+
               </h3>
               <button
                 id="close-http-warning-btn"
@@ -598,13 +831,13 @@ if (reachedBasicLimit || reachedFlexLimit) {
                 </svg>
               </button>
             </div>
-            
+
             <div class="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
               <p class="text-sm text-neutral-800 dark:text-neutral-200">
                 {t("websites.httpWarning.message")}
               </p>
             </div>
-            
+
             <div class="flex justify-end">
               <button
                 id="understood-http-warning"
@@ -625,7 +858,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
    >
      <div class="flex min-h-screen items-center justify-center p-4">
        <div
-         class="w-full max-w-md rounded-2xl border border-red-200 bg-white shadow-xl dark:border-red-700 dark:bg-neutral-800"
+         class="w-full max-w-md rounded-2xl border border-red-200 bg-white shadow-xl dark:border-red-700 dark:bg-[#171717]"
        >
          <div class="p-8">
            <div class="mb-6 flex items-center justify-between">
@@ -641,11 +874,11 @@ if (reachedBasicLimit || reachedFlexLimit) {
                </svg>
              </button>
            </div>
-           
+
            <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
              <p id="delete-warning-text" class="text-sm text-red-800 dark:text-red-200"></p>
            </div>
-           
+
            <form id="delete-website-form">
              <div class="mb-6">
                <label
@@ -683,6 +916,82 @@ if (reachedBasicLimit || reachedFlexLimit) {
        </div>
      </div>
    </div>
+  <!-- Public Dashboards List Modal -->
+  <div id="public-dashboards-list-modal" class="fixed inset-0 z-[10000] hidden bg-neutral-900/50 backdrop-blur-sm">
+    <div class="flex min-h-screen items-center justify-center p-4">
+      <div class="w-full max-w-2xl rounded-2xl connected-pattern border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-[#171717]">
+        <div class="p-6 sm:p-8">
+          <div class="mb-4 sm:mb-6 flex items-center justify-between">
+            <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+              {t("dashboard.publicDashboards.modal.title")}
+            </h3>
+            <button id="close-public-list-btn" class="rounded-xl p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="max-h-[60vh] overflow-y-auto space-y-3" id="public-dashboards-list">
+            {userWebsites.filter((w: any) => w.public_dashboard).length === 0 ? (
+              <p class="text-sm text-neutral-600 dark:text-neutral-400">{t("dashboard.publicDashboards.none")}</p>
+            ) : (
+              userWebsites.filter((w: any) => w.public_dashboard).map((website: any) => (
+                <div class="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/40 p-3 sm:p-4 flex items-center justify-between gap-3">
+                  <div class="min-w-0">
+                    <p class="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{website.name || t("dashboard.publicDashboards.dashboard")}</p>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{website.domain}</p>
+                    <p class="mt-1 text-xs text-neutral-700 dark:text-neutral-300 break-all">{Astro.url.origin}/{lang}/public/{website.id}</p>
+                  </div>
+                  <div class="flex flex-shrink-0 items-center gap-2">
+                    <button class="copy-public-url-list-btn rounded-lg bg-neutral-900 px-3 py-1.5 text-xs text-white hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600 flex items-center gap-1.5" data-public-url={`${Astro.url.origin}/${lang}/public/${website.id}`}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                      </svg>
+                      {t("dashboard.publicModal.copy")}
+                    </button>
+                    <a class="open-public-url-list-btn rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-1.5 text-xs text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center gap-1.5" href={`${Astro.url.origin}/${lang}/public/${website.id}`} target="_blank" rel="noopener noreferrer">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                        <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"/>
+                        <path d="m21 3-9 9"/>
+                        <path d="M15 3h6v6"/>
+                      </svg>
+                      {t("dashboard.publicDashboards.open")}
+                    </a>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div class="mt-5 sm:mt-6 flex justify-end">
+            <button id="close-public-list-btn-2" class="rounded-xl px-5 py-2.5 text-sm text-neutral-800 dark:text-neutral-200 bg-neutral-200 dark:bg-neutral-700 transition-all duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-600">
+              {t("dashboard.publicModal.cancel")}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- GIS Info Modal -->
+  <div id="gis-info-modal" class="fixed inset-0 z-[10000] hidden bg-neutral-900/50 backdrop-blur-sm">
+    <div class="flex min-h-screen items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-2xl connected-pattern border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-[#171717]">
+        <div class="p-6">
+          <div class="mb-4 flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{t("dashboard.gisModal.title")}</h3>
+            <button id="close-gis-info" class="rounded-xl p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-700 dark:hover:text-neutral-300" aria-label="Close">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          <p class="text-xs italic pb-2 text-neutral-700 dark:text-neutral-300">{t("dashboard.gisModal.description")}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
   <script define:vars={{ wizardTranslations }}>
     window.__wizardTranslations = wizardTranslations;
   </script>
@@ -690,64 +999,325 @@ if (reachedBasicLimit || reachedFlexLimit) {
     import { apiClient } from '../../utils/api-client.ts';
     import { createTrackingModal } from '../../utils/tracking-modal.ts';
 
+    const t = (key: string, params?: Record<string, string>): string => {
+    const translations = (window as any).__wizardTranslations || {};
+    let translation = translations[key];
+
+    if (!translation && !key.startsWith('websites.wizard.')) {
+      translation = translations[`websites.wizard.${key}`] ||
+                    translations[`dashboard.${key}`] ||
+                    translations[key];
+    }
+
+    if (!translation) {
+      console.warn(`Translation missing for key: ${key}`);
+      return key;
+    }
+
+    if (params && typeof translation === 'string') {
+      Object.keys(params).forEach(param => {
+        const placeholder = `{${param}}`;
+        translation = translation.replace(new RegExp(placeholder, 'g'), params[param]);
+      });
+    }
+
+
+
+
+    return translation;
+  };
     document.addEventListener('DOMContentLoaded', () => {
       loadFavicons();
+
+      const gisLabel = document.getElementById('gis-label');
+
+  function animateNumber(el: HTMLElement, from: number, to: number, duration: number) {
+    let start: number | null = null;
+    function step(ts: number) {
+      if (start === null) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      const val = from + (to - from) * p;
+      const sign = to >= 0 ? (val >= 0 ? '+' : '') : '';
+      el.textContent = `${sign}${val.toFixed(1)}`;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+      if (gisLabel) {
+        gisLabel.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          document.getElementById('gis-info-modal')?.classList.remove('hidden');
+        });
+
+      const giEl = document.getElementById('global-impact-value');
+      if (giEl) {
+        const targetStr = giEl.getAttribute('data-target') || '';
+        const targetVal = parseFloat(targetStr);
+        if (!isNaN(targetVal)) {
+          animateNumber(giEl as HTMLElement, 0, targetVal, 800);
+        }
+      }
+
+      }
+      updatePublicDashboardsCount();
+
+
+      const closeGis = document.getElementById('close-gis-info');
+      if (closeGis) closeGis.addEventListener('click', () => document.getElementById('gis-info-modal')?.classList.add('hidden'));
+      document.getElementById('gis-info-modal')?.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).id === 'gis-info-modal') (e.target as HTMLElement).classList.add('hidden');
+      });
+
+      const publicModal = document.getElementById('public-dashboard-modal');
+      const confirmModal = document.getElementById('public-confirm-modal');
+
+      let currentWebsiteData: {
+        websiteId: string;
+        websiteName: string;
+        websiteDomain: string;
+        isPublic: boolean;
+      } | null = null;
+
+      updatePublicDashboardsCount();
+
+
+      document.querySelectorAll('.copy-public-url-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const websiteId = btn.getAttribute('data-website-id');
+          const currentLang = window.location.pathname.split('/')[1] || 'en';
+          const publicUrl = `${window.location.origin}/${currentLang}/public/${websiteId}`;
+
+          navigator.clipboard.writeText(publicUrl).then(() => {
+            const span = btn.querySelector('span');
+            if (span) {
+              const originalText = span.textContent;
+              span.textContent = t("dashboard.publicModal.copied");
+              setTimeout(() => {
+                if (originalText !== null) {
+                  span.textContent = originalText;
+                }
+              }, 2000);
+            }
+          });
+        });
+      });
+
+      document.querySelectorAll('.dash-visibility-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const button = btn as HTMLElement;
+          const websiteId = button.dataset.websiteId || '';
+          const websiteName = button.dataset.websiteName || '';
+          const websiteDomain = button.dataset.websiteDomain || '';
+          const isPublic = button.dataset.isPublic === 'true';
+
+          currentWebsiteData = { websiteId, websiteName, websiteDomain, isPublic };
+
+          const modalWebsiteName = document.getElementById('modal-website-name');
+          const modalWebsiteDomain = document.getElementById('modal-website-domain');
+          const publicStatusText = document.getElementById('public-status-text');
+          const publicUrlContainer = document.getElementById('public-url-container');
+          const publicUrlInput = document.getElementById('public-url-input') as HTMLInputElement;
+          const toggleBtnText = document.getElementById('toggle-btn-text');
+          const togglePublicBtn = document.getElementById('toggle-public-btn');
+
+          if (modalWebsiteName) modalWebsiteName.textContent = websiteName;
+          if (modalWebsiteDomain) modalWebsiteDomain.textContent = websiteDomain;
+
+          if (isPublic) {
+            if (publicStatusText) publicStatusText.textContent = t('dashboard.publicModal.statusPublic');
+            if (publicUrlContainer) publicUrlContainer.classList.remove('hidden');
+            if (publicUrlInput) publicUrlInput.value = `${window.location.origin}/public/${websiteId}`;
+            if (toggleBtnText) toggleBtnText.textContent = t("dashboard.publicModal.makePrivate");
+            if (togglePublicBtn) togglePublicBtn.className = 'rounded-xl px-6 py-3 text-white bg-red-600 hover:bg-red-700 transition-all duration-200';
+          } else {
+            if (publicStatusText) publicStatusText.textContent = t('dashboard.publicModal.statusPrivate');
+            if (publicUrlContainer) publicUrlContainer.classList.add('hidden');
+            if (toggleBtnText) toggleBtnText.textContent = t("dashboard.publicModal.makePublic");
+            if (togglePublicBtn) togglePublicBtn.className = 'rounded-xl bg-black dark:bg-white dark:text-black px-6 py-3 text-white transition-all duration-200 hover:bg-blue-700 hover:scale-105 flex items-center gap-2';
+          }
+
+          if (publicModal) publicModal.classList.remove('hidden');
+        });
+      });
+
+      document.getElementById('toggle-public-btn')?.addEventListener('click', () => {
+        if (currentWebsiteData) {
+          const confirmMessage = document.getElementById('confirm-message');
+          const action = currentWebsiteData.isPublic ? 'private' : 'public';
+          if (confirmMessage) {
+            const confirmKey = action === 'public' ?
+              'dashboard.confirmModal.makePublicMessage' :
+              'dashboard.confirmModal.makePrivateMessage';
+            confirmMessage.textContent = t(confirmKey, { websiteName: currentWebsiteData.websiteName });
+          }
+          if (confirmModal) confirmModal.classList.remove('hidden');
+        }
+      });
+
+      document.getElementById('confirm-action')?.addEventListener('click', async () => {
+        if (!currentWebsiteData) return;
+
+        try {
+          const backendUrl = 'https://script.peekvisor.com';
+          const response = await fetch(`${backendUrl}/api/websites/${currentWebsiteData.websiteId}/public-toggle`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${getAuthToken()}`
+            },
+            body: JSON.stringify({ isPublic: !currentWebsiteData.isPublic })
+          });
+
+          if (response.ok) {
+            location.reload();
+          }
+        } catch (error) {
+          console.error('Error toggling public status:', error);
+        }
+      });
+
+      document.getElementById('copy-url-btn')?.addEventListener('click', () => {
+        const urlInput = document.getElementById('public-url-input') as HTMLInputElement;
+        if (urlInput) {
+          urlInput.select();
+          document.execCommand('copy');
+
+          const btn = document.getElementById('copy-url-btn');
+          if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = t("dashboard.publicModal.copied");
+            setTimeout(() => {
+              if (btn) btn.textContent = originalText || t("dashboard.publicModal.copy");
+            }, 2000);
+          }
+        }
+      });
+
+      document.getElementById('close-public-modal-btn')?.addEventListener('click', () => {
+        if (publicModal) publicModal.classList.add('hidden');
+      });
+
+      document.getElementById('cancel-public-modal')?.addEventListener('click', () => {
+        if (publicModal) publicModal.classList.add('hidden');
+      });
+
+      document.getElementById('cancel-confirm')?.addEventListener('click', () => {
+        if (confirmModal) confirmModal.classList.add('hidden');
+
+      });
+
+      const publicListModal = document.getElementById('public-dashboards-list-modal');
+      document.getElementById('view-all-public-btn')?.addEventListener('click', () => publicListModal?.classList.remove('hidden'));
+      document.getElementById('view-all-public-btn-mobile')?.addEventListener('click', () => publicListModal?.classList.remove('hidden'));
+      document.getElementById('close-public-list-btn')?.addEventListener('click', () => publicListModal?.classList.add('hidden'));
+      document.getElementById('close-public-list-btn-2')?.addEventListener('click', () => publicListModal?.classList.add('hidden'));
+      publicListModal?.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement)?.id === 'public-dashboards-list-modal') publicListModal?.classList.add('hidden');
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && publicListModal && !publicListModal.classList.contains('hidden')) publicListModal.classList.add('hidden');
+      });
+
+      document.querySelectorAll('.copy-public-url-list-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const el = btn as HTMLElement;
+          const url = el.getAttribute('data-public-url') || '';
+          if (!url) return;
+          navigator.clipboard.writeText(url).then(() => {
+            const original = (btn as HTMLElement).textContent;
+            (btn as HTMLElement).textContent = t('dashboard.publicModal.copied');
+            setTimeout(() => {
+              if (original !== null) (btn as HTMLElement).textContent = original;
+            }, 2000);
+          });
+        });
+      });
+
+      const publicDashCard = document.getElementById('public-dashboards-card');
+      publicDashCard?.addEventListener('click', () => publicListModal?.classList.remove('hidden'));
+      publicDashCard?.addEventListener('keydown', (e) => {
+        if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+          e.preventDefault();
+          publicListModal?.classList.remove('hidden');
+        }
+      });
+
+
+
+      function updatePublicDashboardsCount() {
+        const publicCount = document.querySelectorAll('[data-is-public="true"]').length;
+        const countEl = document.getElementById('public-dashboards-count');
+        if (countEl) countEl.textContent = publicCount.toString();
+      }
+
+      function getAuthToken() {
+        const cookies = document.cookie.split(';');
+        const authCookie = cookies.find(cookie => cookie.trim().startsWith('app_auth_token='));
+        return authCookie ? authCookie.split('=')[1] : null;
+      }
     });
 
     function loadFavicons() {
-        const faviconImages = document.querySelectorAll('.website-favicon');
-        
-        faviconImages.forEach((img: Element, index: number) => {
-          const domain = img.getAttribute('data-domain');
-          const fallback = img.parentElement?.querySelector('.website-fallback-icon');
-          
-          if (!domain || !fallback) return;
-          fallback.classList.remove('hidden');
-          img.classList.add('hidden');
-          
-          const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/^www\./, '');
+      const faviconImages = document.querySelectorAll('.website-favicon');
 
-          const faviconUrls = [
-            `https://${cleanDomain}/favicon.ico`,
-            `https://${cleanDomain}/favicon.png`,
-            `https://${cleanDomain}/apple-touch-icon.png`,
-            `https://${cleanDomain}/apple-touch-icon-precomposed.png`,
-            `https://${cleanDomain}/icon.png`
-          ];
-          
-          let currentIndex = 0;
-        
-          function tryNextFavicon() {
-            if (currentIndex >= faviconUrls.length) {
-              console.log(`⚠️ No favicon found for ${domain}, keeping fallback`);
-              return;
-            }      
-            const tempImg = new Image();
-            
-            tempImg.onload = () => {
-              if (tempImg.width >= 24 && tempImg.height >= 24) {
-                img.setAttribute('src', faviconUrls[currentIndex]);
-                img.classList.remove('hidden');
-                if (fallback) {
-                  fallback.classList.add('hidden');
-                }
-              } else {
-                currentIndex++;
-                tryNextFavicon();
+      faviconImages.forEach((img: Element, index: number) => {
+        const domain = img.getAttribute('data-domain');
+        const fallback = img.parentElement?.querySelector('.website-fallback-icon');
+
+        if (!domain || !fallback) return;
+        fallback.classList.remove('hidden');
+        img.classList.add('hidden');
+
+        const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/^www\./, '');
+
+        const faviconUrls = [
+          `https://${cleanDomain}/favicon.ico`,
+          `https://${cleanDomain}/favicon.png`,
+          `https://${cleanDomain}/images/favicons/favicon.ico`,
+          `https://${cleanDomain}/images/favicons/favicon.png`,
+          `https://${cleanDomain}/favicons/favicon.ico`,
+          `https://${cleanDomain}/favicons/favicon.png`,
+          `https://${cleanDomain}/apple-touch-icon.png`,
+          `https://${cleanDomain}/apple-touch-icon-precomposed.png`,
+          `https://${cleanDomain}/icon.png`,
+        ];
+
+        let currentIndex = 0;
+
+        function tryNextFavicon() {
+          if (currentIndex >= faviconUrls.length) {
+            return;
+          }
+          const tempImg = new Image();
+
+          tempImg.onload = () => {
+            if (tempImg.width >= 24 && tempImg.height >= 24) {
+              img.setAttribute('src', faviconUrls[currentIndex]);
+              img.classList.remove('hidden');
+              if (fallback) {
+                fallback.classList.add('hidden');
               }
-            };
-            
-            tempImg.onerror = () => {
+            } else {
               currentIndex++;
               tryNextFavicon();
-            };
-            
-            tempImg.src = faviconUrls[currentIndex];
-          }
-          
-          tryNextFavicon();
-        });
-      }
+            }
+          };
+
+          tempImg.onerror = () => {
+            currentIndex++;
+            tryNextFavicon();
+          };
+
+          tempImg.src = faviconUrls[currentIndex];
+        }
+
+        tryNextFavicon();
+      });
+    }
 
     document
       .getElementById("add-website-btn")
@@ -776,59 +1346,59 @@ if (reachedBasicLimit || reachedFlexLimit) {
       }
     });
 
-        document.addEventListener("click", (e) => {
+    document.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
-      
+
       if (target.classList.contains("delete-website-btn") || target.closest(".delete-website-btn")) {
         const button = target.classList.contains("delete-website-btn") ? target : target.closest(".delete-website-btn");
         const websiteId = button?.getAttribute("data-website-id");
         const websiteName = button?.getAttribute("data-website-name");
         const websiteDomain = button?.getAttribute("data-website-domain");
-        
+
         if (websiteId && websiteName && websiteDomain) {
           showDeleteConfirmation(websiteId, websiteName, websiteDomain);
         }
       }
     });
 
-      document.addEventListener("click", (e) => {
-        const target = e.target as HTMLElement;
-        if (target.classList.contains("settings-menu-btn") || target.closest(".settings-menu-btn")) {
-          e.stopPropagation();
-          const button = target.classList.contains("settings-menu-btn") ? target : target.closest(".settings-menu-btn");
-          const dropdown = button?.nextElementSibling;
-          document.querySelectorAll('.settings-dropdown').forEach(dd => {
-            if (dd !== dropdown) dd.classList.add('hidden');
-          });
-          
-          dropdown?.classList.toggle('hidden');
-        }
-        else {
-          document.querySelectorAll('.settings-dropdown').forEach(dd => {
-            dd.classList.add('hidden');
-          });
-        }
-      });
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains("settings-menu-btn") || target.closest(".settings-menu-btn")) {
+        e.stopPropagation();
+        const button = target.classList.contains("settings-menu-btn") ? target : target.closest(".settings-menu-btn");
+        const dropdown = button?.nextElementSibling;
+        document.querySelectorAll('.settings-dropdown').forEach(dd => {
+          if (dd !== dropdown) dd.classList.add('hidden');
+        });
 
-      document.addEventListener("click", (e) => {
-        const target = e.target as HTMLElement;
-        if (target.closest(".settings-dropdown .test-connection-btn")) {
-          const button = target.closest(".test-connection-btn");
-          const websiteId = button?.getAttribute("data-website-id");
-          const domain = button?.getAttribute("data-domain");
+        dropdown?.classList.toggle('hidden');
+      }
+      else {
+        document.querySelectorAll('.settings-dropdown').forEach(dd => {
+          dd.classList.add('hidden');
+        });
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest(".settings-dropdown .test-connection-btn")) {
+        const button = target.closest(".test-connection-btn");
+        const websiteId = button?.getAttribute("data-website-id");
+        const domain = button?.getAttribute("data-domain");
+      }
+      if (target.closest(".settings-dropdown .delete-website-btn")) {
+        const button = target.closest(".delete-website-btn");
+        const websiteId = button?.getAttribute("data-website-id");
+        const websiteName = button?.getAttribute("data-website-name");
+        const websiteDomain = button?.getAttribute("data-website-domain");
+
+        if (websiteId && websiteName && websiteDomain) {
+          showDeleteConfirmation(websiteId, websiteName, websiteDomain);
+          button?.closest('.settings-dropdown')?.classList.add('hidden');
         }
-        if (target.closest(".settings-dropdown .delete-website-btn")) {
-          const button = target.closest(".delete-website-btn");
-          const websiteId = button?.getAttribute("data-website-id");
-          const websiteName = button?.getAttribute("data-website-name");
-          const websiteDomain = button?.getAttribute("data-website-domain");
-          
-          if (websiteId && websiteName && websiteDomain) {
-            showDeleteConfirmation(websiteId, websiteName, websiteDomain);
-            button?.closest('.settings-dropdown')?.classList.add('hidden');
-          }
-        }
-      });
+      }
+    });
 
     document
       .getElementById("add-website-modal")
@@ -856,46 +1426,45 @@ if (reachedBasicLimit || reachedFlexLimit) {
           }
     });
 
-      document
+    document
       .getElementById("delete-domain-confirmation")
       ?.addEventListener("input", validateDeleteInput);
 
-
-      let currentDeleteData = { websiteId: "", websiteName: "", websiteDomain: "" };
+    let currentDeleteData = { websiteId: "", websiteName: "", websiteDomain: "" };
 
     function showDeleteConfirmation(websiteId: string, websiteName: string, websiteDomain: string) {
       currentDeleteData = { websiteId, websiteName, websiteDomain };
-      
+
       const modal = document.getElementById("delete-website-modal");
       const warningText = document.getElementById("delete-warning-text");
       const confirmationLabel = document.getElementById("delete-confirmation-label");
       const confirmationInput = document.getElementById("delete-domain-confirmation") as HTMLInputElement;
       const confirmBtn = document.getElementById("confirm-delete-btn") as HTMLButtonElement;
-      
+
       if (warningText) {
-        warningText.textContent = `Warning: This action is irreversible. Deleting '${websiteName}' will permanently remove all associated analytics data and cannot be undone.`;
+        warningText.innerHTML = t("websites.deleteModal.warning", { websiteName });
       }
-      
+
       if (confirmationLabel) {
-        confirmationLabel.textContent = "To confirm deletion, please type the full domain name:";
+        confirmationLabel.textContent = t("websites.deleteModal.confirmText");
       }
-      
+
       if (confirmationInput) {
         confirmationInput.value = "";
-        confirmationInput.placeholder = `Type ${websiteDomain} here...`;
+        confirmationInput.placeholder = t("websites.deleteModal.placeholder", { domain: websiteDomain });
       }
-      
+
       if (confirmBtn) {
         confirmBtn.disabled = true;
       }
-      
+
       modal?.classList.remove("hidden");
     }
 
     function closeDeleteModal() {
       const modal = document.getElementById("delete-website-modal");
       const form = document.getElementById("delete-website-form") as HTMLFormElement;
-      
+
       modal?.classList.add("hidden");
       form?.reset();
       currentDeleteData = { websiteId: "", websiteName: "", websiteDomain: "" };
@@ -904,11 +1473,11 @@ if (reachedBasicLimit || reachedFlexLimit) {
     function validateDeleteInput() {
       const input = document.getElementById("delete-domain-confirmation") as HTMLInputElement;
       const confirmBtn = document.getElementById("confirm-delete-btn") as HTMLButtonElement;
-      
+
       if (input && confirmBtn) {
         const isValid = input.value.toLowerCase().trim() === currentDeleteData.websiteDomain.toLowerCase().trim();
         confirmBtn.disabled = !isValid;
-        
+
         if (isValid) {
           confirmBtn.classList.remove("opacity-50", "cursor-not-allowed");
           confirmBtn.classList.add("bg-red-600", "hover:bg-red-700");
@@ -921,47 +1490,49 @@ if (reachedBasicLimit || reachedFlexLimit) {
 
     async function confirmDeleteWebsite(e: Event) {
       e.preventDefault();
-      
+
       const input = document.getElementById("delete-domain-confirmation") as HTMLInputElement;
       const confirmBtn = document.getElementById("confirm-delete-btn") as HTMLButtonElement;
-      
+
       if (!input || !currentDeleteData.websiteId) return;
-      
+
       const enteredDomain = input.value.toLowerCase().trim();
       const expectedDomain = currentDeleteData.websiteDomain.toLowerCase().trim();
-      
+
       if (enteredDomain !== expectedDomain) {
-        alert("Domain name does not match");
+        const translations = (window as any).__wizardTranslations as Record<string, string> || {};
+        const invalidDomainMsg = translations["websites.deleteModal.invalidDomain"] || "Domain name does not match";
+        alert(invalidDomainMsg);
         return;
       }
-      
+
       try {
         confirmBtn.disabled = true;
         confirmBtn.textContent = "Deleting...";
-        
+
         await apiClient.deleteWebsite(currentDeleteData.websiteId);
-        
+
         closeDeleteModal();
         const successMsg = document.createElement("div");
         successMsg.className = "fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded z-50";
-        successMsg.textContent = "Website deleted successfully";
+        successMsg.textContent = t("websites.deleteModal.success");
         document.body.appendChild(successMsg);
-        
+
         setTimeout(() => {
           successMsg.remove();
           window.location.reload();
         }, 2000);
-        
+
       } catch (error) {
         console.error("Error deleting website:", error);
-        
+
         const errorMsg = document.createElement("div");
         errorMsg.className = "fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50";
-        errorMsg.textContent = error instanceof Error ? error.message : "Failed to delete website";
+        errorMsg.textContent = error instanceof Error ? error.message : t("websites.deleteModal.error");
         document.body.appendChild(errorMsg);
-        
+
         setTimeout(() => errorMsg.remove(), 5000);
-        
+
         confirmBtn.disabled = false;
         confirmBtn.textContent = "Confirm Deletion";
       }
@@ -980,16 +1551,16 @@ if (reachedBasicLimit || reachedFlexLimit) {
 
       const formData = new FormData(e.target as HTMLFormElement);
       let domain = (formData.get("domain") as string).trim();
-      
+
       if (domain.startsWith("http://")) {
         showHttpWarning();
         return;
       }
-      
+
       domain = domain.replace(/^https?:\/\//i, '');
 
       const fullDomain = `https://${domain}`;
-      
+
       const data = {
         domain: fullDomain,
         name: formData.get("name") as string,
@@ -1026,6 +1597,9 @@ if (reachedBasicLimit || reachedFlexLimit) {
     document
       .getElementById("http-warning-modal")
       ?.addEventListener("click", (e) => {
+
+
+
         if ((e.target as HTMLElement)?.id === "http-warning-modal") {
           closeHttpWarning();
         }
@@ -1035,8 +1609,8 @@ if (reachedBasicLimit || reachedFlexLimit) {
       try {
         const data = await apiClient.getTrackingCode(websiteId);
         const translations = (window as any).__wizardTranslations as Record<string, string>;
-        const t = (key: string) => translations[key] || key;
-        const modal = createTrackingModal(data, t);
+        const localT = (key: string): string => translations[key] || key;
+        const modal = createTrackingModal(data, localT);
         document.body.appendChild(modal);
       } catch (error) {
         console.error("Error fetching tracking code:", error);
@@ -1048,7 +1622,7 @@ if (reachedBasicLimit || reachedFlexLimit) {
     document.getElementById("back-button")?.addEventListener("click", () => {
       window.history.back();
     });
- </script>
+  </script>
 <style>
   @keyframes gradient-animation {
     0% { background-position: 0% 50%; }
@@ -1082,5 +1656,250 @@ if (reachedBasicLimit || reachedFlexLimit) {
       transform: translateY(0);
       box-shadow: 0 4px 15px 0 rgba(77, 25, 204, 0.25);
   }
+  @keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .btn-add-website {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    font-weight: 600;
+    color: white;
+    background-image: linear-gradient(45deg, var(--color-indigo-400), var(--color-indigo-600), #262626);
+    background-size: 200% auto;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(.25,.4,.25,1);
+    box-shadow: 0 4px 15px 0 rgba(77, 25, 204, 0.25);
+    animation: gradient-animation 7s ease infinite;
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .btn-add-website {
+      padding: 1rem;
+    }
+  }
+
+  .btn-add-website:hover {
+    box-shadow: 0 10px 25px 0 rgba(77, 25, 204, 0.4);
+    transform: translateY(-3px);
+  }
+
+  .btn-add-website:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px 0 rgba(77, 25, 204, 0.25);
+  }
+
+  /* Container max-width responsive */
+  .dashboard-container {
+    max-width: 1280px;
+  }
+
+  @media (min-width: 1536px) {
+    .dashboard-container {
+      max-width: 1400px;
+    }
+  }
+
+  /* Stats Grid - Responsive for narrow screens */
+  .stats-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 480px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  /* Icon containers responsive sizing */
+  .stat-icon-container {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 640px) {
+    .stat-icon-container {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  .action-icon-container {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 640px) {
+    .action-icon-container {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  /* Quick Actions Grid */
+  .quick-actions-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 480px) {
+    .quick-actions-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .quick-actions-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .quick-actions-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* Websites Grid */
+  .websites-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .websites-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .websites-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  /* Ensure minimum touch target sizes on mobile */
+  @media (max-width: 639px) {
+    button, a {
+      min-height: 44px;
+    }
+
+    .settings-menu-btn {
+      min-width: 36px;
+      min-height: 36px;
+    }
+  }
+
+  /* Prevent text overflow on very narrow screens */
+  @media (max-width: 359px) {
+    .stat-card p,
+    .action-card p {
+      font-size: 0.625rem;
+    }
+
+    .stat-card .text-xl {
+      font-size: 1rem;
+    }
+  }
+
+  @keyframes gradient-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes border-glow {
+    0%, 100% { 
+      box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+    }
+    50% { 
+      box-shadow: 0 0 20px 2px rgba(99, 102, 241, 0.4);
+    }
+  }
+
+  .animated-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animated-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(
+      45deg,
+      transparent,
+      transparent,
+      rgba(99, 102, 241, 0.5),
+      transparent,
+      transparent
+    );
+    background-size: 200% 200%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .animated-card:hover::before {
+    opacity: 1;
+    animation: gradient-flow 3s ease infinite;
+  }
+
+  .animated-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15);
+  }
+
+  .animated-card:active {
+    transform: translateY(0);
+  }
+
+  .animated-card:first-child {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #262626 100%);
+    color: white;
+    border: none;
+  }
+
+  .animated-card:first-child .text-neutral-600,
+  .animated-card:first-child .text-neutral-400,
+  .animated-card:first-child .opacity-80 {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .animated-card:first-child:hover {
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+  }
 </style>
-</MainLayout>
