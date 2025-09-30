@@ -63,8 +63,7 @@ const plans = [
       { text: t('pricing.features.co2Reporting'), included: false },
       { text: t('pricing.features.customEvents'), included: false },
       { text: t('pricing.features.emailReports'), included: false },
-      { text: t('pricing.features.customSubdomains'), included: false },
-      { text: t('pricing.features.apiAccess'), included: false }
+      { text: t('pricing.features.apiAccess'), included: true }
     ]
   },
   {
@@ -87,11 +86,12 @@ const plans = [
       { text: t('pricing.features.coreAnalytics'), included: true },
       { text: t('pricing.features.customEvents'), included: true },
       { text: t('pricing.features.utmTracking'), included: true },
+      { text: t('pricing.features.gis'), included: true },
       { text: t('pricing.features.dataExport'), included: true },
       { text: t('pricing.features.emailReports'), included: true },
       { text: t('pricing.features.co2Reporting'), included: false },
-      { text: t('pricing.features.customSubdomains'), included: false },
-      { text: t('pricing.features.apiAccess'), included: false }
+      { text: t('pricing.features.apiAccess'), included: true },
+      { text: t('pricing.features.publicDashboards'), included: false },     
     ]
   },
   {
@@ -113,8 +113,6 @@ const plans = [
       { text: t('pricing.features.pageViews'), included: true },
       { text: `${t('pricing.included')} Flex ${t('pricing.plus')}`, included: true, highlight: true },
       { text: t('pricing.features.co2Reporting'), included: true },
-      { text: t('pricing.features.apiAccess'), included: true },
-      { text: t('pricing.features.customSubdomains'), included: true },
       { text: t('pricing.features.publicDashboards'), included: true },
       { text: t('pricing.features.prioritySupport'), included: true }
     ]
@@ -142,7 +140,7 @@ const plans = [
 
       <!-- Billing Toggle -->
       <div class="flex justify-center mb-8 sm:mb-12">
-        <div class="bg-neutral-100 dark:bg-neutral-800 rounded-lg p-1 inline-flex">
+        <div class="bg-neutral-100 dark:bg-[#171717] rounded-lg p-1 inline-flex">
           <button 
             id="monthly-toggle"
             class="billing-toggle px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 shadow-sm"
@@ -164,7 +162,7 @@ const plans = [
       <!-- Pricing Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
         {plans.map((plan) => (
-          <div class={`relative flex flex-col bg-white dark:bg-neutral-800 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 hover:shadow-xl ${
+          <div class={`relative flex flex-col bg-white dark:bg-[#171717] rounded-xl sm:rounded-2xl border-2 transition-all duration-300 hover:shadow-xl ${
             plan.popular 
               ? 'border-brand-coral shadow-lg md:scale-105' 
               : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
@@ -251,7 +249,7 @@ const plans = [
                     <span class={`text-xs sm:text-sm ${
                       feature.included 
                         ? (feature as any).highlight 
-                          ? 'text-brand-coral font-medium' 
+                          ? 'text-[#7C86FF] dark:text-[#A2B3FF] font-medium' 
                           : 'text-neutral-700 dark:text-neutral-300'
                         : 'text-neutral-500 dark:text-neutral-400'
                     }`}>

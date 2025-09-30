@@ -241,17 +241,7 @@ export const Icons = {
     viewBox: "0 0 24 24",
     stroke: "currentColor",
   },
-  linkedinFooter: {
-    paths: [
-      {
-        d: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
-      },
-    ],
-    class: "h-4 w-4 shrink-0 fill-current fill-indigo-400 dark:fill-indigo-300",
-    viewBox: "0 0 24 24",
-    fill: "currentColor",
-    title: "LinkedIn",
-  },
+  
   share: {
     paths: [
       {
@@ -378,10 +368,22 @@ export const Icons = {
       },
     ],
     class:
-      "h-4 w-4 shrink-0 fill-current fill-indigo-400 dark:fill-indigo-300",
+      "h-[18px] w-[18px] shrink-0 fill-current fill-indigo-400 dark:fill-indigo-300",
     viewBox: "0 0 24 24",
     fill: "currentColor",
     title: "GitHub",
+  },
+
+  linkedinFooter: {
+    paths: [
+      {
+        d: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
+      },
+    ],
+    class: "h-[18px] w-[18px] shrink-0 fill-current fill-indigo-400 dark:fill-indigo-300",
+    viewBox: "0 0 24 24",
+    fill: "currentColor",
+    title: "LinkedIn",
   },
   googleFooter: {
     paths: [
@@ -608,6 +610,62 @@ export const Icons = {
     fill: "currentColor",
   },
 
+  creditCard: {
+    paths: [
+      {
+        d: "M2 5h20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 5h20", // combina el rect y el line
+      },
+    ],
+    class: "w-5 h-5 shrink-0 text-neutral-700 dark:text-neutral-300",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+  },
+
+  calendarSync: {
+    paths: [
+      { d: "M11 10v4h4" },
+      { d: "m11 14 1.535-1.605a5 5 0 0 1 8 1.5" },
+      { d: "M16 2v4" },
+      { d: "m21 18-1.535 1.605a5 5 0 0 1-8-1.5" },
+      { d: "M21 22v-4h-4" },
+      { d: "M21 8.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.3" },
+      { d: "M3 10h4" },
+      { d: "M8 2v4" },
+    ],
+    class: "w-5 h-5 shrink-0 text-neutral-700 dark:text-neutral-300",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+  },
+
+  messageCircleQuestion: {
+    paths: [
+      { d: "M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" },
+      { d: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" },
+      { d: "M12 17h.01" },
+    ],
+    class: "w-5 h-5 shrink-0 text-neutral-200 dark:text-neutral-800",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+  },
+
   play_arrow: {
     paths: [
       {
@@ -745,17 +803,24 @@ export const Icons = {
 
   power_off: {
     paths: [
-      {
-        d: "M440-440v-400h80v400h-80Zm40 320q-74 0-139.5-28.5T226-226q-49-49-77.5-114.5T120-480q0-80 33-151t93-123l56 56q-48 40-75 97t-27 121q0 116 82 198t198 82q116 0 198-82t82-198q0-64-27-121t-75-97l56-56q",
-      },
+      { d: "M18.36 6.64A9 9 0 0 1 20.77 15" },
+      { d: "M6.16 6.16a9 9 0 1 0 12.68 12.68" },
+      { d: "M12 2v4" },
+      { d: "m2 2 20 20" },
     ],
-    class: "w-5 h-5 shrink-0 text-neutral-700 dark:text-neutral-300",
-    width: 48,
-    height: 48,
-    viewBox: "0 -960 960 960",
-    fill: "currentColor",
+    class: "w-4 h-4 mr-2 shrink-0 text-neutral-300 dark:text-neutral-200",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
   },
 
+
+  // Analytics specific icons
   pageViews: {
     paths: [
       {

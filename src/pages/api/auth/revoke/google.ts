@@ -3,7 +3,10 @@ import type { APIContext } from "astro";
 import { eq } from "drizzle-orm";
 import { db } from "../../../../db";
 import { sessions } from "../../../../db/schema";
-import { revokeGoogleAccessToken, deleteOauthToken } from "../../../../lib/auth";
+import {
+  revokeGoogleAccessToken,
+  deleteOauthToken,
+} from "../../../../lib/auth";
 import getUser from "../../../../lib/getUser";
 
 export async function POST({ cookies }: APIContext) {
@@ -43,23 +46,31 @@ export async function POST({ cookies }: APIContext) {
       },
     });
 
-    const googleAccessToken = userSession?.user?.oauthTokens?.find(token => token.strategy === 'google')?.accessToken;
+    const googleAccessToken = userSession?.user?.oauthTokens?.find(
+      (token) => token.strategy === "google",
+    )?.accessToken;
 
     if (!googleAccessToken) {
-      return new Response(JSON.stringify({ error: "No Google Access Token found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "No Google Access Token found" }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
 
     try {
       await revokeGoogleAccessToken(googleAccessToken);
     } catch (error) {
-      console.warn('Failed to revoke Google token, but continuing with cleanup:', error);
+      console.warn(
+        "Failed to revoke Google token, but continuing with cleanup:",
+        error,
+      );
     }
-    
+
     await deleteOauthToken(userId, "google");
-    
+
     cookies.delete("app_auth_token", { path: "/" });
 
     return new Response(JSON.stringify({ success: true }), {

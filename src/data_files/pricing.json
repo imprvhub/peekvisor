@@ -22,7 +22,6 @@
       "CO₂ reporting",
       "Custom events",
       "Weekly email reports",
-      "Custom subdomains",
       "API access"
     ],
     "purchaseBtnTitle": "Get Started",
@@ -43,7 +42,7 @@
       "Core analytics",
       "Custom events tracking",
       "UTM campaign tracking",
-      "Data export (Excel/CSV)",
+      "Data export (Excel/PDF/CSV)",
       "Weekly email reports"
     ],
     "notIncluded": ["CO₂ reporting", "Custom subdomains", "API access"],
@@ -64,7 +63,6 @@
       "Everything in Flex +",
       "CO₂ & environmental tracking",
       "API access",
-      "Custom subdomains (bypass ad-blockers)",
       "Public dashboards",
       "Priority support"
     ],

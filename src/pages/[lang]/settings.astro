@@ -67,7 +67,9 @@ function capitalizeFirstWord(text: string) {
 
 <MainLayout title={t('settings.pageTitle')}>
   <section class="py-16 sm:py-20">
+     
       <div class="flex flex-col gap-8">
+        
         <div class="text-center">
           <h1 class="text-4xl font-bold text-neutral-800 dark:text-neutral-200 tracking-tight">
             {t('settings.title')}
@@ -75,12 +77,19 @@ function capitalizeFirstWord(text: string) {
         </div>
 
         <div class="space-y-8">
-          <div class="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
-            <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-6">
+          
+          <div class="bg-white dark:bg-[#171717] rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
+            <a href={`/${lang}/dashboard`} class="inline-flex items-center gap-2 rounded-xl border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>
+              </svg>
+              {t('dashboard.title')}
+            </a>
+            <h2 class="text-xl relative top-4 font-semibold text-neutral-800 dark:text-neutral-200 mb-6">
               {t('settings.profile.title')}
             </h2>
             
-            <div class="space-y-6">
+            <div class="space-y-6 pt-4 pb-4">
               <div class="flex items-center space-x-6">
                 <div class="flex-shrink-0">
                   <Avatar 
@@ -109,32 +118,10 @@ function capitalizeFirstWord(text: string) {
                         {new Date(accountCreated!).toLocaleDateString()}
                       </span>
                     </div>
-                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-                      <a
-                        href={`/${lang}/dashboard`}
-                        class="group flex items-center rounded-xl border border-neutral-200 bg-white p-2 transition-all hover:bg-neutral-50 hover:shadow-sm dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40"
-                      >
-                        <div
-                          class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 group-hover:bg-neutral-200 dark:bg-neutral-700 dark:group-hover:bg-neutral-600"
-                        >
-                          <div class="text-neutral-700 dark:text-neutral-300">
-                            <svg
-                              class="h-5 w-5 flex-none fill-current"
-                              viewBox="0 -960 960 960"
-                            >
-                              <path d="M510-570v-270h330v270H510ZM120-450v-390h330v390H120Zm390 330v-390h330v390H510Zm-390 0v-270h330v270H120Zm60-390h210v-270H180v270Zm390 330h210v-270H570v270Zm0-450h210v-150H570v150ZM180-180h210v-150H180v150Zm210-330Zm180-120Zm0 180ZM390-330Z" />
-                            </svg>
-                          </div>
-                        </div>
-                        <div class="ml-3">
-                          <p class="text-md text-neutral-800 dark:text-neutral-200">
-                            {t("dashboard.title")}
-                          </p>
-                        </div>
-                      </a>
+                    <div class="left-0 text-left max-w-48">
                       <a
                         href={`/${lang}/subscription`}
-                        class="group flex items-center rounded-xl border border-neutral-200 bg-white p-2 transition-all hover:bg-neutral-50 hover:shadow-sm dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700/40"
+                        class="group flex items-center rounded-xl border border-neutral-200 bg-white p-2 transition-all hover:bg-neutral-50 hover:shadow-sm dark:border-neutral-700 dark:bg-[#171717] dark:hover:bg-neutral-700/40"
                       >
                         <div
                           class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 group-hover:bg-neutral-200 dark:bg-neutral-700 dark:group-hover:bg-neutral-600"
@@ -158,7 +145,7 @@ function capitalizeFirstWord(text: string) {
             </div>
           </div>
 
-          <div class="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
+          <div class="bg-white dark:bg-[#171717] rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-lg shadow-neutral-900/20 hover:shadow-xl hover:shadow-neutral-900/20 dark:hover:shadow-white/10 transition-shadow duration-300">
             <h2 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-6">
               {t('settings.account.title')}
             </h2>
@@ -241,7 +228,7 @@ function capitalizeFirstWord(text: string) {
                         </div>
                         <div>
                           {sessionToken === log.sessionId ? (
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-neutral-300 dark:bg-neutral-700 text-[#7C86FF] dark:text-[#A2B3FF]">
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-neutral-100 dark:bg-neutral-900 text-[#7C86FF] dark:text-[#A2B3FF]">
                               {t('settings.sessions.currentDevice')}
                             </span>
                           ) : (

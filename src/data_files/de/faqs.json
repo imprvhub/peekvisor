@@ -23,15 +23,19 @@
     },
     {
       "question": "Kann ich meine Analysedaten exportieren?",
-      "answer": "Alle Pläne beinhalten grundlegende Datenexportfunktionen. Premium-Pläne bieten erweiterte Exportoptionen einschließlich Excel- und CSV-Formaten für umfassende Datenanalyse und Berichterstattung."
+      "answer": "Der Datenexport ist ausschließlich für Flex- und Pro-Pläne verfügbar. Diese Pläne bieten umfassende Exportoptionen in mehreren Formaten einschließlich Excel, CSV und PDF für detaillierte Datenanalyse und Berichterstattung."
     },
     {
       "question": "Was sind benutzerdefinierte Events und wie funktionieren sie?",
       "answer": "Benutzerdefinierte Events ermöglichen es Ihnen, spezifische Benutzerinteraktionen auf Ihrer Website über Standard-Seitenaufrufe hinaus zu verfolgen, wie z.B. Button-Klicks, Formularübermittlungen oder Downloads. Diese Funktion ist in unseren Premium-Plänen verfügbar."
     },
     {
+      "question": "Was ist der Global Impact Score (GIS) und wie wird er berechnet?",
+      "answer": "Global Impact Score ist eine kombinierte Metrik, die Ihre Gesamtleistung in den Dimensionen Digital und Umwelt (Eco) misst. Er wird als Durchschnitt der digitalen Veränderung (% WoW) und der normalisierten Eco-Veränderung (% WoW) über alle Sites berechnet, wobei niedrigere CO₂-Werte als positive Verbesserung zählen. Der Score ist auf ±100 begrenzt, um Ausreißer zu reduzieren. Diese Funktion ist ausschließlich für Flex- und Pro-Abonnenten mit mehreren Websites verfügbar."
+    },
+    {
       "question": "Bietet PeekVisor API-Zugriff?",
-      "answer": "API-Zugriff ist in unserem Top-Tier-Plan verfügbar, sodass Entwickler PeekVisor-Daten direkt in ihre Anwendungen integrieren und benutzerdefinierte Analyselösungen erstellen können."
+      "answer": "Der API-Zugriff ist für alle Pläne mit unterschiedlichen Ratenbegrenzungen aktiviert. Die Limits sind:\nBasic: 500 Anfragen / 15 Minuten\nFlex: 1000 Anfragen / 15 Minuten\nPro: Benutzerdefinierte Limits verfügbar"
     },
     {
       "question": "Welche Zahlungsmethoden werden akzeptiert und wie verwalte ich die Abrechnung?",

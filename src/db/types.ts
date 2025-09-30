@@ -82,7 +82,6 @@ export interface PlanLimitsConfig {
   hasDataExport: boolean;
   hasEmailReports: boolean;
   hasCarbonReports: boolean;
-  hasCustomSubdomains: boolean;
   hasApiAccess: boolean;
   hasPublicDashboards: boolean;
   hasPrioritySupport: boolean;

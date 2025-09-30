@@ -23,15 +23,19 @@
     },
     {
       "question": "Can I export my analytics data?",
-      "answer": "All plans include basic data export capabilities. Premium plans offer enhanced export options including Excel and CSV formats for comprehensive data analysis and reporting."
+      "answer": "Data export is available exclusively for Flex and Pro plans. These plans offer comprehensive export options in multiple formats including Excel, CSV, and PDF for detailed data analysis and reporting."
     },
     {
       "question": "What are custom events and how do they work?",
       "answer": "Custom events allow you to track specific user interactions on your website beyond standard page views, such as button clicks, form submissions, or downloads. This feature is available in our premium plans."
     },
     {
+      "question": "What is Global Impact Score (GIS) and how is it calculated?",
+      "answer": "Global Impact Score is a combined metric that measures your overall performance across Digital and Environmental (Eco) dimensions. It's calculated as the average of your Digital change (% WoW) and normalized Eco change (% WoW) across all sites, where lower CO₂ counts as positive improvement. The score is capped at ±100 to reduce outliers. This feature is available exclusively for Flex and Pro subscribers with multiple websites."
+    },
+    {
       "question": "Does PeekVisor provide API access?",
-      "answer": "API access is available in our top-tier plan, allowing developers to integrate PeekVisor data directly into their applications and create custom analytics solutions."
+      "answer": "API Access is enabled for all plans with different rate limiting. The limits are:\nBasic: 500 requests / 15 minutes\nFlex: 1000 requests / 15 minutes\nPro: Custom limits available"
     },
     {
       "question": "What payment methods are accepted and how do I manage billing?",

@@ -1,6 +1,7 @@
 ---
 import AccordionItem from "@components/ui/blocks/AccordionItem.astro";
 
+
 const { title, faqs } = Astro.props;
 
 
@@ -20,12 +21,11 @@ interface Props {
 }
 const makeId = (base: any, index: any) => `${base}${index + 1}`;
 ---
-
 <section
   class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14"
 >
   <div class="mx-auto max-w-4xl">
-    <div class="text-center">
+    <div class="text-center grid-cols-2">
       <h2
         class="text-2xl mb-4 font-bold text-neutral-800 dark:text-neutral-200 md:text-4xl md:leading-tight"
       >
@@ -34,8 +34,15 @@ const makeId = (base: any, index: any) => `${base}${index + 1}`;
       <p class="mt-1 text-neutral-600 dark:text-neutral-400">
         {faqs.subTitle}
       </p>
+      <div class="py-4 mt-2 flex justify-center">
+      <img
+        src="/faq.svg"
+        alt="Contact"
+        class="h-auto w-full max-w-[280px]"
+      />
     </div>
-
+    </div>
+    
     <div class="mt-12">
       <div
         class="hs-accordion-group divide-y divide-neutral-200 dark:divide-neutral-700"

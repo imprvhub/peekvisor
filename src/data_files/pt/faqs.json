@@ -23,15 +23,19 @@
     },
     {
       "question": "Posso exportar meus dados de análise?",
-      "answer": "Todos os planos incluem recursos básicos de exportação de dados. Os planos premium oferecem opções aprimoradas de exportação, incluindo formatos Excel e CSV para análise e relatórios abrangentes de dados."
+      "answer": "A exportação de dados está disponível exclusivamente para os planos Flex e Pro. Esses planos oferecem opções completas de exportação em múltiplos formatos incluindo Excel, CSV e PDF para análise detalhada de dados e relatórios."
     },
     {
       "question": "O que são eventos personalizados e como funcionam?",
       "answer": "Eventos personalizados permitem rastrear interações específicas do usuário em seu site além das visualizações de página padrão, como cliques em botões, envios de formulários ou downloads. Este recurso está disponível em nossos planos premium."
     },
     {
+      "question": "O que é o Global Impact Score (GIS) e como é calculado?",
+      "answer": "Global Impact Score é uma métrica combinada que mede seu desempenho geral nas dimensões Digital e Ambiental (Eco). É calculado como a média da mudança Digital (% semanal) e mudança Eco normalizada (% semanal) em todos os sites, onde menor CO₂ conta como melhoria positiva. A pontuação é limitada a ±100 para reduzir outliers. Este recurso está disponível exclusivamente para assinantes Flex e Pro com múltiplos sites."
+    },
+    {
       "question": "O PeekVisor fornece acesso à API?",
-      "answer": "O acesso à API está disponível em nosso plano de nível superior, permitindo que desenvolvedores integrem dados do PeekVisor diretamente em suas aplicações e criem soluções de análise personalizadas."
+      "answer": "O acesso à API está ativado para todos os planos com diferentes limites de taxa. Os limites são:\nBasic: 500 solicitações / 15 minutos\nFlex: 1000 solicitações / 15 minutos\nPro: Limites personalizados disponíveis"
     },
     {
       "question": "Quais métodos de pagamento são aceitos e como gerencio o faturamento?",

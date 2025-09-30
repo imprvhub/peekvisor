@@ -46,11 +46,13 @@ export async function GET({ request, cookies }: APIContext) {
       body: formData,
     });
 
-
-  const fetchTokenRes = await fetchToken.json();
+    const fetchTokenRes = await fetchToken.json();
 
     if (!fetchTokenRes.access_token || !fetchTokenRes.refresh_token) {
-      console.error("Token response missing access_token or refresh_token:", fetchTokenRes);
+      console.error(
+        "Token response missing access_token or refresh_token:",
+        fetchTokenRes,
+      );
       throw new Error("Invalid token response");
     }
 
@@ -58,7 +60,7 @@ export async function GET({ request, cookies }: APIContext) {
       "https://www.googleapis.com/oauth2/v2/userinfo",
       {
         headers: { Authorization: `Bearer ${fetchTokenRes.access_token}` },
-      }
+      },
     );
     const fetchUserRes = await fetchUser.json();
     const userExists = await checkUserExists({
@@ -90,14 +92,14 @@ export async function GET({ request, cookies }: APIContext) {
         sessionId,
         userAgent: request.headers.get("user-agent"),
         userId: userId,
-        ip: "dev",
+        ip: "GDPR_REDACTED",
       });
 
       cookies.delete("google_oauth_state");
       cookies.delete("google_code_challenge");
       cookies.set("app_auth_token", sessionId, {
         path: "/",
-        httpOnly: true,
+        httpOnly: false, // Allow JavaScript access
         expires: expiresAt,
         secure: import.meta.env.PROD,
         sameSite: "lax",
@@ -105,10 +107,9 @@ export async function GET({ request, cookies }: APIContext) {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: `/en/dashboard`, 
+          Location: `/en/dashboard`,
         },
       });
-      
     } else {
       if (userExists.oauthTokens.length > 0) {
         await updateOauthToken({
@@ -134,7 +135,7 @@ export async function GET({ request, cookies }: APIContext) {
         sessionId,
         userAgent: request.headers.get("user-agent"),
         userId: userExists.id,
-        ip:  "dev",
+        ip: "dev",
       });
 
       cookies.delete("google_oauth_state", { path: "/" });
@@ -142,7 +143,7 @@ export async function GET({ request, cookies }: APIContext) {
 
       cookies.set("app_auth_token", sessionId, {
         path: "/",
-        httpOnly: true,
+        httpOnly: false, // Allow JavaScript access
         expires: expiresAt,
         secure: import.meta.env.PROD,
         sameSite: "lax",
@@ -150,7 +151,7 @@ export async function GET({ request, cookies }: APIContext) {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: `/en/dashboard`, 
+          Location: `/en/dashboard`,
         },
       });
     }

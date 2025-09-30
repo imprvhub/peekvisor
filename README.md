@@ -91,23 +91,27 @@ Peekvisor offers flexible, transparent pricing powered by [Lemon Squeezy](https:
         ✓ Core Analytics<br/>
         ✓ Real-Time Data<br/>
         ✓ Privacy-First<br/>
-        ✓ No Credit Card
+        ✓ No Credit Card<br/>
+        ✓ API Access (500 req/15min)
       </td>
       <td align="left">
         ✓ 5 Websites<br/>
         ✓ 180 Days Retention<br/>
         ✓ Custom Events<br/>
         ✓ UTM Tracking<br/>
+        ✓ Global Impact Score<br/>
         ✓ Data Export (CSV/PDF)<br/>
-        ✓ Email Reports
+        ✓ Email Reports<br/>
+        ✓ API Access (1000 req/15min)
       </td>
       <td align="left">
         ✓ Unlimited Websites<br/>
         ✓ Unlimited Retention<br/>
         ✓ All Flex Features<br/>
         ✓ CO₂ Footprint Reports<br/>
-        ✓ API Access<br/>
-        ✓ Public Dashboards
+        ✓ API Access (Custom limits)<br/>
+        ✓ Public Dashboards<br/>
+        ✓ Priority Support
       </td>
     </tr>
     <tr>
