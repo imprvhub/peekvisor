@@ -1,7 +1,7 @@
 {
   "name": "peekvisor",
   "type": "module",
-  "version": "0.6.3",
+  "version": "0.8.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -9,12 +9,17 @@
     "preview": "astro preview",
     "astro": "astro"
   },
+  "overrides": {
+    "esbuild": "^0.25.10",
+    "path-to-regexp": "^8.2.0"
+  },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^4.3.0",
     "@astrojs/sitemap": "^3.4.1",
     "@astrojs/starlight": "^0.34.4",
-    "@astrojs/vercel": "^8.2.6",
+    "@astrojs/vercel": "^8.2.8",
+    "@lemonsqueezy/lemonsqueezy.js": "^4.0.0",
     "@libsql/client": "^0.15.9",
     "@paralleldrive/cuid2": "^2.2.2",
     "@tailwindcss/vite": "^4.1.11",
@@ -38,7 +43,7 @@
     "sharp": "^0.34.2",
     "sharp-ico": "^0.1.5",
     "tailwindcss": "^4.1.11",
-    "xlsx": "^0.18.5"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.10",
