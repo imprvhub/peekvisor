@@ -18,6 +18,8 @@ const sessionToken = Astro.cookies.get("app_auth_token")?.value;
 let isAuthenticated = false;
 let userInfo = null;
 let userWebsites: any[] = [];
+let userPlan = 'basic';
+let planLabelKey = 'dashboard.planCard.basicPlan';
 
 if (sessionToken) {
   try {
@@ -40,6 +42,34 @@ if (sessionToken) {
         profilePhoto: sessionData.user.profilePhoto,
       };
       userWebsites = sessionData.user.websites || [];
+      
+      try {
+        const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
+        const profileRes = await fetch(`${backendUrl}/api/user/profile`, {
+          headers: {
+            'Authorization': `Bearer ${sessionToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (profileRes.ok) {
+          const profile = await profileRes.json();
+          userPlan = profile?.user?.plan || 'basic';
+          
+          switch (userPlan) {
+            case 'pro':
+              planLabelKey = 'dashboard.planCard.proPlan';
+              break;
+            case 'flex':
+              planLabelKey = 'dashboard.planCard.flexPlan';
+              break;
+            default:
+              planLabelKey = 'dashboard.planCard.basicPlan';
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
     }
   } catch (error) {
     console.error("Error verificando sesión:", error);
@@ -48,25 +78,56 @@ if (sessionToken) {
 }
 
 const navLinks = [
-  { name: t("nav.home"), url: `/${lang}/` },
-  { name: t("nav.pricing"), url: `/${lang}/pricing` },
+  { 
+    name: t("nav.home"), 
+    url: `/${lang}/`,
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`
+  },
   ...(isAuthenticated
     ? [
-        { name: t("nav.dashboard"), url: `/${lang}/dashboard` },
-        { name: t("settings.title"), url: `/${lang}/settings` },
+        { 
+          name: t("nav.dashboard"), 
+          url: `/${lang}/dashboard`,
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>`
+        },
+        {
+          name: "Docs", 
+          url: `/${lang}/api`,
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="m16 18 6-6-6-6"></path><path d="m8 6-6 6 6 6"></path></svg>`
+        },
+      ]
+    : []),
+  {
+    name: t("nav.pricing"), 
+    url: `/${lang}/pricing`,
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>`
+  },
+  ...(isAuthenticated
+    ? [
+        { 
+          name: t("settings.title"), 
+          url: `/${lang}/settings`,
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>`
+        },
       ]
     : []),
 ];
+
+const logoutLink = {
+  name: t("settings.danger.logout"),
+  url: "/api/auth/logout",
+  icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>`
+};
 ---
 
 <header
   class="sticky inset-x-0 top-4 z-[1000] flex w-full flex-wrap text-sm md:flex-nowrap md:justify-start"
 >
   <nav
-    class="relative mx-2 w-full rounded-[36px] border border-yellow-100/40 bg-indigo-50/40 px-4 py-5 backdrop-blur-md md:flex md:items-center md:justify-between md:px-6 md:py-4 lg:px-8 xl:mx-auto dark:border-neutral-700/40 dark:bg-neutral-800/80 dark:backdrop-blur-md"
+    class="relative mx-2 w-full max-w-7xl rounded-[36px] border border-yellow-100/40 bg-indigo-50/40 px-4 py-5 backdrop-blur-md md:flex md:items-center md:justify-between md:px-6 md:py-4 lg:px-8 dark:border-neutral-700/40 dark:bg-[#171717] dark:backdrop-blur-md"
     aria-label="Global"
   >
-    <div class="flex items-center justify-between">
+    <div class="flex items-center">
       <a
         class="flex-none rounded-lg text-xl font-bold ring-zinc-500 outline-hidden focus-visible:ring-3 dark:ring-zinc-200 dark:focus:outline-hidden"
         href={`/${lang}/`}
@@ -75,10 +136,12 @@ const navLinks = [
         <BrandLogo class="h-auto w-24" />
       </a>
 
-      <div class="mr-5 ml-auto md:hidden">
+      <div class="flex items-center gap-2 ml-auto md:hidden">
+        <LanguagePicker />
+        <ThemeIcon />
         <button
           type="button"
-          class="hs-collapse-toggle flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-neutral-600 transition duration-300 hover:bg-neutral-200 disabled:pointer-events-none disabled:opacity-50 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:outline-hidden"
+          class="hs-collapse-toggle flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-neutral-600 transition duration-300 hover:bg-neutral-200 disabled:pointer-events-none disabled:opacity-50 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:outline-hidden ml-2"
           data-hs-collapse="#navbar-collapse-with-animation"
           aria-controls="navbar-collapse-with-animation"
           aria-label="Toggle navigation"
@@ -114,12 +177,6 @@ const navLinks = [
           </svg>
         </button>
       </div>
-
-      {/* Language Picker and Theme Icon for mobile */}
-      <div class="flex items-center gap-2 md:hidden">
-        <LanguagePicker />
-        <ThemeIcon />
-      </div>
     </div>
 
     <div
@@ -129,42 +186,66 @@ const navLinks = [
       <div
         class="mt-5 flex flex-col items-start gap-x-0 gap-y-4 md:mt-0 md:flex-row md:items-center md:justify-end md:gap-x-4 md:gap-y-0 md:ps-7 lg:gap-x-7"
       >
-        {/* Show Home and Pricing links on desktop */}
         <div class="hidden md:flex md:items-center md:gap-x-4 lg:gap-x-7">
           <NavLink url={navLinks[0].url} name={navLinks[0].name} />
-          <NavLink url={navLinks[1].url} name={navLinks[1].name} />
+          {isAuthenticated && (
+            <>
+              <NavLink 
+                url={`/${lang}/dashboard`} 
+                name={t("nav.dashboard")}
+              />
+              <NavLink 
+                url={`/${lang}/api`} 
+                name="Docs"
+              />
+            </>
+          )}
+          <NavLink url={`/${lang}/pricing`} name={t("nav.pricing")} />
+          
         </div>
 
-        {/* Show all navigation links on mobile */}
-        <div class="flex w-full flex-col gap-y-4 md:hidden">
-          {navLinks.map((link) => <NavLink url={link.url} name={link.name} />)}
+        <div class="flex w-full flex-col gap-y-1 md:hidden">
+          {navLinks.map((link) => (
+            <a 
+              href={link.url}
+              class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-700 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700/50 hover:text-[#b4b8e5] dark:hover:text-[#A2B3FF] transition-colors"
+            >
+              <Fragment set:html={link.icon} />
+              <span>{link.name}</span>
+            </a>
+          ))}
         </div>
 
         {!isAuthenticated && <Authentication />}
 
-        {/* Show logout link on mobile when authenticated */}
         {
           isAuthenticated && (
-            <div class="md:hidden">
-              <NavLink
-                url="/api/auth/logout"
-                name={t("settings.danger.logout")}
-              />
+            <div class="w-full md:hidden">
+              <a 
+                href={logoutLink.url}
+                class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              >
+                <Fragment set:html={logoutLink.icon} />
+                <span>{logoutLink.name}</span>
+              </a>
             </div>
           )
         }
 
-        {/* Language Picker and Theme Icon for desktop */}
         <div class="hidden md:flex md:items-center md:gap-x-4 lg:gap-x-7">
           <LanguagePicker />
           <ThemeIcon />
         </div>
 
-        {/* Avatar dropdown only on desktop */}
         {
           isAuthenticated && userInfo && (
             <div class="hidden md:block">
-              <AvatarDropdown userInfo={userInfo} userWebsites={userWebsites} />
+              <AvatarDropdown 
+                userInfo={userInfo} 
+                userWebsites={userWebsites}
+                userPlan={userPlan}
+                planLabelKey={planLabelKey}
+              />
             </div>
           )
         }
@@ -277,3 +358,20 @@ const navLinks = [
     });
   });
 </script>
+
+<style>
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: inherit;
+  }
+
+  .mobile-nav-link:hover {
+    background-color: #4E5675;
+  }
+  
+  .dark .mobile-nav-link:hover {
+    background-color: rgb(64 64 64 / 0.5);
+  }
+</style>
