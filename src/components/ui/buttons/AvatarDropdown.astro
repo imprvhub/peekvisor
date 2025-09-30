@@ -9,9 +9,11 @@ interface Props {
     profilePhoto?: string | null;
   };
   userWebsites?: any[];
+  userPlan?: string;
+  planLabelKey?: string;
 }
 
-const { userInfo, userWebsites = [] } = Astro.props;
+const { userInfo, userWebsites = [], userPlan = 'basic', planLabelKey = 'dashboard.planCard.basicPlan' } = Astro.props;
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 ---
@@ -44,10 +46,11 @@ const t = useTranslations(lang);
   </button>
 
   <div
-    class="hs-dropdown-menu hs-dropdown-open:opacity-100 z-[1001] hidden min-w-60 rounded-lg bg-white p-2 opacity-0 shadow-md transition-opacity duration-300 dark:border dark:border-neutral-700 dark:bg-neutral-800"
+    class="hs-dropdown-menu hs-dropdown-open:opacity-100 z-[1001] hidden min-w-60 max-h-[70vh] overflow-y-auto rounded-lg bg-white p-2 opacity-0 shadow-md transition-opacity duration-300 dark:border dark:border-neutral-700 dark:bg-[#171717]"
     aria-labelledby="avatar-dropdown"
+    data-user-email={userInfo.email}
   >
-    <div class="py-2 first:pt-0 last:pb-0">
+    <div class="first:pt-0 last:pb-0">
       <div class="flex items-center space-x-3 px-3 py-2">
         <div class="min-w-0 flex-1">
           <p
@@ -60,6 +63,11 @@ const t = useTranslations(lang);
           >
             {userInfo.email}
           </p>
+          <p
+            class="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100"
+          >
+            {t(planLabelKey)}
+          </p>
         </div>
       </div>
     </div>
@@ -67,41 +75,46 @@ const t = useTranslations(lang);
     {
       userWebsites.length > 0 && (
         <div class="py-2 first:pt-0 last:pb-0">
-          <a
-          href={`/${lang}/dashboard`}
-          class="block rounded-lg px-3 py-2 text-xs font-medium uppercase text-neutral-400 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
-        >
-          Your Domains
-        </a>
-          {userWebsites.slice(0, 5).map((website: any) => (
+          <div class="my-1 border-t border-neutral-200 dark:border-neutral-700"></div>
+        <div class="flex items-center justify-between px-3 py-2">
+          <span class="text-xs font-medium uppercase text-neutral-400 dark:text-neutral-200">{t("nav.yourDomains")}</span>
+          <button id="toggle-reorder" class="ml-2 p-1 text-neutral-800 dark:text-neutral-300 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700" aria-label="Reorder websites">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6-6 6 6"></path>
+              <path d="m6 15 6 6 6-6"></path>
+            </svg>
+          </button>
+        </div>
+          {userWebsites.map((website: any) => (
             <a
               class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-neutral-800 hover:bg-neutral-100 focus:ring-2 focus:ring-blue-500 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
               href={`/${lang}/analytics/${website.id}`}
+              data-website-id={website.id}
             >
               <div
-              class="relative flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 dark:bg-neutral-700 overflow-hidden"
-            >
-              <img
-                class="website-favicon h-5 w-5 rounded absolute hidden"
-                data-domain={website.domain}
-                alt={`${website.name} favicon`}
-              />
-              <div
-                class="website-fallback-icon text-neutral-700 dark:text-neutral-300 flex items-center justify-center"
+                class="relative flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 dark:bg-neutral-700 overflow-hidden"
               >
-                <svg
-                  class="w-5 h-5"
-                  width="24"
-                  height="24"
-                  viewBox="0 -960 960 960"
-                  fill="currentColor"
+                <img
+                  class="website-favicon h-5 w-5 rounded absolute hidden"
+                  data-domain={website.domain}
+                  alt={`${website.name} favicon`}
+                />
+                <div
+                  class="website-fallback-icon text-neutral-700 dark:text-neutral-300 flex items-center justify-center"
                 >
-                  <path
-                    d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-82v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q20-22 36-47.5t26.5-53q10.5-27.5 16-56.5t5.5-59q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"
-                  ></path>
-                </svg>
+                  <svg
+                    class="w-5 h-5"
+                    width="24"
+                    height="24"
+                    viewBox="0 -960 960 960"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-82v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q20-22 36-47.5t26.5-53q10.5-27.5 16-56.5t5.5-59q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"
+                    ></path>
+                  </svg>
+                </div>
               </div>
-            </div>
               <div class="grow">
                 <span class="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
                   {website.name}
@@ -110,16 +123,21 @@ const t = useTranslations(lang);
                   {website.domain}
                 </span>
               </div>
+              <div class="reorder-controls hidden ml-auto flex items-center gap-1">
+                <button class="reorder-btn p-1 rounded hover:bg-neutral-200 dark:hover:bg-neutral-600" data-dir="up" aria-label="Move up">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m18 15-6-6-6 6"></path>
+                  </svg>
+                </button>
+                <button class="reorder-btn p-1 rounded hover:bg-neutral-200 dark:hover:bg-neutral-600" data-dir="down" aria-label="Move down">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6"></path>
+                  </svg>
+                </button>
+              </div>
             </a>
           ))}
-          {userWebsites.length > 5 && (
-            <a
-              class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-neutral-800 hover:bg-neutral-100 focus:ring-2 focus:ring-blue-500 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
-              href={`/${lang}/websites`}
-            >
-              View all websites →
-            </a>
-          )}
+
         </div>
       )
     }
@@ -130,13 +148,8 @@ const t = useTranslations(lang);
       href={`/${lang}/dashboard`}
       class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-neutral-800 hover:bg-neutral-100 focus:ring-2 focus:ring-blue-500 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
     >
-      <svg
-        class="h-5 w-5 flex-none fill-current"
-        viewBox="0 -960 960 960"
-      >
-        <path d="M510-570v-270h330v270H510ZM120-450v-390h330v390H120Zm390 330v-390h330v390H510Zm-390 0v-270h330v270H120Zm60-390h210v-270H180v270Zm390 330h210v-270H570v270Zm0-450h210v-150H570v150ZM180-180h210v-150H180v150Zm210-330Zm180-120Zm0 180ZM390-330Z" />
-      </svg>
-      {t("nav.dashboard")}
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></svg>
+      {t("nav.seeYourDomains")}
     </a>
 
     <a
@@ -165,9 +178,14 @@ const t = useTranslations(lang);
         <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
       </svg>
       {t("nav.logout")}
-    <script>
+    </a>
+  </div>
+</div>
+
+<script>
   document.addEventListener("DOMContentLoaded", () => {
     loadFavicons();
+    initWebsiteReorder();
   });
 
   function loadFavicons() {
@@ -190,21 +208,24 @@ const t = useTranslations(lang);
       const faviconUrls = [
         `https://${cleanDomain}/favicon.ico`,
         `https://${cleanDomain}/favicon.png`,
+        `https://${cleanDomain}/favicon-32.png`,
+        `https://${cleanDomain}/images/favicons/favicon.ico`,
+        `https://${cleanDomain}/images/favicons/favicon.png`,
+        `https://${cleanDomain}/favicons/favicon.ico`,
+        `https://${cleanDomain}/favicons/favicon.png`,
         `https://${cleanDomain}/apple-touch-icon.png`,
         `https://${cleanDomain}/apple-touch-icon-precomposed.png`,
         `https://${cleanDomain}/icon.png`
       ];
-      
+
       let currentIndex = 0;
-      
+
       function tryNextFavicon() {
         if (currentIndex >= faviconUrls.length) {
-          console.log(`⚠️ No favicon found for ${domain}, keeping fallback`);
           return;
         }
-        
         const tempImg = new Image();
-        
+
         tempImg.onload = () => {
           if (tempImg.width >= 24 && tempImg.height >= 24) {
             img.setAttribute('src', faviconUrls[currentIndex]);
@@ -212,26 +233,96 @@ const t = useTranslations(lang);
             if (fallback) {
               fallback.classList.add('hidden');
             }
-            console.log(`✅ Favicon loaded for ${domain} from ${faviconUrls[currentIndex]}`);
           } else {
-            console.log(`⚠️ Favicon too small for ${domain} from ${faviconUrls[currentIndex]}, trying next...`);
             currentIndex++;
             tryNextFavicon();
           }
         };
-        
+
         tempImg.onerror = () => {
           currentIndex++;
           tryNextFavicon();
         };
-        
+
         tempImg.src = faviconUrls[currentIndex];
       }
-      
+
       tryNextFavicon();
     });
   }
+
+  function initWebsiteReorder() {
+    const menu = document.querySelector('.hs-dropdown-menu[aria-labelledby="avatar-dropdown"]');
+    if (!menu) return;
+    const userEmail = menu.getAttribute('data-user-email') || '';
+    const key = 'pv_order_' + userEmail;
+    const toggleBtn = document.getElementById('toggle-reorder');
+    let reorderMode = false;
+    function getLinks() {
+      return Array.from((menu as HTMLElement).querySelectorAll('a[data-website-id]'));
+    }
+    function applySavedOrder() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(key) || '[]');
+        if (!Array.isArray(saved) || saved.length === 0) return;
+        const map = new Map(getLinks().map(a => [a.getAttribute('data-website-id') || '', a]));
+        const first = getLinks()[0];
+        const parent = first ? first.parentElement : null;
+        if (!parent) return;
+        saved.forEach(id => {
+          const node = map.get(String(id));
+          if (node && node.parentElement === parent) parent.appendChild(node);
+        });
+      } catch {}
+    }
+    function saveOrder() {
+      const ids = getLinks().map(a => a.getAttribute('data-website-id') || '').filter(Boolean);
+      localStorage.setItem(key, JSON.stringify(ids));
+    }
+    function setMode(active: boolean) {
+      reorderMode = !!active;
+      getLinks().forEach(a => {
+        const controls = a.querySelector('.reorder-controls');
+        if (controls) (controls as HTMLElement).classList.toggle('hidden', !reorderMode);
+      });
+    }
+    applySavedOrder();
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        setMode(!reorderMode);
+      });
+    }
+    menu.addEventListener('click', e => {
+      const t = e.target as HTMLElement;
+      if (reorderMode && t && t.closest('a[data-website-id]')) {
+        e.preventDefault();
+      }
+    });
+    menu.querySelectorAll('.reorder-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const target = e.currentTarget as HTMLElement;
+        const dir = target.getAttribute('data-dir');
+        const link = target.closest('a[data-website-id]') as HTMLElement | null;
+        if (!link) return;
+        const links = getLinks();
+        const idx = links.indexOf(link as HTMLAnchorElement);
+        if (dir === 'up' && idx > 0) {
+          link.parentElement?.insertBefore(link, links[idx - 1]);
+          saveOrder();
+        } else if (dir === 'down' && idx >= 0 && idx < links.length - 1) {
+          const next = links[idx + 1].nextSibling;
+          if (next) {
+            link.parentElement?.insertBefore(link, next);
+          } else {
+            link.parentElement?.appendChild(link);
+          }
+          saveOrder();
+        }
+      });
+    });
+  }
 </script>
-    </a>
-  </div>
-</div>
