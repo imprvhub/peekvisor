@@ -23,15 +23,19 @@
     },
     {
       "question": "¿Puedo exportar mis datos de análisis?",
-      "answer": "Todos los planes incluyen capacidades básicas de exportación de datos. Los planes premium ofrecen opciones de exportación mejoradas que incluyen formatos Excel y CSV para análisis y reportes completos de datos."
+      "answer": "La exportación de datos está disponible exclusivamente para los planes Flex y Pro. Estos planes ofrecen opciones completas de exportación en múltiples formatos incluyendo Excel, CSV y PDF para análisis detallado de datos y reportes."
     },
     {
       "question": "¿Qué son los eventos personalizados y cómo funcionan?",
       "answer": "Los eventos personalizados permiten rastrear interacciones específicas del usuario en su sitio web más allá de las vistas de página estándar, como clics de botón, envíos de formularios o descargas. Esta función está disponible en nuestros planes premium."
     },
     {
+      "question": "¿Qué es el Global Impact Score (GIS) y cómo se calcula?",
+      "answer": "Global Impact Score es una métrica combinada que mide su rendimiento general en las dimensiones Digital y Ambiental (Eco). Se calcula como el promedio del cambio Digital (% semanal) y el cambio Eco normalizado (% semanal) en todos los sitios, donde un menor CO₂ cuenta como mejora positiva. La puntuación está limitada a ±100 para reducir valores atípicos. Esta función está disponible exclusivamente para suscriptores Flex y Pro con múltiples sitios web."
+    },
+    {
       "question": "¿PeekVisor proporciona acceso a API?",
-      "answer": "El acceso a API está disponible en nuestro plan de nivel superior, permitiendo a los desarrolladores integrar datos de PeekVisor directamente en sus aplicaciones y crear soluciones de análisis personalizadas."
+      "answer": "El acceso a la API está habilitado para todos los planes con diferentes límites de tasa. Los límites son:\nBasic: 500 solicitudes / 15 minutos\nFlex: 1000 solicitudes / 15 minutos\nPro: Límites personalizados disponibles"
     },
     {
       "question": "¿Qué métodos de pago se aceptan y cómo gestiono la facturación?",

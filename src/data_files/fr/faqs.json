@@ -23,15 +23,19 @@
     },
     {
       "question": "Puis-je exporter mes données d'analyse ?",
-      "answer": "Tous les plans incluent des capacités d'exportation de données de base. Les plans premium offrent des options d'exportation améliorées incluant les formats Excel et CSV pour une analyse et des rapports de données complets."
+      "answer": "L'exportation de données est disponible exclusivement pour les plans Flex et Pro. Ces plans offrent des options d'exportation complètes dans plusieurs formats incluant Excel, CSV et PDF pour une analyse détaillée des données et des rapports."
     },
     {
       "question": "Que sont les événements personnalisés et comment fonctionnent-ils ?",
       "answer": "Les événements personnalisés vous permettent de suivre des interactions utilisateur spécifiques sur votre site web au-delà des vues de page standard, comme les clics de bouton, les soumissions de formulaire ou les téléchargements. Cette fonctionnalité est disponible dans nos plans premium."
     },
     {
+      "question": "Qu'est-ce que le Global Impact Score (GIS) et comment est-il calculé ?",
+      "answer": "Global Impact Score est une métrique combinée qui mesure votre performance globale dans les dimensions Digitale et Environnementale (Eco). Il est calculé comme la moyenne du changement Digital (% hebdomadaire) et du changement Eco normalisé (% hebdomadaire) sur tous les sites, où un CO₂ plus faible compte comme amélioration positive. Le score est plafonné à ±100 pour réduire les valeurs aberrantes. Cette fonctionnalité est disponible exclusivement pour les abonnés Flex et Pro avec plusieurs sites web."
+    },
+    {
       "question": "PeekVisor fournit-il un accès API ?",
-      "answer": "L'accès API est disponible dans notre plan de niveau supérieur, permettant aux développeurs d'intégrer les données PeekVisor directement dans leurs applications et de créer des solutions d'analyse personnalisées."
+      "answer": "L'accès à l'API est activé pour tous les plans avec des limitations de débit différentes. Les limites sont :\nBasic: 500 requêtes / 15 minutes\nFlex: 1000 requêtes / 15 minutes\nPro: Limites personnalisées disponibles"
     },
     {
       "question": "Quels modes de paiement sont acceptés et comment gérer la facturation ?",
