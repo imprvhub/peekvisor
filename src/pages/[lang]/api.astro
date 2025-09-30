@@ -1,0 +1,1007 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { eq } from "drizzle-orm";
+import { db } from "../../db/index";
+import { sessions } from "../../db/schema";
+import {
+  API_ENDPOINTS,
+  API_CATEGORIES,
+  RATE_LIMITS,
+  ERROR_CODES,
+  generateCodeExamples,
+  type ApiEndpoint,
+  type ApiCategory,
+  type Website
+} from "../../utils/api-docs";
+
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const sessionToken = Astro.cookies.get("app_auth_token")?.value;
+if (!sessionToken) return Astro.redirect(`/${lang}/`);
+
+const userInfo = await db.query.sessions.findFirst({
+  where: eq(sessions.id, sessionToken),
+  with: { user: true },
+});
+if (!userInfo?.user) return Astro.redirect(`/${lang}/`);
+
+let userPlan = 'basic';
+let apiKey = null;
+let websites = [];
+
+try {
+  const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
+  const profileRes = await fetch(`${backendUrl}/api/user/profile`, {
+    headers: {
+      'Authorization': `Bearer ${sessionToken}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (profileRes.ok) {
+    const profile = await profileRes.json();
+    userPlan = profile?.user?.plan || 'basic';
+    apiKey = profile?.user?.api_key || null;
+
+    if (apiKey) {
+      const websitesRes = await fetch(`${backendUrl}/api/v1/websites`, {
+        headers: {
+          'X-API-Key': apiKey,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (websitesRes.ok) {
+        const websitesData = await websitesRes.json();
+        websites = websitesData.websites || [];
+      }
+    }
+  }
+} catch (error) {
+  console.error('Failed to fetch data:', error);
+}
+
+const backendUrl = import.meta.env.BACKEND_API_URL || 'https://script.peekvisor.com';
+
+const categorizedEndpoints: Record<string, ApiCategory & { endpoints: ApiEndpoint[] }> = {};
+API_CATEGORIES.forEach(cat => {
+  categorizedEndpoints[cat.id] = {
+    ...cat,
+    endpoints: API_ENDPOINTS.filter(ep => ep.category === cat.id)
+  };
+});
+---
+
+<MainLayout title={t("api.doc.title")} customDescription={t("api.doc.description")}>
+  <div class="min-h-screen rounded-[24px] shadow-2xl mt-8 mb-8 bg-gray-50 border dark:border-gray-700/40 dark:bg-[#171717]">
+    <div class="sticky top-0 z-50 rounded-[24px] bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div class="flex h-16 items-center justify-between">
+          <div class="flex items-center gap-8">
+            <a href={`/${lang}/dashboard`} class="inline-flex items-center gap-2 rounded-xl border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>
+              </svg>
+              {t('dashboard.title')}
+            </a>
+            <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t("api.doc.header.title")}</h1>
+          </div>
+            <div class="lg:hidden">
+              <button
+                type="button"
+                class="hs-collapse-toggle flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-neutral-600 transition duration-300 hover:bg-neutral-200 disabled:pointer-events-none disabled:opacity-50 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:outline-hidden"
+                data-hs-collapse="#api-sidebar-collapse"
+                aria-controls="api-sidebar-collapse"
+                aria-label="Toggle sidebar"
+              >
+                <svg
+                  class="hs-collapse-open:hidden h-[1.25rem] w-[1.25rem] shrink-0"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="3" x2="21" y1="6" y2="6"></line>
+                  <line x1="3" x2="21" y1="12" y2="12"></line>
+                  <line x1="3" x2="21" y1="18" y2="18"></line>
+                </svg>
+                <svg
+                  class="hs-collapse-open:block hidden h-[1.25rem] w-[1.25rem] shrink-0"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+              </button>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div id="api-sidebar-collapse" class="hs-collapse hidden lg:hidden border-b border-neutral-200 dark:border-neutral-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <nav class="space-y-1">
+          <a href="#getting-started" class="nav-link group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-[#171717]">
+            <svg class="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span>{t("api.section.gettingStarted")}</span>
+          </a>
+          {API_CATEGORIES.sort((a, b) => a.order - b.order).map(category => (
+            <div class="category-nav" data-category={category.id}>
+              <button class="category-toggle w-full group flex items-center justify-between gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
+                <div class="flex items-center gap-3">
+                  <span set:html={category.icon} class="text-neutral-500 dark:text-neutral-400"></span>
+                  <span>{t(category.name)}</span>
+                </div>
+                <svg class="w-4 h-4 text-neutral-400 transition-transform category-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+              <div class="category-endpoints hidden ml-8 mt-1 space-y-0.5">
+                {categorizedEndpoints[category.id]?.endpoints.map(endpoint => (
+                  <a href={`#${endpoint.id}`} class="endpoint-link block px-3 py-1.5 text-xs text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+                    {t(endpoint.title)}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+          <a href="#rate-limits" class="nav-link group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
+            <svg class="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>{t("api.section.rateLimits")}</span>
+          </a>
+          <a href="#error-codes" class="nav-link group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
+            <svg class="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>{t("api.section.errorCodes")}</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex gap-8">
+        <aside class="hidden lg:block w-64 flex-shrink-0">
+          <div class="sticky top-24 space-y-1">
+            <nav class="space-y-1">
+              <a href="#getting-started" class="nav-link group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-[#171717]">
+                <svg class="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                <span>{t("api.section.gettingStarted")}</span>
+              </a>
+
+              {API_CATEGORIES.sort((a, b) => a.order - b.order).map(category => (
+                <div class="category-nav" data-category={category.id}>
+                  <button class="category-toggle w-full group flex items-center justify-between gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
+                    <div class="flex items-center gap-3">
+                      <span set:html={category.icon} class="text-neutral-500 dark:text-neutral-400"></span>
+                      <span>{t(category.name)}</span>
+                    </div>
+                    <svg class="w-4 h-4 text-neutral-400 transition-transform category-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                  <div class="category-endpoints hidden ml-8 mt-1 space-y-0.5">
+                    {categorizedEndpoints[category.id]?.endpoints.map(endpoint => (
+                      <a href={`#${endpoint.id}`} class="endpoint-link block px-3 py-1.5 text-xs text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+                        {t(endpoint.title)}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <a href="#rate-limits" class="nav-link group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
+                <svg class="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{t("api.section.rateLimits")}</span>
+              </a>
+
+              <a href="#error-codes" class="nav-link group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
+                <svg class="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{t("api.section.errorCodes")}</span>
+              </a>
+            </nav>
+          </div>
+        </aside>
+
+        <main class="flex-1 min-w-0">
+          <div class="space-y-12">
+            <section id="getting-started" class="scroll-mt-24">
+              <div class="mb-8">
+                <h2 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">{t("api.section.gettingStarted")}</h2>
+                <p class="text-neutral-600 dark:text-neutral-400">{t("api.section.gettingStarted.subtitle")}</p>
+              </div>
+
+              <div class="grid gap-6 md:grid-cols-2">
+                <div class="rounded-xl border border-neutral-200 dark:border-gray-700 bg-white dark:bg-[#171717] p-6">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                      <svg class="w-5 h-5 text-neutral-800 dark:text-neutral-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                      </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{t("api.card.keyManagement.title")}</h3>
+                  </div>
+
+                  <div class="space-y-4">
+                    {apiKey ? (
+                      <div class="space-y-3">
+                        <div class="flex items-center gap-2">
+                          <input
+                            type="text"
+                            id="api-key-display"
+                            value={apiKey}
+                            readonly
+                            class="flex-1 px-3 py-2 text-sm font-mono rounded-lg border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100"
+                          />
+                          <button id="copy-api-key" class="px-4 py-2 text-sm font-medium rounded-lg bg-neutral-900 dark:bg-neutral-700 text-white hover:bg-neutral-800 dark:hover:bg-neutral-600 transition-colors">
+                            {t("api.key.button.copy")}
+                          </button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <button id="regenerate-api-key" class="flex-1 px-4 py-2 text-sm font-medium rounded-lg border border-neutral-200 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors">
+                            {t("api.key.button.regenerate")}
+                          </button>
+                          <button id="revoke-api-key" class="px-4 py-2 text-sm font-medium rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors">
+                            {t("api.key.button.revoke")}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button id="generate-api-key" class="w-52 my-0 mx-auto relative text-center flex justify-center px-4 py-2 text-sm font-medium rounded-lg border border-neutral-200 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors">
+                        {t("api.key.button.generate")}
+                      </button>
+                    )}
+                    <p class="text-x mt-4 text-neutral-500 dark:text-neutral-400">
+                      {t("api.key.security.note")}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="rounded-xl border border-neutral-200 dark:border-gray-700 bg-white dark:bg-[#171717] p-6">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 rounded-lg text-neutral-800 dark:text-neutral-200">
+                      <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                      </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{t("api.card.quickConfig.title")}</h3>
+                  </div>
+
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        {t("api.config.selectWebsite.label")}
+                      </label>
+                      <select id="website-selector" class="w-full px-3 py-2 text-sm rounded-lg border border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100">
+                        <option value="">{t("api.config.selectWebsite.placeholder")}</option>
+                        {websites.map((site: any) => (
+                          <option value={site.id}>{site.name} ({site.domain})</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div class="space-y-2">
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="auto-replace-key" class="rounded text-blue-600" checked={!!apiKey} />
+                        <span class="text-sm text-neutral-700 dark:text-neutral-300">{t("api.config.autoFillKey")}</span>
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="auto-replace-website" class="rounded text-blue-600" />
+                        <span class="text-sm text-neutral-700 dark:text-neutral-300">{t("api.config.autoFillWebsite")}</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="md:col-span-2 rounded-xl border border-neutral-200 dark:border-gray-700 bg-white dark:bg-[#171717] p-6">
+                  <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t("api.card.baseUrl.title")}</h3>
+                  <div class="bg-neutral-50 dark:bg-[#21232f] rounded-lg p-4 font-mono text-sm">
+                    <div class="text-neutral-600 dark:text-neutral-400 mb-2">{t("api.baseUrl.label")}</div>
+                    <div class="text-neutral-900 dark:text-neutral-100 mb-4">{backendUrl}/api/v1</div>
+                    <div class="text-neutral-600 dark:text-neutral-400 mb-2">{t("api.headers.label")}</div>
+                    <div class="text-neutral-900 dark:text-neutral-100">X-API-Key: YOUR_API_KEY</div>
+                    <div class="text-neutral-900 dark:text-neutral-100">Accept: application/json</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {API_CATEGORIES.sort((a, b) => a.order - b.order).map(category => {
+              const endpoints = categorizedEndpoints[category.id]?.endpoints || [];
+              if (endpoints.length === 0) return null;
+
+              return (
+                <section id={`category-${category.id}`} class="scroll-mt-24">
+                  <div class="mb-8">
+                    <div class="flex items-center gap-3 mb-2">
+                      <span set:html={category.icon} class="text-neutral-600 dark:text-neutral-400"></span>
+                      <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{t(category.name)}</h2>
+                    </div>
+                    <p class="text-neutral-600 dark:text-neutral-400">{t(category.description)}</p>
+                  </div>
+
+                  <div class="space-y-8">
+                    {endpoints.map(endpoint => {
+                      const codeExamples = generateCodeExamples(endpoint, backendUrl);
+
+                      return (
+                        <div id={endpoint.id} class="endpoint-section scroll-mt-24 rounded-xl border border-neutral-200 dark:border-gray-700 bg-white dark:bg-[#171717] overflow-hidden">
+                          <div class="p-6 border-b border-neutral-200 dark:border-gray-700">
+                            <div class="flex items-start justify-between gap-4 mb-4">
+                              <div>
+                                <h3 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+                                  {t(endpoint.title)}
+                                </h3>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-400 mb-3">
+                                  {t(endpoint.description)}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 p-3 rounded-lg bg-neutral-50 dark:bg-neutral-900 font-mono text-sm">
+                              <span class="text-[#1e8045] text-sm mr-2 rounded-md p-1 bg-[#0eaf417e] dark:bg-[#1e804565] dark:text-[#0eaf41]">{endpoint.method}</span>
+                              <span class="text-neutral-900 dark:text-neutral-100">{endpoint.path}</span>
+                              {endpoint.exampleParams && (
+                                <span class="text-neutral-800 dark:text-neutral-200">{endpoint.exampleParams}</span>
+                              )}
+                            </div>
+
+                            {endpoint.parameters.length > 0 && (
+                              <div class="mt-4">
+                                <h4 class="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2">{t("api.endpoint.parameters")}</h4>
+                                <div class="space-y-2">
+                                  {endpoint.parameters.map(param => (
+                                    <div class="flex items-start gap-2 text-sm">
+                                      <code class="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100">
+                                        {param.name}
+                                      </code>
+                                      <span class={`text-xs ${param.required ? 'text-red-600 dark:text-red-400 mt-1' : 'text-neutral-500 dark:text-neutral-400 mt-1'}`}>
+                                        {param.required ? t("api.endpoint.required") : t("api.endpoint.optional")}
+                                      </span>
+                                      <span class="text-neutral-600 mt-0.5 dark:text-neutral-400">
+                                        {param.type} - {t(param.description)}
+                                        {param.default && ` (${t("api.endpoint.default")}: ${param.default})`}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <div class="code-section">
+                            <div class="flex border-b border-neutral-200 dark:border-gray-700 overflow-x-auto">
+                              {codeExamples.map((example, idx) => (
+                                <button
+                                  class={`code-tab px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
+                                    idx === 0
+                                      ? 'bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 border-b-2 border-blue-600'
+                                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
+                                  }`}
+                                  data-lang={example.language}
+                                  data-endpoint={endpoint.id}
+                                >
+                                  {example.displayName}
+                                </button>
+                              ))}
+                            </div>
+
+                            <div class="relative">
+                              {codeExamples.map((example, idx) => (
+                                <div
+                                  class={`code-content ${idx !== 0 ? 'hidden' : ''}`}
+                                  data-lang={example.language}
+                                  data-endpoint={endpoint.id}
+                                >
+                                  <button class="absolute top-4 right-4 px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-700 hover:bg-neutral-600 text-white transition-colors copy-code-btn">
+                                    {t("api.key.button.copy")}
+                                  </button>
+                                  <pre class="p-6 bg-neutral-50 dark:bg-[#21232f] overflow-x-auto"><code class="text-sm text-neutral-900 dark:text-neutral-100">{example.code}</code></pre>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {endpoint.responseExample && (
+                            <div class="p-6 border-t border-neutral-200 dark:border-gray-700">
+                              <h4 class="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">{t("api.endpoint.exampleResponse")}</h4>
+                              <div class="relative">
+                                <button class="absolute top-3 right-3 px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-700 hover:bg-neutral-600 text-white transition-colors copy-response-btn">
+                                  {t("api.key.button.copy")}
+                                </button>
+                                <pre class="p-4 rounded-lg bg-neutral-50 dark:bg-[#21232f] overflow-x-auto"><code class="text-sm text-neutral-900 dark:text-neutral-100">{endpoint.responseExample}</code></pre>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              );
+            })}
+
+            <section id="rate-limits" class="scroll-mt-24">
+              <div class="rounded-xl border border-neutral-200 dark:border-gray-700 bg-white dark:bg-[#171717] p-6">
+                <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">{t(RATE_LIMITS.title)}</h2>
+                <p class="text-neutral-600 dark:text-neutral-400 mb-6">{t(RATE_LIMITS.description)}</p>
+
+                <div class="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-3">{t("api.rateLimits.planLimits")}</h3>
+                    <div class="space-y-2">
+                      {RATE_LIMITS.limits.map(limit => (
+                        <div class="flex justify-between p-3 rounded-lg bg-neutral-50 dark:bg-neutral-900">
+                          <span class="font-medium text-neutral-900 dark:text-neutral-100">{limit.plan}</span>
+                          <span class="text-sm text-neutral-600 dark:text-neutral-400">
+                            {limit.unit ? t(limit.limit) + ' ' + t(limit.unit) : t(limit.limit)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-3">{t("api.rateLimits.responseHeaders")}</h3>
+                    <div class="space-y-2">
+                      {RATE_LIMITS.headers.map(header => (
+                        <div class="p-3 rounded-lg bg-neutral-50 dark:bg-neutral-900">
+                          <code class="text-sm font-mono text-neutral-800 dark:text-neutral-200">{header.header}</code>
+                          <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-1">{t(header.description)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="error-codes" class="scroll-mt-24">
+              <div class="rounded-xl border border-neutral-200 dark:border-gray-700 bg-white dark:bg-[#171717] p-6">
+                <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">{t("api.errorCodes.title")}</h2>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full">
+                    <thead>
+                      <tr class="border-b border-neutral-200 dark:border-gray-700">
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t("api.errorCodes.code")}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t("api.errorCodes.status")}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t("api.errorCodes.description")}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ERROR_CODES.map((error, idx) => (
+                        <tr class={idx !== ERROR_CODES.length - 1 ? 'border-b border-neutral-100 dark:border-neutral-800' : ''}>
+                          <td class="py-3 px-4">
+                            <span class={`inline-flex items-center justify-center w-12 h-7 text-xs font-mono rounded-lg ${
+                              error.code === 200
+                                ? 'bg-[#bbf7d0] text-[#14532d] dark:bg-[#14532d] dark:text-[#00b93b]'
+                                : error.code < 400
+                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                                : error.code < 500
+                                ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
+                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                            }`}>
+                              {error.code}
+                            </span>
+                          </td>
+                          <td class="py-3 px-4 text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                            {t(error.message)}
+                          </td>
+                          <td class="py-3 px-4 text-sm text-neutral-600 dark:text-neutral-400">
+                            {t(error.description)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+  <!-- API Key Regenerate Confirmation Modal -->
+  <div id="regenerate-confirm-modal" class="fixed inset-0 z-[10000] hidden bg-neutral-900/50 backdrop-blur-sm">
+    <div class="flex min-h-screen items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-2xl border border-neutral-200 bg-white shadow-xl dark:border-gray-700 dark:bg-[#171717]">
+        <div class="p-8">
+          <div class="mb-4 flex items-center justify-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30 text-neutral-800 dark:text-neutral-200">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-round-icon lucide-key-round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+            </div>
+          </div>
+          <h4 class="mb-2 text-center text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+            {t("api.key.regenerate.confirm.title")}
+          </h4>
+          <p class="mb-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
+            {t("api.key.regenerate.confirm.message")}
+          </p>
+          <div class="flex justify-center space-x-3">
+            <button
+              id="cancel-regenerate-confirm"
+              class="rounded-lg px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
+            >
+              {t("api.key.regenerate.confirm.cancel")}
+            </button>
+            <button
+              id="confirm-regenerate-action"
+              class="rounded-lg bg-neutral-800 dark:bg-neutral-200 px-6 py-2 text-sm text-white dark:text-black hover:bg-amber-700 transition-colors"
+            >
+              {t("api.key.regenerate.confirm.regenerate")}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- API Key Revoke Confirmation Modal -->
+  <div id="revoke-confirm-modal" class="fixed inset-0 z-[10000] hidden bg-neutral-900/50 backdrop-blur-sm">
+    <div class="flex min-h-screen items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-2xl border border-neutral-200 bg-white shadow-xl dark:border-gray-700 dark:bg-[#171717]">
+        <div class="p-8">
+          <div class="mb-4 flex items-center justify-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600 dark:text-red-400">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+          </div>
+          <h4 class="mb-2 text-center text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+            {t("api.key.revoke.confirm.title")}
+          </h4>
+          <p class="mb-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
+            {t("api.key.revoke.confirm.message")}
+          </p>
+          <div class="flex justify-center space-x-3">
+            <button
+              id="cancel-revoke-confirm"
+              class="rounded-lg px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
+            >
+              {t("api.key.revoke.confirm.cancel")}
+            </button>
+            <button
+              id="confirm-revoke-action"
+              class="rounded-lg bg-red-600 px-6 py-2 text-sm text-white hover:bg-red-700 transition-colors"
+            >
+              {t("api.key.revoke.confirm.revoke")}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script define:vars={{
+    apiKey,
+    websites,
+    backendUrl,
+    translations: {
+      generating: t("api.key.generating"),
+      regenerating: t("api.key.regenerating"),
+      revoking: t("api.key.revoking"),
+      copied: t("api.button.copied"),
+      generateError: t("api.key.generate.error"),
+      regenerateError: t("api.key.regenerate.error"),
+      revokeError: t("api.key.revoke.error")
+    }
+  }}>
+    document.addEventListener('DOMContentLoaded', function() {
+      let currentApiKey = apiKey || '';
+      let currentWebsiteId = '';
+
+      const navLinks = document.querySelectorAll('.nav-link');
+      const categoryToggles = document.querySelectorAll('.category-toggle');
+      const endpointLinks = document.querySelectorAll('.endpoint-link');
+      const autoReplaceKey = document.getElementById('auto-replace-key');
+      const autoReplaceWebsite = document.getElementById('auto-replace-website');
+      const websiteSelector = document.getElementById('website-selector');
+
+      categoryToggles.forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          const parent = toggle.closest('.category-nav');
+          const endpoints = parent.querySelector('.category-endpoints');
+          const chevron = toggle.querySelector('.category-chevron');
+
+          if (endpoints.classList.contains('hidden')) {
+            endpoints.classList.remove('hidden');
+            chevron.style.transform = 'rotate(90deg)';
+          } else {
+            endpoints.classList.add('hidden');
+            chevron.style.transform = 'rotate(0)';
+          }
+        });
+      });
+
+      function highlightActiveSection() {
+        const sections = document.querySelectorAll('section[id]');
+        const scrollPosition = window.scrollY + 100;
+
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.offsetHeight;
+          const sectionId = section.getAttribute('id');
+
+          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            navLinks.forEach(link => {
+              link.classList.remove('bg-neutral-100', 'dark:bg-[#171717]', 'text-neutral-900', 'dark:text-neutral-100');
+              link.classList.add('text-neutral-700', 'dark:text-neutral-300');
+            });
+
+            const activeLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+            if (activeLink) {
+              activeLink.classList.remove('text-neutral-700', 'dark:text-neutral-300');
+              activeLink.classList.add('bg-neutral-100', 'dark:bg-[#171717]', 'text-neutral-900', 'dark:text-neutral-100');
+            }
+
+            endpointLinks.forEach(link => {
+              link.classList.remove('text-neutral-900', 'dark:text-neutral-100', 'font-semibold');
+            });
+
+            const activeEndpoint = document.querySelector(`.endpoint-link[href="#${sectionId}"]`);
+            if (activeEndpoint) {
+              activeEndpoint.classList.add('text-neutral-900', 'dark:text-neutral-100', 'font-semibold');
+            }
+          }
+        });
+      }
+
+      window.addEventListener('scroll', highlightActiveSection);
+      highlightActiveSection();
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href').substring(1);
+          const targetElement = document.getElementById(targetId);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      endpointLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href').substring(1);
+          const targetElement = document.getElementById(targetId);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      if (websiteSelector) {
+        websiteSelector.addEventListener('change', (e) => {
+          currentWebsiteId = e.target.value;
+          if (e.target.value && websites.length === 1) {
+            autoReplaceWebsite.checked = true;
+          }
+        });
+
+        if (websites.length === 1) {
+          websiteSelector.value = websites[0].id;
+          currentWebsiteId = websites[0].id;
+        }
+      }
+
+      const copyApiKeyBtn = document.getElementById('copy-api-key');
+      if (copyApiKeyBtn) {
+        copyApiKeyBtn.addEventListener('click', () => {
+          const input = document.getElementById('api-key-display');
+          if (input) {
+            navigator.clipboard.writeText(input.value).then(() => {
+              const originalText = copyApiKeyBtn.textContent;
+              copyApiKeyBtn.textContent = translations.copied;
+              setTimeout(() => copyApiKeyBtn.textContent = originalText, 2000);
+            });
+          }
+        });
+      }
+
+      const generateBtn = document.getElementById('generate-api-key');
+      if (generateBtn) {
+        generateBtn.addEventListener('click', async () => {
+          generateBtn.disabled = true;
+          generateBtn.textContent = translations.generating;
+
+          try {
+            const sessionToken = document.cookie.split('app_auth_token=')[1]?.split(';')[0];
+            const response = await fetch(`${backendUrl}/api/user/generate-api-key`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${sessionToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (!response.ok) throw new Error('Failed to generate API key');
+
+            const { apiKey: newApiKey } = await response.json();
+            currentApiKey = newApiKey;
+            location.reload();
+          } catch (error) {
+            alert(translations.generateError);
+            generateBtn.disabled = false;
+            generateBtn.textContent = '${t("api.key.button.generate")}';
+          }
+        });
+      }
+
+      const regenerateBtn = document.getElementById('regenerate-api-key');
+      const regenerateModal = document.getElementById('regenerate-confirm-modal');
+      const cancelRegenerateBtn = document.getElementById('cancel-regenerate-confirm');
+      const confirmRegenerateBtn = document.getElementById('confirm-regenerate-action');
+
+      if (regenerateBtn) {
+        regenerateBtn.addEventListener('click', () => {
+          if (regenerateModal) {
+            regenerateModal.classList.remove('hidden');
+          }
+        });
+      }
+
+      if (cancelRegenerateBtn) {
+        cancelRegenerateBtn.addEventListener('click', () => {
+          if (regenerateModal) {
+            regenerateModal.classList.add('hidden');
+          }
+        });
+      }
+
+      if (regenerateModal) {
+        regenerateModal.addEventListener('click', (e) => {
+          if (e.target === regenerateModal) {
+            regenerateModal.classList.add('hidden');
+          }
+        });
+      }
+
+      if (confirmRegenerateBtn) {
+        confirmRegenerateBtn.addEventListener('click', async () => {
+          try {
+            confirmRegenerateBtn.disabled = true;
+            confirmRegenerateBtn.textContent = translations.regenerating;
+
+            const sessionToken = document.cookie.split('app_auth_token=')[1]?.split(';')[0];
+            const response = await fetch(`${backendUrl}/api/user/generate-api-key`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${sessionToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (!response.ok) throw new Error('Failed to regenerate API key');
+
+            if (regenerateModal) {
+              regenerateModal.classList.add('hidden');
+            }
+            location.reload();
+          } catch (error) {
+            alert(translations.regenerateError);
+            confirmRegenerateBtn.disabled = false;
+            confirmRegenerateBtn.textContent = '${t("api.key.regenerate.confirm.regenerate")}';
+          }
+        });
+      }
+
+      const revokeBtn = document.getElementById('revoke-api-key');
+      const revokeModal = document.getElementById('revoke-confirm-modal');
+      const cancelRevokeBtn = document.getElementById('cancel-revoke-confirm');
+      const confirmRevokeBtn = document.getElementById('confirm-revoke-action');
+
+      if (revokeBtn) {
+        revokeBtn.addEventListener('click', () => {
+          if (revokeModal) {
+            revokeModal.classList.remove('hidden');
+          }
+        });
+      }
+
+      if (cancelRevokeBtn) {
+        cancelRevokeBtn.addEventListener('click', () => {
+          if (revokeModal) {
+            revokeModal.classList.add('hidden');
+          }
+        });
+      }
+
+      if (revokeModal) {
+        revokeModal.addEventListener('click', (e) => {
+          if (e.target === revokeModal) {
+            revokeModal.classList.add('hidden');
+          }
+        });
+      }
+
+      if (confirmRevokeBtn) {
+        confirmRevokeBtn.addEventListener('click', async () => {
+          try {
+            confirmRevokeBtn.disabled = true;
+            confirmRevokeBtn.textContent = translations.revoking;
+
+            const sessionToken = document.cookie.split('app_auth_token=')[1]?.split(';')[0];
+            const response = await fetch(`${backendUrl}/api/user/api-key`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${sessionToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              if (revokeModal) {
+                revokeModal.classList.add('hidden');
+              }
+              location.reload();
+            } else {
+              throw new Error('Failed to revoke API key');
+            }
+          } catch (error) {
+            alert(translations.revokeError);
+            confirmRevokeBtn.disabled = false;
+            confirmRevokeBtn.textContent = '${t("api.key.revoke.confirm.revoke")}';
+          }
+        });
+      }
+
+      document.querySelectorAll('.code-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+          const lang = tab.dataset.lang;
+          const endpointId = tab.dataset.endpoint;
+          const section = tab.closest('.code-section');
+
+          section.querySelectorAll('.code-tab').forEach(t => {
+            t.classList.remove('bg-neutral-100', 'dark:bg-neutral-700', 'text-neutral-900', 'dark:text-neutral-100', 'border-b-2', 'border-blue-600');
+            t.classList.add('text-neutral-600', 'dark:text-neutral-400');
+          });
+
+          tab.classList.add('bg-neutral-100', 'dark:bg-neutral-700', 'text-neutral-900', 'dark:text-neutral-100', 'border-b-2', 'border-blue-600');
+          tab.classList.remove('text-neutral-600', 'dark:text-neutral-400');
+
+          section.querySelectorAll('.code-content').forEach(content => {
+            content.classList.add('hidden');
+          });
+
+          const targetContent = section.querySelector(`.code-content[data-lang="${lang}"][data-endpoint="${endpointId}"]`);
+          if (targetContent) {
+            targetContent.classList.remove('hidden');
+          }
+        });
+      });
+
+      document.querySelectorAll('.copy-code-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const codeContent = btn.closest('.code-content');
+          let codeText = codeContent.querySelector('code').textContent;
+
+          if (autoReplaceKey && autoReplaceKey.checked && currentApiKey) {
+            codeText = codeText.replace(/YOUR_API_KEY/g, currentApiKey);
+          }
+
+          if (autoReplaceWebsite && autoReplaceWebsite.checked && currentWebsiteId) {
+            codeText = codeText.replace(/WEBSITE_ID/g, currentWebsiteId);
+          }
+
+          navigator.clipboard.writeText(codeText).then(() => {
+            const originalText = btn.textContent;
+            btn.textContent = translations.copied;
+            setTimeout(() => btn.textContent = originalText, 2000);
+          });
+        });
+      });
+
+      document.querySelectorAll('.copy-response-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const responseText = btn.parentElement.querySelector('code').textContent;
+
+          navigator.clipboard.writeText(responseText).then(() => {
+            const originalText = btn.textContent;
+            btn.textContent = translations.copied;
+            setTimeout(() => btn.textContent = originalText, 2000);
+          });
+        });
+      });
+
+      document.querySelectorAll('[data-hs-collapse="#api-sidebar-collapse"]').forEach(el => {
+        el.addEventListener('click', () => {
+          setTimeout(() => {
+            const panel = document.getElementById('api-sidebar-collapse');
+            if (panel && !panel.classList.contains('hidden')) {
+              panel.style.height = 'auto';
+            }
+          }, 300);
+        });
+      });
+
+      categoryToggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const panel = document.getElementById('api-sidebar-collapse');
+          if (panel && !panel.classList.contains('hidden')) {
+            panel.style.height = 'auto';
+          }
+        });
+      });
+
+    });
+  </script>
+
+  <style>
+    .category-chevron {
+      transition: transform 0.2s ease;
+    }
+
+    .category-endpoints {
+      transition: max-height 0.3s ease;
+    }
+
+    .code-tab {
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    code {
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    }
+
+    .endpoint-section {
+      transition: all 0.3s ease;
+    }
+
+    .endpoint-section:hover {
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    aside::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    aside::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    aside::-webkit-scrollbar-thumb {
+      background-color: rgb(203 213 225);
+      border-radius: 2px;
+    }
+
+    .dark aside::-webkit-scrollbar-thumb {
+      background-color: rgb(71 85 105);
+    }
+  </style>
+</MainLayout>
