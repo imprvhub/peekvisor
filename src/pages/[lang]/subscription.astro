@@ -45,14 +45,12 @@ const subscription = subscriptionData?.subscription || null;
       
       <!-- Header -->
       <div class="mb-8">
-        <a
-          href={`/${lang}/dashboard`}
-          class="inline-flex items-center text-neutral-500 transition-colors hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
-        >
-          <Icon name="arrowLeft" />
-          <span class="ml-1 text-lg">{t("nav.dashboard")}</span>
+        <a href={`/${lang}/dashboard`} class="inline-flex items-center gap-2 rounded-xl border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>
+            </svg>
+            {t('nav.websites')}
         </a>
-
         <h1 class="mt-4 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
           {t("subscription.title")}
         </h1>
@@ -83,7 +81,7 @@ const subscription = subscriptionData?.subscription || null;
      
           <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <!-- Billing Information -->
-            <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="rounded-xl border border-neutral-200 p-6 shadow-sm dark:border-gray-700 dark:bg-[#171717]">
               <h3 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
                 {t("subscription.billingInfo")}
               </h3>
@@ -139,7 +137,7 @@ const subscription = subscriptionData?.subscription || null;
             </div>
 
             <!-- Quick Actions -->
-            <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="rounded-xl border border-neutral-200 p-6 shadow-sm dark:border-gray-700 dark:bg-[#171717]">
               <h3 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
                 {t("subscription.quickActions")}
               </h3>
@@ -197,7 +195,7 @@ const subscription = subscriptionData?.subscription || null;
           </div>
         </div>
       ) : (
-        <div class="rounded-xl border border-neutral-200 bg-white p-6 sm:p-8 text-center shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+        <div class="rounded-xl border border-neutral-200 bg-white p-6 sm:p-8 text-center shadow-sm dark:border-neutral-700 dark:bg-[#171717]">
           <h2 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
             {t("subscription.noSubscription")}
           </h2>
@@ -222,3 +220,8 @@ const subscription = subscriptionData?.subscription || null;
     </div>
   </div>
 </MainLayout>
+<style>
+  html.dark .dark\:bg-gray-800 {
+    background: linear-gradient(180deg, #0e1319 0%, #0d1016 100%);
+  }
+</style>

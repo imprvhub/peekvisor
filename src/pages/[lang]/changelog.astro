@@ -86,7 +86,7 @@ function processMarkdown(text: string) {
 >
     <div class="w-full flex justify-center mt-4 sm:mt-8 mb-4 sm:mb-8 px-1 min-[400px]:px-2 sm:px-4">
         <div
-            class="w-[calc(100%-16px)] mx-auto max-w-5xl rounded-lg border border-yellow-100/40 py-3 px-2 min-[400px]:px-3 sm:py-8 sm:px-6 md:py-10 md:px-8 dark:border-neutral-700/40"
+            class="w-[calc(100%-16px)] mx-auto max-w-5xl rounded-lg  py-3 px-2 min-[400px]:px-3 sm:py-8 sm:px-6 md:py-10 md:px-8 dark:border-neutral-700/40"
         >
             <h1
                 class="mb-6 sm:mb-8 text-center text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100"
@@ -111,8 +111,8 @@ function processMarkdown(text: string) {
                     <div class="max-h-[60vh] sm:max-h-[70vh] space-y-4 sm:space-y-6 overflow-y-auto overflow-x-hidden">
                         {releases.map((release: any, index: number) => (
                             <div
-                                class="w-full mb-4 sm:mb-6 rounded-[12px] min-[400px]:rounded-[16px] sm:rounded-[24px] border border-[#7C86FF] p-2 min-[400px]:p-3 sm:p-5 md:p-6 overflow-hidden"
-                                style="border-color: #7C86FF;"
+                                class="w-full mb-4 bg-white dark:bg-[#171717] sm:mb-6 rounded-[12px] min-[400px]:rounded-[16px] sm:rounded-[24px] shadow-2xl border border-[#354153] p-2 min-[400px]:p-3 sm:p-5 md:p-6 overflow-hidden"
+                                style="border-color: #354153;"
                             >
                                  <div class="mb-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                                     <div class="min-w-0 flex-1 text-center sm:text-left">
@@ -199,4 +199,10 @@ function processMarkdown(text: string) {
             }
         });
     </script>
+
 </MainLayout>
+<style>
+    html.dark .dark\:bg-gray-800 {
+    background: linear-gradient(180deg, #0e1319 0%, #0d1016 100%);
+  }
+</style>
