@@ -35,7 +35,7 @@
     },
     {
       "question": "Does PeekVisor provide API access?",
-      "answer": "API Access is enabled for all plans with different rate limiting. The limits are:\nBasic: 500 requests / 15 minutes\nFlex: 1000 requests / 15 minutes\nPro: Custom limits available"
+      "answer": "API Access is enabled for all plans with different rate limiting. The limits are:\nBasic: 150 requests / 15 minutes\nFlex: 400 requests / 15 minutes\nPro: 1000 requests / 15 minutes"
     },
     {
       "question": "What payment methods are accepted and how do I manage billing?",
