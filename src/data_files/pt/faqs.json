@@ -35,7 +35,7 @@
     },
     {
       "question": "O PeekVisor fornece acesso à API?",
-      "answer": "O acesso à API está ativado para todos os planos com diferentes limites de taxa. Os limites são:\nBasic: 500 solicitações / 15 minutos\nFlex: 1000 solicitações / 15 minutos\nPro: Limites personalizados disponíveis"
+      "answer": "O acesso à API está ativado para todos os planos com diferentes limites de taxa. Os limites são:\nBasic: 150 solicitações / 15 minutos\nFlex: 400 solicitações / 15 minutos\nPro: 1000 solicitações / 15 minutos"
     },
     {
       "question": "Quais métodos de pagamento são aceitos e como gerencio o faturamento?",

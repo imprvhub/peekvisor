@@ -589,9 +589,9 @@ export const RATE_LIMITS = {
   title: "api.rateLimits.title",
   description: "api.rateLimits.description",
   limits: [
-    { plan: "Basic", limit: "500", unit: "api.rateLimits.requestsPerWindow" },
+    { plan: "Basic", limit: "api.rateLimits.basic" },
     { plan: "Flex", limit: "api.rateLimits.flex" },
-    { plan: "Pro", limit: "api.rateLimits.customLimits" }
+    { plan: "Pro", limit: "api.rateLimits.pro" }
   ],
   headers: [
     { header: "X-RateLimit-Limit", description: "api.rateLimits.header.limit" },

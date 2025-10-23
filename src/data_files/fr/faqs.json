@@ -35,7 +35,7 @@
     },
     {
       "question": "PeekVisor fournit-il un accès API ?",
-      "answer": "L'accès à l'API est activé pour tous les plans avec des limitations de débit différentes. Les limites sont :\nBasic: 500 requêtes / 15 minutes\nFlex: 1000 requêtes / 15 minutes\nPro: Limites personnalisées disponibles"
+      "answer": "L'accès à l'API est activé pour tous les plans avec des limitations de débit différentes. Les limites sont :\nBasic: 150 requêtes / 15 minutes\nFlex: 400 requêtes / 15 minutes\nPro: 1000 requêtes / 15 minutes"
     },
     {
       "question": "Quels modes de paiement sont acceptés et comment gérer la facturation ?",

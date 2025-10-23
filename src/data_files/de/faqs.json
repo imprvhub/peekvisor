@@ -35,7 +35,7 @@
     },
     {
       "question": "Bietet PeekVisor API-Zugriff?",
-      "answer": "Der API-Zugriff ist für alle Pläne mit unterschiedlichen Ratenbegrenzungen aktiviert. Die Limits sind:\nBasic: 500 Anfragen / 15 Minuten\nFlex: 1000 Anfragen / 15 Minuten\nPro: Benutzerdefinierte Limits verfügbar"
+      "answer": "Der API-Zugriff ist für alle Pläne mit unterschiedlichen Ratenbegrenzungen aktiviert. Die Limits sind:\nBasic: 150 Anfragen / 15 Minuten\nFlex: 400 Anfragen / 15 Minuten\nPro: 1000 Anfragen / 15 Minuten"
     },
     {
       "question": "Welche Zahlungsmethoden werden akzeptiert und wie verwalte ich die Abrechnung?",
