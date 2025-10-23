@@ -1,9 +1,11 @@
 'use client';
 import { useRef, useEffect, useCallback, useMemo, useState } from 'react';
 import { gsap } from 'gsap';
-import { InertiaPlugin } from 'gsap/InertiaPlugin';
+import InertiaPlugin from 'gsap/InertiaPlugin';
 
-gsap.registerPlugin(InertiaPlugin);
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(InertiaPlugin);
+}
 
 const throttle = (func, limit) => {
   let lastCall = 0;
