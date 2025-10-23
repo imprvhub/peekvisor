@@ -1,0 +1,22 @@
+---
+import DotGrid from '../DotGrid.jsx';
+---
+
+<div class="fixed inset-0 -z-10 pointer-events-none">
+  <DotGrid 
+    client:load
+    dotSize={5}
+    gap={12}
+    baseColorLight="#dcdada"
+    activeColorLight="#7D87FF"
+    baseColorDark="#212121"
+    activeColorDark="#A3B4FF"
+    proximity={120}
+    shockRadius={200}
+    shockStrength={4}
+    resistance={800}
+    returnDuration={1.5}
+    className="w-full h-full"
+    style={{ width: '100vw', height: '100vh' }}
+  />
+</div>

@@ -5,6 +5,7 @@ import compressor from "astro-compressor";
 import starlight from "@astrojs/starlight";
 import vercel from "@astrojs/vercel/serverless";
 import mdx from "@astrojs/mdx";
+import react from "@astrojs/react";
 
 export default defineConfig({
   output: "server",
@@ -22,6 +23,7 @@ export default defineConfig({
   },
   prefetch: true,
   integrations: [
+    react(),
     sitemap(),
     starlight({
       title: "PeekVisor",
