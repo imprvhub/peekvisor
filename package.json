@@ -36,7 +36,7 @@
     "globby": "^14.1.0",
     "gsap": "^3.13.0",
     "html-minifier-terser": "^7.2.0",
-    "jspdf": "^3.0.1",
+    "jspdf": "^4.1.0",
     "jspdf-autotable": "^5.0.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.546.0",
